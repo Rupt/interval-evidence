@@ -20,7 +20,7 @@ def main():
         except AssertionError:
             print(end="x", flush=True)
             print(file=sys.stderr)
-            traceback.print_exc(limit=-3)
+            traceback.print_exc(limit)
 
     print()
 

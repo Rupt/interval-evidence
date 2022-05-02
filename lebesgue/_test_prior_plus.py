@@ -21,7 +21,9 @@ def test_shift():
 
 def test_args():
     prior = _prior_log_normal.log_normal(-4, 2.0)
-    assert _testing.raises(lambda: _prior_plus.prior(None, prior))
+    assert _testing.raises(lambda: _prior_plus.plus(None, prior), TypeError)
 
     not_prior = _likelihood_poisson.poisson(3)
-    assert _testing.raises(lambda: _prior_plus.prior(3, not_prior))
+    assert _testing.raises(lambda: _prior_plus.plus(3, not_prior), TypeError)
+
+    assert not _testing.raises(lambda: _prior_plus.plus(0.0, prior))

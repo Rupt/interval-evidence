@@ -9,8 +9,11 @@ from ._bayes import Likelihood
 
 def poisson(n):
     """Return a Poisson likelihood for n observed events."""
+    if not n == int(n):
+        raise ValueError(n)
     n = int(n)
-    assert n >= 0, n
+    if not n >= 0:
+        raise ValueError(n)
     return Likelihood(_Poisson(n))
 
 

@@ -12,7 +12,8 @@ def log_normal(mu, sigma):
     mu = float(mu)
 
     sigma = float(sigma)
-    assert sigma > 0, sigma
+    if not sigma > 0:
+        raise ValueError(sigma)
 
     return Prior(_LogNormal(mu, tau=1 / sigma))
 

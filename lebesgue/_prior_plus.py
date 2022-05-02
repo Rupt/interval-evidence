@@ -8,7 +8,8 @@ from ._bayes import Prior
 def plus(x, prior):
     """Return a prior shifted by x"""
     x = float(x)
-    assert isinstance(prior, Prior)
+    if not isinstance(prior, Prior):
+        raise TypeError(prior)
     cls = _plus_class(numba.typeof(prior._prior))
     return Prior(cls(x, prior._prior))
 

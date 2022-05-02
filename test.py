@@ -27,6 +27,7 @@ def main():
         lebesgue._test_likelihood_poisson.test_poisson_interval,
         lebesgue._test_likelihood_poisson.test_invg_lo,
         lebesgue._test_likelihood_poisson.test_invg_hi,
+        lebesgue._test_likelihood_poisson.test_signatures,
         # p
         lebesgue._test_prior_log_normal.test_gaussian_dcdf,
         lebesgue._test_prior_log_normal.test_between,

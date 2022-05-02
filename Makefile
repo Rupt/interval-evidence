@@ -22,7 +22,7 @@ fmt:
 
 .PHONY: clean
 clean:
-	git clean -fdx
+	rm -rf __pycache__ lebesgue/__pycache__
 
 
 env_lebesgue/bin/activate:

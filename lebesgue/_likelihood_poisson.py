@@ -29,7 +29,7 @@ class _Poisson:
 
 
 # specialized below
-@_core.jit
+@_core.jit(cache=True)
 def _poisson_interval(n, r):
     # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
     #        = -n * (x / n - 1 - log(x / n))

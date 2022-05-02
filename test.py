@@ -2,6 +2,7 @@ import sys
 import traceback
 
 import lebesgue
+import lebesgue._test_bayes
 import lebesgue._test_likelihood_poisson
 import lebesgue._test_prior_log_normal
 import lebesgue._test_prior_plus
@@ -21,6 +22,9 @@ def main():
         lebesgue._test_likelihood_poisson.test_poisson_interval,
         lebesgue._test_likelihood_poisson.test_invg_lo,
         lebesgue._test_likelihood_poisson.test_invg_hi,
+        lebesgue._test_bayes.test_args_likelihood,
+        lebesgue._test_bayes.test_args_prior,
+        lebesgue._test_bayes.test_args_model,
     ]
 
     for test in tests:

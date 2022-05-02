@@ -1,7 +1,7 @@
 """Define testing utilities."""
 
 
-def raises(func, exception=Exception):
+def raises(func, exception=BaseException):
     try:
         func()
     except exception:

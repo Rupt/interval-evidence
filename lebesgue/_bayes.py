@@ -16,9 +16,12 @@ class Likelihood:
 
     def __post_init__(self):
         type_ = numba.typeof(self._likelihood)
-        assert isinstance(type_, ClassInstanceType), self._likelihood
+        if not isinstance(type_, ClassInstanceType):
+            raise TypeError(self._likelihood)
+
         jit_methods = type_.jit_methods
-        assert "_interval" in jit_methods, jit_methods.keys()
+        if "_interval" not in jit_methods:
+            raise TypeError(jit_methods.keys())
 
     def interval(self, ratio):
         ratio = float(ratio)
@@ -32,9 +35,12 @@ class Prior:
 
     def __post_init__(self):
         type_ = numba.typeof(self._prior)
-        assert isinstance(type_, ClassInstanceType), self._prior
+        if not isinstance(type_, ClassInstanceType):
+            raise TypeError(self._prior)
+
         jit_methods = type_.jit_methods
-        assert "_between" in jit_methods, jit_methods.keys()
+        if "_between" not in jit_methods:
+            raise TypeError(jit_methods.keys())
 
     def between(self, lo, hi):
         lo = float(lo)
@@ -51,8 +57,11 @@ class Model:
     _model: ClassInstanceType
 
     def __init__(self, likelihood, prior):
-        assert isinstance(likelihood, Likelihood), likelihood
-        assert isinstance(prior, Prior), prior
+        if not isinstance(likelihood, Likelihood):
+            raise TypeError(likelihood)
+
+        if not isinstance(prior, Prior):
+            raise TypeError(prior)
 
         cls = _model_class(
             numba.typeof(likelihood._likelihood),

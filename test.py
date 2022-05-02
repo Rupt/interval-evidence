@@ -35,6 +35,7 @@ def main():
         lebesgue._test_prior_plus.test_args,
         # q
         lebesgue._test_quad_bound.test_fpow,
+        lebesgue._test_quad_bound.test_model,
     ]
 
     for test in tests:

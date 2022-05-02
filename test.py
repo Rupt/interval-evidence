@@ -12,19 +12,23 @@ import lebesgue._test_quad_bound
 def main():
 
     tests = [
-        lebesgue._test_quad_bound.test_fpow,
+        # b
+        lebesgue._test_bayes.test_args_likelihood,
+        lebesgue._test_bayes.test_args_prior,
+        lebesgue._test_bayes.test_args_model,
+        # l
+        lebesgue._test_likelihood_poisson.test_args,
+        lebesgue._test_likelihood_poisson.test_poisson_interval,
+        lebesgue._test_likelihood_poisson.test_invg_lo,
+        lebesgue._test_likelihood_poisson.test_invg_hi,
+        # p
         lebesgue._test_prior_log_normal.test_gaussian_dcdf,
         lebesgue._test_prior_log_normal.test_between,
         lebesgue._test_prior_log_normal.test_args,
         lebesgue._test_prior_plus.test_shift,
         lebesgue._test_prior_plus.test_args,
-        lebesgue._test_likelihood_poisson.test_args,
-        lebesgue._test_likelihood_poisson.test_poisson_interval,
-        lebesgue._test_likelihood_poisson.test_invg_lo,
-        lebesgue._test_likelihood_poisson.test_invg_hi,
-        lebesgue._test_bayes.test_args_likelihood,
-        lebesgue._test_bayes.test_args_prior,
-        lebesgue._test_bayes.test_args_model,
+        # q
+        lebesgue._test_quad_bound.test_fpow,
     ]
 
     for test in tests:

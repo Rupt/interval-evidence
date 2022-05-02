@@ -3,6 +3,7 @@ import traceback
 
 import lebesgue
 import lebesgue._test_bayes
+import lebesgue._test_cephes_ndtr
 import lebesgue._test_likelihood_poisson
 import lebesgue._test_prior_log_normal
 import lebesgue._test_prior_plus
@@ -12,6 +13,11 @@ import lebesgue._test_quad_bound
 def main():
 
     tests = [
+        # c
+        lebesgue._test_cephes_ndtr.test_ndtr,
+        lebesgue._test_cephes_ndtr.test_erf,
+        lebesgue._test_cephes_ndtr.test_erfc,
+        lebesgue._test_cephes_ndtr.test_signatures,
         # b
         lebesgue._test_bayes.test_args_likelihood,
         lebesgue._test_bayes.test_args_prior,
@@ -36,7 +42,7 @@ def main():
             test()
             print(end=".", flush=True)
         except AssertionError:
-            print(end="x", flush=True)
+            print(end="!", flush=True)
             print(file=sys.stderr)
             traceback.print_exc()
 

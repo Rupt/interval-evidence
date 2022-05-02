@@ -4,6 +4,7 @@ import numpy
 from numba import f8, i8
 
 from . import _bayes, _core
+from ._bayes import Likelihood
 
 
 def poisson(n):

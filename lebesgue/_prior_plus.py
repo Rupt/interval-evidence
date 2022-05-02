@@ -7,10 +7,10 @@ from ._bayes import Prior
 
 def plus(x, prior):
     """Return a prior shifted by x"""
-    assert isinstance(prior, Prior)
     x = float(x)
-    cls = _plus_class(numba.typeof(self._prior))
-    return Prior(cls(x, self._prior))
+    assert isinstance(prior, Prior)
+    cls = _plus_class(numba.typeof(prior._prior))
+    return Prior(cls(x, prior._prior))
 
 
 @_core.cache

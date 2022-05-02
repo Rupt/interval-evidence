@@ -3,8 +3,7 @@ import itertools
 import numpy
 import scipy.special
 
-from . import _prior_log_normal
-from ._testing import raises
+from . import _prior_log_normal, _testing
 
 
 def test_gaussian_dcdf():
@@ -20,8 +19,8 @@ def test_gaussian_dcdf():
         numpy.testing.assert_allclose(chk, ref, atol=1e-15)
 
 
-def test_log_normal_between():
-    rng = numpy.random.Generator(numpy.random.Philox(2))
+def test_between():
+    rng = numpy.random.Generator(numpy.random.Philox(3))
 
     ntest = 100
     mus = rng.normal(size=ntest)
@@ -38,15 +37,13 @@ def test_log_normal_between():
         numpy.testing.assert_allclose(chk, ref, atol=1e-15)
 
 
-def test_log_normal_arguments():
-    bad_mu = lambda: _prior_log_normal.log_normal(None, 1)
-    assert raises(bad_mu, TypeError)
+def test_args():
+    assert _testing.raises(lambda: _prior_log_normal.log_normal(None, 1))
+    assert _testing.raises(lambda: _prior_log_normal.log_normal(1, None))
+    assert _testing.raises(lambda: _prior_log_normal.log_normal(1, -1))
 
-    bad_sigma = lambda: _prior_log_normal.log_normal(1, None)
-    assert raises(bad_sigma, TypeError)
 
-    neg_sigma = lambda: _prior_log_normal.log_normal(1, -1)
-    assert raises(neg_sigma, AssertionError)
+# utilities
 
 
 def gaussian_dcdf_ref(lo, hi):

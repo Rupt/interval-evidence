@@ -1,11 +1,7 @@
 import itertools
 from types import SimpleNamespace
 
-from . import _quad_bound
-
-
-def test():
-    test_fpow()
+from . import _core, _quad_bound
 
 
 def test_fpow():
@@ -16,25 +12,34 @@ def test_fpow():
 
     for k, lo, hi in itertools.product(ks, los, his):
         func, integral = make_fpow(k, lo, hi)
-        zlo, zhi = wrap_quad_bound(func, rtol=1e-2)
+        zlo, zhi = _quad_bound._quad_bound(func, rtol=1e-2)
         assert zlo <= integral <= zhi
-
-
-def wrap_quad_bound(func, *, rtol):
-    obj = SimpleNamespace(_mass=func)
-    return _quad_bound._quad_bound(obj, rtol)
 
 
 def make_fpow(k, lo, hi):
     assert lo < hi, (lo, hi)
 
-    # rescale such that 0 -> lo, 1 -> hi
-    def fpow(x):
-        x = lo + (hi - lo) * x
-        return (1 - x) ** k
+    func = Fpow(int(k), float(lo), float(hi))
 
     integral = ((1 - lo) ** (k + 1) - (1 - hi) ** (k + 1)) / (k + 1)
     # jacobian factor for the rescaling
     integral /= hi - lo
 
-    return fpow, integral
+    return func, integral
+
+
+@_core.jitclass
+class Fpow:
+    _k: int
+    _lo: float
+    _hi: float
+
+    def __init__(self, k, lo, hi):
+        self._k = k
+        self._lo = lo
+        self._hi = hi
+
+    def _mass(self, x):
+        # resale such that 0 -> lo, 1 -> hi
+        x = self._lo + (self._hi - self._lo) * x
+        return (1 - x) ** self._k

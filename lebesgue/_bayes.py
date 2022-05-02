@@ -1,6 +1,7 @@
 """Manage likelihoods and priors."""
 from dataclasses import dataclass
 
+import numba
 from numba.core.types.misc import ClassInstanceType
 
 from . import _core

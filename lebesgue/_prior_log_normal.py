@@ -1,7 +1,10 @@
 """Implement the log-normal prior."""
-import scipy.special
+import numpy
+from numba import f8
 
 from . import _core
+from ._bayes import Prior
+from ._cephes_ndtr import ndtr
 
 
 def log_normal(mu, sigma):
@@ -40,11 +43,12 @@ class _LogNormal:
         return gaussian_dcdf(lo, hi)
 
 
-@_core.jit
+@_core.jit(f8(f8, f8))
 def gaussian_dcdf(lo, hi):
+    """Return cdf(hi) - cdf(lo) with reduced truncation error."""
     offset = numpy.copysign(0.5, hi) - numpy.copysign(0.5, lo)
 
-    flo = numpy.copysign(scipy.special.ndtr(-abs(lo)), lo)
-    fhi = numpy.copysign(scipy.special.ndtr(-abs(hi)), hi)
+    flo = numpy.copysign(ndtr(-abs(lo)), lo)
+    fhi = numpy.copysign(ndtr(-abs(hi)), hi)
 
     return flo - fhi + offset

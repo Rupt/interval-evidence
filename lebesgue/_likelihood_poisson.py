@@ -1,5 +1,7 @@
 """ Implement the Poisson likelihood function. """
+import numba
 import numpy
+from numba import f8, i8
 
 from . import _bayes, _core
 
@@ -19,11 +21,12 @@ class _Poisson:
         self._n = n
 
     def _interval(self, ratio):
-        return poisson_interval(self._n, ratio)
+        return _poisson_interval(self._n, ratio)
 
 
+# specialized below
 @_core.jit
-def poisson_interval(n, r):
+def _poisson_interval(n, r):
     # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
     #        = -n * (x / n - 1 - log(x / n))
     # => -log(r) / n = (x / n) - 1 - log(x / n) = g(x / n)
@@ -36,36 +39,36 @@ def poisson_interval(n, r):
         return 0.0, -numpy.log(r)
 
     y = -numpy.log(r) / n
-    return n * invg_lo(y), n * invg_hi(y)
+    return n * _invg_lo(y), n * _invg_hi(y)
 
 
 # low branch
 
 
 @_core.jit
-def invg_lo(y):
+def _invg_lo(y):
     if y < 0:
         return numpy.nan
 
     if y < 2.9103830456733704e-11:
-        return invg_lo_a(y)
+        return _invg_lo_a(y)
 
     if y > 128:
-        return invg_lo_b(y)
+        return _invg_lo_b(y)
 
     if y < 2:
-        x = invg_lo_c(y)
+        x = _invg_lo_c(y)
     else:
-        x = invg_lo_b(y)
+        x = _invg_lo_b(y)
 
     if y < 0.5:
-        return halley_lin(x, y)
+        return _halley_lin(x, y)
 
-    return halley_log(x, y)
+    return _halley_log(x, y)
 
 
 @_core.jit
-def invg_lo_a(y):
+def _invg_lo_a(y):
     v = numpy.sqrt(y)
     c0 = 1.0
     c1 = 1.4142135623730951
@@ -74,7 +77,7 @@ def invg_lo_a(y):
 
 
 @_core.jit
-def invg_lo_b(y):
+def _invg_lo_b(y):
     a = numpy.exp(-1 - y)
     r = 54 / 5
     r = r * a + 125 / 24
@@ -86,7 +89,7 @@ def invg_lo_b(y):
 
 
 @_core.jit
-def invg_lo_c(y):
+def _invg_lo_c(y):
     c0 = 1.0
     c1 = 1.4142135623730951
     c2 = 0.6666666666666666
@@ -113,26 +116,26 @@ def invg_lo_c(y):
 
 
 @_core.jit
-def invg_hi(y):
+def _invg_hi(y):
     if y < 0:
         return numpy.nan
 
     if y < 5.820766091346741e-11:
-        return invg_hi_a(y)
+        return _invg_hi_a(y)
 
     if y > 8192:
-        return invg_hi_b(y)
+        return _invg_hi_b(y)
 
     if y < 10.75:
-        x = invg_hi_c(y)
+        x = _invg_hi_c(y)
     else:
-        x = invg_hi_b(y)
+        x = _invg_hi_b(y)
 
-    return halley_lin(x, y)
+    return _halley_lin(x, y)
 
 
 @_core.jit
-def invg_hi_a(y):
+def _invg_hi_a(y):
     v = numpy.sqrt(y)
     c0 = 1.0
     c1 = 1.4142135623730951
@@ -141,7 +144,7 @@ def invg_hi_a(y):
 
 
 @_core.jit
-def invg_hi_b(y):
+def _invg_hi_b(y):
     # x = -exp(-1 - y)
     # L1 = ln(-x) = -1 - y
     # L2 = ln(-L1) = ln(1 + y) = s
@@ -162,7 +165,7 @@ def invg_hi_b(y):
 
 
 @_core.jit
-def invg_hi_c(y):
+def _invg_hi_c(y):
     c0 = 1.0
     c1 = 1.4142135623730951
     c2 = 0.6666666666666666
@@ -189,7 +192,7 @@ def invg_hi_c(y):
 
 
 @_core.jit
-def halley_log(x, y):
+def _halley_log(x, y):
     u = numpy.log(x)
     # order for case when y ~ 1 so x << 1, u ~ -1
     f = -y - u - 1 + x
@@ -198,7 +201,11 @@ def halley_log(x, y):
 
 
 @_core.jit
-def halley_lin(x, y):
+def _halley_lin(x, y):
     f = x - 1 - numpy.log(x) - y
     x -= x * (x - 1) * f / ((x - 1) * (x - 1) - 0.5 * f)
     return x
+
+
+# specialization
+_core.specialize(_poisson_interval, numba.typeof((0.0, 0.0))(i8, f8))

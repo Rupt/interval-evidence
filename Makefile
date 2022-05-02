@@ -3,14 +3,15 @@ SHELL := /bin/bash
 
 .PHONY: help
 help:
+	@echo "usage:"
 	@echo "make test  # run tests"
-	@echo "make fmt   # autoformat code"
+	@echo "make fmt   # format code"
 	@echo "make clean # clean up"
 
 
 .PHONY: test
 test:
-	NUMBA_DISABLE_JIT=1 python test.py
+	python test.py
 
 
 .PHONY: fmt
@@ -29,5 +30,5 @@ env_lebesgue/bin/activate:
 	( \
 	source env_lebesgue/bin/activate; \
 	pip install --upgrade pip; \
-	pip install scipy numpy numba numba-scipy black isort; \
+	pip install scipy numpy numba black isort; \
 	)

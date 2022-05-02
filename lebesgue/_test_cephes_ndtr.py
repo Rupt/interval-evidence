@@ -35,7 +35,7 @@ def test_erfc():
     assert scipy.special.erfc(-6) == 2
     assert scipy.special.erfc(27) == 0
 
-    x = rng.uniform(-38, 9, size=100)
+    x = rng.uniform(-6, 27, size=100)
 
     for x, y_ref in zip(x, scipy.special.erfc(x)):
         assert _cephes_ndtr.erfc(x) == y_ref

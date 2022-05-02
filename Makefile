@@ -16,7 +16,7 @@ test:
 
 .PHONY: fmt
 fmt:
-	isort lebesgue/*.py *.py
+	isort lebesgue/*.py *.py --profile black
 	black lebesgue/*.py *.py
 
 

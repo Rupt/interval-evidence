@@ -10,13 +10,13 @@ help:
 
 .PHONY: test
 test:
-	python test.py
+	NUMBA_DISABLE_JIT=1 python test.py
 
 
 .PHONY: fmt
 fmt:
-	black lebesgue/*.py
-	isort lebesgue/*.py
+	isort lebesgue/*.py *.py
+	black lebesgue/*.py *.py
 
 
 .PHONY: clean

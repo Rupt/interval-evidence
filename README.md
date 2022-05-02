@@ -13,24 +13,23 @@ source setup.sh
 
 ## development
 
-
+Auto-format code
 ```bash
 make fmt
 
 ```
 
+Run tests
+```bash
+make test
 
-## clean
+```
+
+
+## clean up
 
 ```bash
 make clean
 
 ```
 
-
-## test
-
-```bash
-make test
-
-```

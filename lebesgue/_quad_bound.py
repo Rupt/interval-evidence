@@ -4,6 +4,8 @@ Bound integrals by numerical quadrature.
 Appropriate functions are weakly decreasing on the unit interval, as are prior
 masses above likelihood ratios.
 """
+import numpy
+
 from . import _core
 
 
@@ -11,7 +13,7 @@ from . import _core
 def _quad_bound(model, rtol):
     # 2 ** -1022 is the smallest positive normal float
     nscan = 1022
-    atol = 2.0 ** -nscan
+    atol = 2.0**-nscan
 
     fs = numpy.empty(nscan + 1)
 
@@ -65,7 +67,7 @@ def _quad_bound(model, rtol):
     else:
         err_thresh = numpy.nan
 
-    # recursive refinement
+    # refinement
     zlo = 0.0
     zhi = 0.0
 
@@ -79,7 +81,7 @@ def _quad_bound(model, rtol):
 
         if err > err_thresh:
             cut = err - err_thresh
-            ilo, ihi = _quad_bound_impl(model, cut, lo, hi, flo, fhi)
+            ilo, ihi = _quad_bound_recurse(model, cut, lo, hi, flo, fhi)
         else:
             ilo, ihi = fhi * size, flo * size
 

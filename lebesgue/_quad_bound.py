@@ -11,7 +11,7 @@ from . import _core
 def _quad_bound(model, rtol):
     # 2 ** -1022 is the smallest positive normal float
     nscan = 1022
-    atol = 2.0**-nscan
+    atol = 2.0 ** -nscan
 
     fs = numpy.empty(nscan + 1)
 

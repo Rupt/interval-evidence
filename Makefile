@@ -1,10 +1,12 @@
 SHELL := /bin/bash
 
+
 .PHONY: help
 help:
 	@echo "make test  # run tests"
-	@echo "make fmt   # autoformat python code"
-	@echo "make clean # clean up
+	@echo "make fmt   # autoformat code"
+	@echo "make clean # clean up"
+
 
 .PHONY: test
 test:

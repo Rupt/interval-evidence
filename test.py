@@ -13,15 +13,15 @@ import lebesgue._test_quad_bound
 def main():
 
     tests = [
+        # b
+        lebesgue._test_bayes.test_args_likelihood,
+        lebesgue._test_bayes.test_args_prior,
+        lebesgue._test_bayes.test_args_model,
         # c
         lebesgue._test_cephes_ndtr.test_ndtr,
         lebesgue._test_cephes_ndtr.test_erf,
         lebesgue._test_cephes_ndtr.test_erfc,
         lebesgue._test_cephes_ndtr.test_signatures,
-        # b
-        lebesgue._test_bayes.test_args_likelihood,
-        lebesgue._test_bayes.test_args_prior,
-        lebesgue._test_bayes.test_args_model,
         # l
         lebesgue._test_likelihood_poisson.test_args,
         lebesgue._test_likelihood_poisson.test_poisson_interval,

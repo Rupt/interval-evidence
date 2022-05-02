@@ -18,6 +18,9 @@ def main():
         lebesgue._test_prior_plus.test_shift,
         lebesgue._test_prior_plus.test_args,
         lebesgue._test_likelihood_poisson.test_args,
+        lebesgue._test_likelihood_poisson.test_poisson_interval,
+        lebesgue._test_likelihood_poisson.test_invg_lo,
+        lebesgue._test_likelihood_poisson.test_invg_hi,
     ]
 
     for test in tests:

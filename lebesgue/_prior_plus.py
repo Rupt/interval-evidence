@@ -1,7 +1,8 @@
 """ The "plus" prior shifts another prior by a constant. """
+import functools
+
 import numba
 
-from . import _misc
 from ._bayes import Prior
 
 
@@ -17,7 +18,7 @@ def plus(x, prior):
     return Prior(args, between_func)
 
 
-@_misc.cache
+@functools.lru_cache(maxsize=None)
 def _plus_between(between_func):
     @numba.njit
     def _between(args, lo, hi):

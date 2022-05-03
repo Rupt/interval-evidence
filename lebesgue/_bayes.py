@@ -79,9 +79,7 @@ _integrate_func_cache = {}
 
 
 def _integrate_func(interval_func, between_func):
-
     key = (interval_func, between_func)
-
     cached = _integrate_func_cache.get(key)
 
     if cached is not None:
@@ -94,7 +92,5 @@ def _integrate_func(interval_func, between_func):
         return between_func(between_args, lo, hi)
 
     integrate_func = _quad_bound.generate(_mass)
-
     _integrate_func_cache[key] = integrate_func
-
     return integrate_func

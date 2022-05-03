@@ -17,7 +17,15 @@ class _Likelihood:
         if not isinstance(self._interval_func, Callable):
             raise TypeError(self._interval_func)
 
-    def interval(self, ratio):
+    def interval(self, ratio: float) -> (float, float):
+        """Return (lo, hi) representing an interval of likelihood above ratio.
+
+        The returned interval should contain all parameter space for which the
+        represented likelihood function exceeds ratio times its maximum.
+
+        Arguments:
+            ratio: float in [0, 1]
+        """
         ratio = float(ratio)
         if not 0 <= ratio <= 1:
             raise ValueError(ratio)
@@ -33,7 +41,14 @@ class _Prior:
         if not isinstance(self._between_func, Callable):
             raise TypeError(self._between_func)
 
-    def between(self, lo, hi):
+    def between(self, lo: float, hi: float) -> float:
+        """Return the probability mass between lo and hi.
+
+        Arguments:
+            lo: float
+            hi: float
+        """
+
         lo = float(lo)
         hi = float(hi)
         if not lo <= hi:
@@ -43,7 +58,13 @@ class _Prior:
 
 @dataclass(frozen=True)
 class Model:
-    """A Likelihood--Prior pair."""
+    """A Likelihood--Prior pair.
+
+    Arguments:
+        likelihood: observed data component; gives intervals above ratios
+        prior: distribution of probability; gives proportions between limits
+
+    """
 
     likelihood: _Likelihood
     prior: _Prior
@@ -55,7 +76,16 @@ class Model:
         if not isinstance(self.prior, _Prior):
             raise TypeError(self.prior)
 
-    def integrate(self, *, rtol=1e-2):
+    def integrate(self, *, rtol: float=1e-2) -> (float, float):
+        """Return numerical bounds on the integral of likelihood over prior.
+
+        Arguments:
+            rtol: float, relative tolerance of the bounds.
+                Should satisfy lo < integral < hi
+                and (hi - lo) < rtol * lo
+
+                Time cost scales something like ~ 1 / rtol.
+        """
         rtol = float(rtol)
         # tiny tol (< 2 ** -51?) can cause runaway recursion
         # small tol is slow and unlikely to be useful
@@ -69,12 +99,13 @@ class Model:
 
         return integrate_func(args, rtol)
 
-    def mass(self, ratio):
+    def mass(self, ratio: float) -> float:
+        """Return the prior mass inside the interval at likelihood ratio."""
         lo, hi = self.likelihood.interval(ratio)
         return self.prior.between(lo, hi)
 
 
-# caching reduces recompilation, which is expecsive
+# caching reduces recompilation, which is expensive
 _integrate_func_cache = {}
 
 

@@ -5,8 +5,13 @@ import numpy
 from ._bayes import _Likelihood
 
 
-def poisson(n):
-    """Return a Poisson likelihood for n observed events."""
+def poisson(n: int) -> _Likelihood:
+    """Return a Poisson likelihood for n observed events.
+
+    Arguments:
+        n: number of observed events; non-negative integer
+
+    """
     if not n == int(n):
         raise ValueError(n)
     n = int(n)

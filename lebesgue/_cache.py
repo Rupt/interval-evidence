@@ -5,7 +5,8 @@ The odd layout here enables numba's caching.
 
 """
 import numba
-from . import _bayes, _core, _likelihood_poisson, _prior_log_normal, _prior_plus
+
+from . import _bayes, _likelihood_poisson, _prior_log_normal, _prior_plus
 
 # poisson x log_normal
 _eg_likelihood_poisson = _likelihood_poisson.poisson(0)

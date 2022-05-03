@@ -15,8 +15,6 @@ which states:
 import numba
 import numpy
 
-from . import _core
-
 # constants
 
 P = (

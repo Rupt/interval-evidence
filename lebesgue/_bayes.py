@@ -4,9 +4,8 @@ from dataclasses import dataclass
 from typing import Any
 
 import numba
-from numba.core.types.misc import ClassInstanceType
 
-from . import _core, _quad_bound
+from . import _quad_bound
 
 # python-facing
 

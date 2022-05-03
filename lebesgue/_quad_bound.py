@@ -4,10 +4,8 @@ Bound integrals by numerical quadrature.
 Appropriate functions are weakly decreasing on the unit interval, as are prior
 masses above likelihood ratios.
 """
-import numpy
 import numba
-
-from . import _core
+import numpy
 
 
 def generate(func):

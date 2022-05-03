@@ -1,7 +1,7 @@
 """
 Define functions for benchmarking.
 """
-import lebesgue
+
 from lebesgue import Model
 from lebesgue.likelihood import poisson
 from lebesgue.prior import log_normal, plus

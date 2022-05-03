@@ -1,8 +1,7 @@
 """Implement the log-normal prior."""
-import numpy
 import numba
+import numpy
 
-from . import _core
 from ._bayes import Prior
 from ._cephes_ndtr import ndtr
 

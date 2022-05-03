@@ -6,7 +6,7 @@ help:
 	@echo "usage:"
 	@echo "make test  # run tests"
 	@echo "make bench # time calls"
-	@echo "make fmt   # format code"
+	@echo "make fmt   # format and lint code"
 	@echo "make clean # clean up"
 
 
@@ -22,8 +22,9 @@ bench:
 
 .PHONY: fmt
 fmt:
-	isort lebesgue/*.py *.py --profile black
+	isort lebesgue/*.py *.py
 	black lebesgue/*.py *.py
+	flake8 lebesgue/ *.py; :
 
 
 .PHONY: clean
@@ -36,5 +37,5 @@ env_lebesgue/bin/activate:
 	( \
 	source env_lebesgue/bin/activate; \
 	pip install --upgrade pip; \
-	pip install scipy numpy numba black isort; \
+	pip install scipy numpy numba black isort flake8; \
 	)

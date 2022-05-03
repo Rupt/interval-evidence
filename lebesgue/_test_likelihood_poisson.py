@@ -1,5 +1,6 @@
 import numba
 import numpy
+from numba import f8, i8
 
 from . import _likelihood_poisson, _testing
 
@@ -15,13 +16,12 @@ def test_args():
 
     assert _testing.raises(lambda: likelihood.interval(1.1), ValueError)
     assert _testing.raises(lambda: likelihood.interval(-0.1), ValueError)
-    assert not _testing.raises(lambda: likelihood.interval(1.))
-    assert not _testing.raises(lambda: likelihood.interval(0.))
+    assert not _testing.raises(lambda: likelihood.interval(1.0))
+    assert not _testing.raises(lambda: likelihood.interval(0.0))
     assert not _testing.raises(lambda: likelihood.interval(0.3))
 
 
 def test_poisson_interval():
-
     rng = numpy.random.Generator(numpy.random.Philox(6))
 
     xs = rng.normal(size=10)
@@ -67,7 +67,7 @@ def test_invg_hi():
 
 def test_signatures():
     _likelihood_poisson._poisson_interval(1.0, 1)
-    assert _likelihood_poisson._poisson_interval.signatures == [(numba.i8, numba.f8)]
+    assert _likelihood_poisson._poisson_interval.signatures == [(i8, f8)]
 
 
 # utilities

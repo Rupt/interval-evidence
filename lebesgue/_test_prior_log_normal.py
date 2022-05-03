@@ -11,7 +11,7 @@ def test_gaussian_dcdf():
     # which gets bad truncation error for large hi, lo
     rng = numpy.random.Generator(numpy.random.Philox(2))
 
-    xys = rng.normal(scale=3, size=(1000, 2))
+    xys = rng.normal(scale=3, size=(100, 2))
 
     for xi, yi in xys:
         chk = _prior_log_normal.gaussian_dcdf(xi, yi)

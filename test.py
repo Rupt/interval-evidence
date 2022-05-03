@@ -2,11 +2,11 @@ import sys
 import traceback
 
 # import lebesgue
-# import lebesgue._test_bayes
+import lebesgue._test_bayes
 import lebesgue._test_cephes_ndtr
 import lebesgue._test_likelihood_poisson
+import lebesgue._test_prior_log_normal
 
-# import lebesgue._test_prior_log_normal
 # import lebesgue._test_prior_plus
 import lebesgue._test_quad_bound
 
@@ -15,10 +15,10 @@ def main():
 
     tests = [
         # b
-        # lebesgue._test_bayes.test_args_likelihood,
-        # lebesgue._test_bayes.test_args_prior,
-        # lebesgue._test_bayes.test_args_model,
-        # lebesgue._test_bayes.test_monotonic,
+        lebesgue._test_bayes.test_args_likelihood,
+        lebesgue._test_bayes.test_args_prior,
+        lebesgue._test_bayes.test_args_model,
+        lebesgue._test_bayes.test_monotonic,
         # c
         lebesgue._test_cephes_ndtr.test_ndtr,
         lebesgue._test_cephes_ndtr.test_signatures,
@@ -29,9 +29,9 @@ def main():
         lebesgue._test_likelihood_poisson.test_invg_hi,
         lebesgue._test_likelihood_poisson.test_signatures,
         # p
-        # lebesgue._test_prior_log_normal.test_gaussian_dcdf,
-        # lebesgue._test_prior_log_normal.test_between,
-        # lebesgue._test_prior_log_normal.test_args,
+        lebesgue._test_prior_log_normal.test_gaussian_dcdf,
+        lebesgue._test_prior_log_normal.test_between,
+        lebesgue._test_prior_log_normal.test_args,
         # lebesgue._test_prior_plus.test_shift,
         # lebesgue._test_prior_plus.test_args,
         # q

@@ -16,7 +16,7 @@ def plus(x, prior):
 
 @_core.cache
 def _plus_class(prior_type):
-    @_core.jitclass
+    # @_core.jitclass
     class _Plus:
         _x: float
         _prior: prior_type

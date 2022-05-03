@@ -15,33 +15,26 @@ def log_normal(mu, sigma):
     if not sigma > 0:
         raise ValueError(sigma)
 
-    return Prior(_LogNormal(mu, tau=1 / sigma))
+    return Prior((mu, 1 / sigma), _log_normal_between)
 
 
-@_core.jitclass
-class _LogNormal:
-    _mu: float
-    _tau: float
+@_core.jit(cache=True)
+def _log_normal_between(args, lo, hi):
+    mu, tau = args
+    if lo > 0:
+        lo = numpy.log(lo)
+    else:
+        lo = -numpy.inf
 
-    def __init__(self, mu, tau):
-        self._mu = mu
-        self._tau = tau
+    if hi > 0:
+        hi = numpy.log(hi)
+    else:
+        hi = -numpy.inf
 
-    def _between(self, lo, hi):
-        if lo > 0:
-            lo = numpy.log(lo)
-        else:
-            lo = -numpy.inf
+    lo = (lo - mu) * tau
+    hi = (hi - mu) * tau
 
-        if hi > 0:
-            hi = numpy.log(hi)
-        else:
-            hi = -numpy.inf
-
-        lo = (lo - self._mu) * self._tau
-        hi = (hi - self._mu) * self._tau
-
-        return gaussian_dcdf(lo, hi)
+    return gaussian_dcdf(lo, hi)
 
 
 @_core.jit(f8(f8, f8))

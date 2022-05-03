@@ -4,21 +4,27 @@ from . import _bayes, _likelihood_poisson, _prior_log_normal, _testing
 
 
 def test_args_likelihood():
-    assert _testing.raises(lambda: _bayes.Likelihood(None), TypeError)
-    assert _testing.raises(
-        lambda: _bayes.Likelihood(_prior_log_normal._LogNormal(0, 1)), TypeError
-    )
-    assert not _testing.raises(
-        lambda: _bayes.Likelihood(_likelihood_poisson._Poisson(0))
-    )
+    assert _testing.raises(lambda: _bayes.Likelihood(0, None), TypeError)
+
+    likelihood = _bayes.Likelihood(None, lambda args, ratio: (0.0, 0.0))
+
+    assert _testing.raises(lambda: likelihood.interval(None), TypeError)
+    assert _testing.raises(lambda: likelihood.interval(1.1), ValueError)
+    assert _testing.raises(lambda: likelihood.interval(-0.1), ValueError)
+    assert not _testing.raises(lambda: likelihood.interval(1.0))
+    assert not _testing.raises(lambda: likelihood.interval(0.0))
+    assert not _testing.raises(lambda: likelihood.interval(0.3))
 
 
 def test_args_prior():
-    assert _testing.raises(lambda: _bayes.Prior(None), TypeError)
-    assert _testing.raises(
-        lambda: _bayes.Prior(_likelihood_poisson._Poisson(0)), TypeError
-    )
-    assert not _testing.raises(lambda: _bayes.Prior(_prior_log_normal._LogNormal(0, 1)))
+    assert _testing.raises(lambda: _bayes.Prior(0, None), TypeError)
+
+    prior = _bayes.Prior(None, lambda args, lo, hi: 0.0)
+
+    assert _testing.raises(lambda: prior.between(None, 0.0), TypeError)
+    assert _testing.raises(lambda: prior.between(0.0, -1.0), ValueError)
+    assert not _testing.raises(lambda: prior.between(1.0, 1.0))
+    assert not _testing.raises(lambda: prior.between(1.0, 2.0))
 
 
 def test_args_model():

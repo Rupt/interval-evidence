@@ -39,8 +39,8 @@ class Prior:
     def between(self, lo, hi):
         lo = float(lo)
         hi = float(hi)
-        # TODO test, ValueError
-        assert lo <= hi, (lo, hi)
+        if not lo <= hi:
+            raise ValueError((lo, hi))
         return self._between_func(self._args, lo, hi)
 
 
@@ -49,10 +49,17 @@ class Model:
     likelihood: Likelihood
     prior: Prior
 
+    def __post_init__(self):
+        if not isinstance(self.likelihood, Likelihood):
+            raise TypeError(self.likelihood)
+
+        if not isinstance(self.prior, Prior):
+            raise TypeError(self.prior)
+
     def integrate(self, *, rtol=1e-2):
         rtol = float(rtol)
-        # Tiny tol (< 2 ** -51?) can cause runaway recursion.
-        # Small tol is slow and unlikely to be useful.
+        # tiny tol (< 2 ** -51?) can cause runaway recursion
+        # small tol is slow and unlikely to be useful
         assert rtol >= 1e-7, rtol
 
         args = (self.likelihood._args, self.prior._args)
@@ -64,7 +71,6 @@ class Model:
         return integrate_func(args, rtol)
 
     def mass(self, ratio):
-        # TODO test, ValueError
         lo, hi = self.likelihood.interval(ratio)
         return self.prior.between(lo, hi)
 

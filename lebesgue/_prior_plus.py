@@ -1,7 +1,7 @@
 """ The "plus" prior shifts another prior by a constant. """
 import numba
 
-from . import _core
+from . import _misc
 from ._bayes import Prior
 
 

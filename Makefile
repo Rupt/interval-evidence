@@ -5,6 +5,7 @@ SHELL := /bin/bash
 help:
 	@echo "usage:"
 	@echo "make test  # run tests"
+	@echo "make bench # time calls"
 	@echo "make fmt   # format code"
 	@echo "make clean # clean up"
 
@@ -12,6 +13,11 @@ help:
 .PHONY: test
 test:
 	python test.py
+
+
+.PHONY: bench
+bench:
+	python -m timeit -s "from benchmark import model_integrate_1 as b" "b()"
 
 
 .PHONY: fmt

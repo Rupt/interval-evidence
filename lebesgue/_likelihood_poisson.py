@@ -1,4 +1,6 @@
 """ Implement the Poisson likelihood function. """
+from collections.abc import Callable
+
 import numba
 import numpy
 from numba import f8, i8
@@ -14,18 +16,7 @@ def poisson(n):
     n = int(n)
     if not n >= 0:
         raise ValueError(n)
-    return Likelihood(_Poisson(n))
-
-
-@_core.jitclass
-class _Poisson:
-    _n: int
-
-    def __init__(self, n):
-        self._n = n
-
-    def _interval(self, ratio):
-        return _poisson_interval(self._n, ratio)
+    return Likelihood(n, _poisson_interval)
 
 
 # specialized below

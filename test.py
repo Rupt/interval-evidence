@@ -4,8 +4,8 @@ import traceback
 # import lebesgue
 # import lebesgue._test_bayes
 import lebesgue._test_cephes_ndtr
+import lebesgue._test_likelihood_poisson
 
-# import lebesgue._test_likelihood_poisson
 # import lebesgue._test_prior_log_normal
 # import lebesgue._test_prior_plus
 import lebesgue._test_quad_bound
@@ -23,11 +23,11 @@ def main():
         lebesgue._test_cephes_ndtr.test_ndtr,
         lebesgue._test_cephes_ndtr.test_signatures,
         # l
-        # lebesgue._test_likelihood_poisson.test_args,
-        # lebesgue._test_likelihood_poisson.test_poisson_interval,
-        # lebesgue._test_likelihood_poisson.test_invg_lo,
-        # lebesgue._test_likelihood_poisson.test_invg_hi,
-        # lebesgue._test_likelihood_poisson.test_signatures,
+        lebesgue._test_likelihood_poisson.test_args,
+        lebesgue._test_likelihood_poisson.test_poisson_interval,
+        lebesgue._test_likelihood_poisson.test_invg_lo,
+        lebesgue._test_likelihood_poisson.test_invg_hi,
+        lebesgue._test_likelihood_poisson.test_signatures,
         # p
         # lebesgue._test_prior_log_normal.test_gaussian_dcdf,
         # lebesgue._test_prior_log_normal.test_between,

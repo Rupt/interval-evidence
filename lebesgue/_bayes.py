@@ -1,77 +1,53 @@
 """Manage likelihoods and priors."""
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 import numba
 from numba.core.types.misc import ClassInstanceType
 
-from . import _core
-from ._quad_bound import _quad_bound
+from . import _core, _quad_bound
 
 # python-facing
 
 
 @dataclass(frozen=True)
 class Likelihood:
-    _likelihood: ClassInstanceType
+    _args: Any
+    _interval_func: Callable
 
     def __post_init__(self):
-        type_ = numba.typeof(self._likelihood)
-        if not isinstance(type_, ClassInstanceType):
-            raise TypeError(self._likelihood)
-
-        jit_methods = type_.jit_methods
-        if "_interval" not in jit_methods:
-            raise TypeError(jit_methods.keys())
+        if not isinstance(self._interval_func, Callable):
+            raise TypeError(self._interval_func)
 
     def interval(self, ratio):
         ratio = float(ratio)
-        assert 0 <= ratio <= 1, ratio
-        return self._likelihood._interval(ratio)
+        if not 0 <= ratio <= 1:
+            raise ValueError(ratio)
+        return self._interval_func(self._args, ratio)
 
 
 @dataclass(frozen=True)
 class Prior:
-    _prior: ClassInstanceType
+    _args: Any
+    _between_func: Callable
 
     def __post_init__(self):
-        type_ = numba.typeof(self._prior)
-        if not isinstance(type_, ClassInstanceType):
-            raise TypeError(self._prior)
-
-        jit_methods = type_.jit_methods
-        if "_between" not in jit_methods:
-            raise TypeError(jit_methods.keys())
+        if not isinstance(self._between_func, Callable):
+            raise TypeError(self._between_func)
 
     def between(self, lo, hi):
         lo = float(lo)
         hi = float(hi)
+        # TODO test, ValueError
         assert lo <= hi, (lo, hi)
-        return self._prior._between(lo, hi)
+        return self._between_func(self._args, lo, hi)
 
 
-@dataclass(frozen=True, init=False)
+@dataclass(frozen=True)
 class Model:
     likelihood: Likelihood
     prior: Prior
-
-    _model: ClassInstanceType
-
-    def __init__(self, likelihood, prior):
-        if not isinstance(likelihood, Likelihood):
-            raise TypeError(likelihood)
-
-        if not isinstance(prior, Prior):
-            raise TypeError(prior)
-
-        cls = _model_class(
-            numba.typeof(likelihood._likelihood),
-            numba.typeof(prior._prior),
-        )
-        _model = cls(likelihood._likelihood, prior._prior)
-
-        object.__setattr__(self, "likelihood", likelihood)
-        object.__setattr__(self, "prior", prior)
-        object.__setattr__(self, "_model", _model)
 
     def integrate(self, *, rtol=1e-2):
         rtol = float(rtol)
@@ -79,29 +55,41 @@ class Model:
         # Small tol is slow and unlikely to be useful.
         assert rtol >= 1e-7, rtol
 
-        return _quad_bound(self._model, rtol)
+        args = (self.likelihood._args, self.prior._args)
+        integrate_func = _integrate_func(
+            self.likelihood._interval_func,
+            self.prior._between_func,
+        )
+
+        return integrate_func(args, rtol)
 
     def mass(self, ratio):
+        # TODO test, ValueError
         lo, hi = self.likelihood.interval(ratio)
         return self.prior.between(lo, hi)
 
 
 # numba-facing
+_integrate_func_cache = {}
 
 
-@_core.cache
-def _model_class(likelihood_type, prior_type):
-    @_core.jitclass
-    class _Model:
-        likelihood: likelihood_type
-        prior: prior_type
+def _integrate_func(interval_func, between_func):
 
-        def __init__(self, likelihood, prior):
-            self.likelihood = likelihood
-            self.prior = prior
+    key = (interval_func, between_func)
 
-        def _mass(self, ratio):
-            lo, hi = self.likelihood._interval(ratio)
-            return self.prior._between(lo, hi)
+    cached = _integrate_func_cache.get(key)
 
-    return _Model
+    if cached is not None:
+        return cached
+
+    @_core.jit
+    def mass_func(args, ratio):
+        interval_args, between_args = args
+        lo, hi = interval_func(interval_args, ratio)
+        return between_func(between_args, lo, hi)
+
+    integrate_func = _quad_bound.generate(mass_func)
+
+    _integrate_func_cache[key] = integrate_func
+
+    return integrate_func

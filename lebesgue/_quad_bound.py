@@ -15,7 +15,8 @@ def generate(func):
 
     The result can be compiled and cached at a given location like so:
 
-        _quad_bound_func = generate(func1)
+        _quad_bound_func = _quad_bound.generate(func1)
+
 
         @_core.jit(cache=True)
         def quad_bound_func(args, rtol):

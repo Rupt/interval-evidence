@@ -86,7 +86,7 @@ MAXLOG = 7.09782712893383996732e2
 SQRT1_2 = 2**-0.5
 
 # top level functions; all f8(f8); specialized below
-@_core.jit
+@_core.jit(cache=True)
 def ndtr(a):
     x = a * SQRT1_2
     z = abs(x)
@@ -102,12 +102,40 @@ def ndtr(a):
     return y
 
 
-@_core.jit
+@_core.jit(cache=True)
 def erfc(a):
     x = abs(a)
 
     if x < 1.0:
-        return 1.0 - erf(a)
+        return 1.0 - _erf_x_le_1(a)
+
+    return _erfc_x_ge_1(a)
+
+
+@_core.jit(cache=True)
+def erf(a):
+    x = abs(a)
+
+    if x > 1.0:
+        # yes this passes is x, not a
+        r = 1.0 - _erfc_x_ge_1(x)
+        return numpy.copysign(r, a)
+
+    return _erf_x_le_1(a)
+
+
+# specialized cases to remove recursion so we can cache with numba
+
+
+@_core.jit
+def _erf_x_le_1(a):
+    r = a * polevl(a * a, T) / p1evl(a * a, U)
+    return numpy.copysign(r, a)
+
+
+@_core.jit
+def _erfc_x_ge_1(a):
+    x = abs(a)
 
     z = -a * a
 
@@ -129,18 +157,6 @@ def erfc(a):
         return 2.0 - y
 
     return y
-
-
-@_core.jit
-def erf(a):
-    x = abs(a)
-
-    if x > 1.0:
-        r = 1.0 - erfc(x)
-    else:
-        r = x * polevl(x * x, T) / p1evl(x * x, U)
-
-    return numpy.copysign(r, a)
 
 
 # utilities

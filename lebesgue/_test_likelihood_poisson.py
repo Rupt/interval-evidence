@@ -12,14 +12,6 @@ def test_args():
     assert not _testing.raises(lambda: _likelihood_poisson.poisson(0))
     assert not _testing.raises(lambda: _likelihood_poisson.poisson(1))
 
-    likelihood = _likelihood_poisson.poisson(1)
-
-    assert _testing.raises(lambda: likelihood.interval(1.1), ValueError)
-    assert _testing.raises(lambda: likelihood.interval(-0.1), ValueError)
-    assert not _testing.raises(lambda: likelihood.interval(1.0))
-    assert not _testing.raises(lambda: likelihood.interval(0.0))
-    assert not _testing.raises(lambda: likelihood.interval(0.3))
-
 
 def test_poisson_interval():
     rng = numpy.random.Generator(numpy.random.Philox(6))

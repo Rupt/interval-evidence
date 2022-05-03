@@ -28,31 +28,6 @@ def test_fpow():
         assert zhi - zlo <= rtol * zlo
 
 
-def test_model():
-    """Test integrating a Model, which uses _quad_bound."""
-    ns = [0, 3, 10]
-    shifts = [0, 2]
-    means = [0, 1, 5]
-
-    for n, shift, mean in itertools.product(ns, shifts, means):
-        model = _bayes.Model(
-            _likelihood_poisson.poisson(n),
-            _prior_plus.plus(
-                shift,
-                _prior_log_normal.log_normal(mean, 1.0),
-            ),
-        )
-
-        rtol = 1e-2
-        zlo, zhi = model.integrate(rtol=rtol)
-        assert zhi - zlo <= rtol * zlo
-
-        # quad comes with an absolute error estimate; be generous with it
-        chk, chk_err = scipy.integrate.quad(model.mass, 0, 1, epsabs=0, epsrel=1e-8)
-        assert zlo <= chk + chk_err
-        assert zhi >= chk - chk_err
-
-
 # utilities
 
 

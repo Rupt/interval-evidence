@@ -1,10 +1,11 @@
 import sys
 import traceback
 
-# import lebesgue
+import lebesgue
 import lebesgue._test_bayes
 import lebesgue._test_cephes_ndtr
 import lebesgue._test_likelihood_poisson
+import lebesgue._test_models
 import lebesgue._test_prior_log_normal
 import lebesgue._test_prior_plus
 import lebesgue._test_quad_bound
@@ -27,6 +28,9 @@ def main():
         lebesgue._test_likelihood_poisson.test_invg_lo,
         lebesgue._test_likelihood_poisson.test_invg_hi,
         lebesgue._test_likelihood_poisson.test_signatures,
+        # m
+        lebesgue._test_models.test_poisson_log_normal,
+        lebesgue._test_models.test_poisson_plus_log_normal,
         # p
         lebesgue._test_prior_log_normal.test_gaussian_dcdf,
         lebesgue._test_prior_log_normal.test_between,
@@ -35,7 +39,6 @@ def main():
         lebesgue._test_prior_plus.test_args,
         # q
         lebesgue._test_quad_bound.test_fpow,
-        lebesgue._test_quad_bound.test_model,
     ]
 
     for test in tests:

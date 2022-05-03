@@ -37,7 +37,7 @@ def _log_normal_between(args, lo, hi):
     return gaussian_dcdf(lo, hi)
 
 
-@_core.jit(f8(f8, f8))
+@_core.jit(f8(f8, f8), cache=True)
 def gaussian_dcdf(lo, hi):
     """Return cdf(hi) - cdf(lo) with reduced truncation error."""
     offset = numpy.copysign(0.5, hi) - numpy.copysign(0.5, lo)

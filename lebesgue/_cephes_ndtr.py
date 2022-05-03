@@ -85,43 +85,28 @@ UTHRESH = 37.519379347
 MAXLOG = 7.09782712893383996732e2
 SQRT1_2 = 2**-0.5
 
-# top level functions; all f8(f8); specialized below
-@_core.jit(cache=True)
-def ndtr(a):
-    x = a * SQRT1_2
-    z = abs(x)
 
-    if z < SQRT1_2:
-        return 0.5 + 0.5 * _erf(x)
-
-    y = 0.5 * _erfc(z)
-
-    if x > 0:
-        return 1.0 - y
-
-    return y
+# inverse order so declarations are prepared
 
 
 @_core.jit
-def _erfc(a):
-    x = abs(a)
+def polevl(x, coef):
+    ans = coef[0]
 
-    if x < 1.0:
-        return 1.0 - _erf_x_le_1(a)
+    for c in coef[1:]:
+        ans = ans * x + c
 
-    return _erfc_x_ge_1(a)
+    return ans
 
 
 @_core.jit
-def _erf(a):
-    x = abs(a)
+def p1evl(x, coef):
+    ans = x + coef[0]
 
-    if x > 1.0:
-        # yes this passes is x, not a
-        r = 1.0 - _erfc_x_ge_1(x)
-        return numpy.copysign(r, a)
+    for c in coef[1:]:
+        ans = ans * x + c
 
-    return _erf_x_le_1(a)
+    return ans
 
 
 # specialized cases to remove recursion so we can cache with numba
@@ -159,29 +144,42 @@ def _erfc_x_ge_1(a):
     return y
 
 
-# utilities
+@_core.jit
+def _erfc(a):
+    x = abs(a)
+
+    if x < 1.0:
+        return 1.0 - _erf_x_le_1(a)
+
+    return _erfc_x_ge_1(a)
 
 
 @_core.jit
-def polevl(x, coef):
-    ans = coef[0]
+def _erf(a):
+    x = abs(a)
 
-    for c in coef[1:]:
-        ans = ans * x + c
+    if x > 1.0:
+        # yes this passes is x, not a
+        r = 1.0 - _erfc_x_ge_1(x)
+        return numpy.copysign(r, a)
 
-    return ans
-
-
-@_core.jit
-def p1evl(x, coef):
-    ans = x + coef[0]
-
-    for c in coef[1:]:
-        ans = ans * x + c
-
-    return ans
+    return _erf_x_le_1(a)
 
 
-# specialization
+# core
 
-_core.specialize(ndtr, f8(f8))
+
+@_core.jit(f8(f8), cache=True)
+def ndtr(a):
+    x = a * SQRT1_2
+    z = abs(x)
+
+    if z < SQRT1_2:
+        return 0.5 + 0.5 * _erf(x)
+
+    y = 0.5 * _erfc(z)
+
+    if x > 0:
+        return 1.0 - y
+
+    return y

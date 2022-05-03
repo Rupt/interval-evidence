@@ -4,6 +4,7 @@ from collections.abc import Callable
 import numba
 import numpy
 from numba import f8, i8
+from numba.types import Tuple
 
 from . import _bayes, _core
 from ._bayes import Likelihood
@@ -19,47 +20,28 @@ def poisson(n):
     return Likelihood(n, _poisson_interval)
 
 
-# specialized below
-@_core.jit(cache=True)
-def _poisson_interval(n, r):
-    # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
-    #        = -n * (x / n - 1 - log(x / n))
-    # => -log(r) / n = (x / n) - 1 - log(x / n) = g(x / n)
-    # => x = n * invg(-log(r) / n)
-    if n < 0:
-        return numpy.nan, numpy.nan
+# inverse order for numba declarations
 
-    if n == 0 or r == 0.0:
-        # r = e^-x => x = -log(r)
-        return 0.0, -numpy.log(r)
-
-    y = -numpy.log(r) / n
-    return n * _invg_lo(y), n * _invg_hi(y)
-
-
-# low branch
+# root finding iterations
 
 
 @_core.jit
-def _invg_lo(y):
-    if y < 0:
-        return numpy.nan
+def _halley_log(x, y):
+    u = numpy.log(x)
+    # order for case when y ~ 1 so x << 1, u ~ -1
+    f = -y - u - 1 + x
+    u -= (x - 1) * f / ((x - 1) * (x - 1) - 0.5 * x * f)
+    return numpy.exp(u)
 
-    if y < 2.9103830456733704e-11:
-        return _invg_lo_a(y)
 
-    if y > 128:
-        return _invg_lo_b(y)
+@_core.jit
+def _halley_lin(x, y):
+    f = x - 1 - numpy.log(x) - y
+    x -= x * (x - 1) * f / ((x - 1) * (x - 1) - 0.5 * f)
+    return x
 
-    if y < 2:
-        x = _invg_lo_c(y)
-    else:
-        x = _invg_lo_b(y)
 
-    if y < 0.5:
-        return _halley_lin(x, y)
-
-    return _halley_log(x, y)
+# low branch
 
 
 @_core.jit
@@ -107,26 +89,29 @@ def _invg_lo_c(y):
     return r
 
 
-# high branch
-
-
-@_core.jit
-def _invg_hi(y):
+@_core.jit(cache=True)
+def _invg_lo(y):
     if y < 0:
         return numpy.nan
 
-    if y < 5.820766091346741e-11:
-        return _invg_hi_a(y)
+    if y < 2.9103830456733704e-11:
+        return _invg_lo_a(y)
 
-    if y > 8192:
-        return _invg_hi_b(y)
+    if y > 128:
+        return _invg_lo_b(y)
 
-    if y < 10.75:
-        x = _invg_hi_c(y)
+    if y < 2:
+        x = _invg_lo_c(y)
     else:
-        x = _invg_hi_b(y)
+        x = _invg_lo_b(y)
 
-    return _halley_lin(x, y)
+    if y < 0.5:
+        return _halley_lin(x, y)
+
+    return _halley_log(x, y)
+
+
+# high branch
 
 
 @_core.jit
@@ -183,24 +168,40 @@ def _invg_hi_c(y):
     return r
 
 
-# root finding iterations
+@_core.jit(cache=True)
+def _invg_hi(y):
+    if y < 0:
+        return numpy.nan
+
+    if y < 5.820766091346741e-11:
+        return _invg_hi_a(y)
+
+    if y > 8192:
+        return _invg_hi_b(y)
+
+    if y < 10.75:
+        x = _invg_hi_c(y)
+    else:
+        x = _invg_hi_b(y)
+
+    return _halley_lin(x, y)
 
 
-@_core.jit
-def _halley_log(x, y):
-    u = numpy.log(x)
-    # order for case when y ~ 1 so x << 1, u ~ -1
-    f = -y - u - 1 + x
-    u -= (x - 1) * f / ((x - 1) * (x - 1) - 0.5 * x * f)
-    return numpy.exp(u)
+# core
 
 
-@_core.jit
-def _halley_lin(x, y):
-    f = x - 1 - numpy.log(x) - y
-    x -= x * (x - 1) * f / ((x - 1) * (x - 1) - 0.5 * f)
-    return x
+@_core.jit(Tuple([f8, f8])(i8, f8), cache=True)
+def _poisson_interval(n, r):
+    # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
+    #        = -n * (x / n - 1 - log(x / n))
+    # => -log(r) / n = (x / n) - 1 - log(x / n) = g(x / n)
+    # => x = n * invg(-log(r) / n)
+    if n < 0:
+        return numpy.nan, numpy.nan
 
+    if n == 0 or r == 0.0:
+        # r = e^-x => x = -log(r)
+        return 0.0, -numpy.log(r)
 
-# specialization
-_core.specialize(_poisson_interval, numba.typeof((0.0, 0.0))(i8, f8))
+    y = -numpy.log(r) / n
+    return n * _invg_lo(y), n * _invg_hi(y)

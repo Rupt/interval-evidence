@@ -7,14 +7,20 @@ from ._bayes import _Prior
 
 
 def log_normal(mu: float, sigma: float) -> _Prior:
-    """Return a log-normal prior for given mu, sigma."""
+    """Return a log-normal prior for given mu, sigma.
+
+    Arguments:
+        mu: log-mean
+        sigma: log-standard-deviation
+    """
     mu = float(mu)
 
     sigma = float(sigma)
     if not sigma > 0:
         raise ValueError(sigma)
 
-    return _Prior((mu, 1 / sigma), _log_normal_between)
+    tau = 1 / sigma
+    return _Prior((mu, tau), _log_normal_between)
 
 
 @numba.njit(cache=True)

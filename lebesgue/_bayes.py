@@ -24,7 +24,7 @@ class _Likelihood:
         represented likelihood function exceeds ratio times its maximum.
 
         Arguments:
-            ratio: float in [0, 1]
+            ratio: in [0, 1]
         """
         ratio = float(ratio)
         if not 0 <= ratio <= 1:
@@ -45,8 +45,8 @@ class _Prior:
         """Return the probability mass between lo and hi.
 
         Arguments:
-            lo: float
-            hi: float
+            lo: low edge
+            hi: high edge
         """
 
         lo = float(lo)

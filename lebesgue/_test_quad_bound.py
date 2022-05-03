@@ -29,7 +29,7 @@ def test_fpow():
 
 
 def test_model():
-    """Test integrating a prior-likelihood model."""
+    """Test integrating a Model, which uses _quad_bound."""
     ns = [0, 3, 10]
     shifts = [0, 2]
     means = [0, 1, 5]

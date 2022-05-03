@@ -3,8 +3,12 @@ from types import SimpleNamespace
 
 import scipy.integrate
 
-from . import (  # _bayes,; _likelihood_poisson,; _prior_log_normal,; _prior_plus,
+from . import (
+    _bayes,
     _core,
+    _likelihood_poisson,
+    _prior_log_normal,
+    _prior_plus,
     _quad_bound,
 )
 

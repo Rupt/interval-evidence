@@ -76,7 +76,7 @@ class Model:
         if not isinstance(self.prior, _Prior):
             raise TypeError(self.prior)
 
-    def integrate(self, *, rtol: float=1e-2) -> (float, float):
+    def integrate(self, *, rtol: float = 1e-2) -> (float, float):
         """Return numerical bounds on the integral of likelihood over prior.
 
         Arguments:

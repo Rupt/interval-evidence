@@ -19,7 +19,7 @@ def plus(x, prior):
 
 @_core.cache
 def _plus_between(between_func):
-    @_core.jit
+    @numba.njit
     def _between(args, lo, hi):
         x, args_inner = args
         return between_func(args_inner, lo - x, hi - x)

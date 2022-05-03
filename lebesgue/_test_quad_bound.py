@@ -1,4 +1,5 @@
 import itertools
+import numba
 from types import SimpleNamespace
 
 import scipy.integrate
@@ -43,7 +44,7 @@ def make_fpow(k, lo, hi):
     return args, integral
 
 
-@_core.jit
+@numba.njit
 def fpow(args, x):
     k, lo, hi = args
     # resale such that 0 -> lo, 1 -> hi
@@ -54,6 +55,6 @@ def fpow(args, x):
 _quad_bound_fpow = _quad_bound.generate(fpow)
 
 
-@_core.jit(cache=True)
+@numba.njit(cache=True)
 def quad_bound_fpow(args, rtol):
     return _quad_bound_fpow(args, rtol)

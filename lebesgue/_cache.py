@@ -4,7 +4,7 @@ Cache slow-to-compile functions.
 The odd layout here enables numba's caching.
 
 """
-
+import numba
 from . import _bayes, _core, _likelihood_poisson, _prior_log_normal, _prior_plus
 
 # poisson x log_normal
@@ -19,7 +19,7 @@ key = (
 _poisson_log_normal = _bayes._integrate_func(*key)
 
 
-@_core.jit(cache=True)
+@numba.njit(cache=True)
 def poisson_log_normal(args, ratio):
     return _poisson_log_normal(args, ratio)
 
@@ -38,7 +38,7 @@ key = (
 _poisson_plus_log_normal = _bayes._integrate_func(*key)
 
 
-@_core.jit(cache=True)
+@numba.njit(cache=True)
 def poisson_plus_log_normal(args, ratio):
     return _poisson_plus_log_normal(args, ratio)
 

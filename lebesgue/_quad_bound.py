@@ -5,6 +5,7 @@ Appropriate functions are weakly decreasing on the unit interval, as are prior
 masses above likelihood ratios.
 """
 import numpy
+import numba
 
 from . import _core
 
@@ -18,16 +19,16 @@ def generate(func):
         _quad_bound_func = _quad_bound.generate(func1)
 
 
-        @_core.jit(cache=True)
+        @numba.njit(cache=True)
         def quad_bound_func(args, rtol):
             return _quad_bound_func(args, rtol)
 
     Arguments:
-        func: f8(Any, f8)
+        func: numba.float64(Any, numba.float64)
 
     """
 
-    @_core.jit
+    @numba.njit
     def _quad_bound(args, rtol):
         # 2 ** -1022 is the smallest positive normal float
         nscan = 1022
@@ -113,7 +114,7 @@ def generate(func):
         zhi += 1.0 * size
         return zlo, zhi
 
-    @_core.jit
+    @numba.njit
     def _recurse(args, cut, lo, hi, flo, fhi):
         size = 0.5 * (hi - lo)
         mid = lo + size

@@ -14,7 +14,6 @@ which states:
 """
 import numba
 import numpy
-from numba import f8
 
 from . import _core
 
@@ -89,7 +88,7 @@ SQRT1_2 = 2**-0.5
 # inverse order so declarations are prepared
 
 
-@_core.jit
+@numba.njit
 def polevl(x, coef):
     ans = coef[0]
 
@@ -99,7 +98,7 @@ def polevl(x, coef):
     return ans
 
 
-@_core.jit
+@numba.njit
 def p1evl(x, coef):
     ans = x + coef[0]
 
@@ -112,13 +111,13 @@ def p1evl(x, coef):
 # specialized cases to remove recursion so we can cache with numba
 
 
-@_core.jit
+@numba.njit
 def _erf_x_le_1(a):
     r = a * polevl(a * a, T) / p1evl(a * a, U)
     return numpy.copysign(r, a)
 
 
-@_core.jit
+@numba.njit
 def _erfc_x_ge_1(a):
     x = abs(a)
 
@@ -144,7 +143,7 @@ def _erfc_x_ge_1(a):
     return y
 
 
-@_core.jit
+@numba.njit
 def _erfc(a):
     x = abs(a)
 
@@ -154,7 +153,7 @@ def _erfc(a):
     return _erfc_x_ge_1(a)
 
 
-@_core.jit
+@numba.njit
 def _erf(a):
     x = abs(a)
 
@@ -169,7 +168,7 @@ def _erf(a):
 # core
 
 
-@_core.jit(f8(f8), cache=True)
+@numba.njit(numba.float64(numba.float64), cache=True)
 def ndtr(a):
     x = a * SQRT1_2
     z = abs(x)

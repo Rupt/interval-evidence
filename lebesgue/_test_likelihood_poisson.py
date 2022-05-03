@@ -1,6 +1,5 @@
 import numba
 import numpy
-from numba import f8, i8
 
 from . import _likelihood_poisson, _testing
 
@@ -59,7 +58,7 @@ def test_invg_hi():
 
 def test_signatures():
     _likelihood_poisson._poisson_interval(1.0, 1)
-    assert _likelihood_poisson._poisson_interval.signatures == [(i8, f8)]
+    assert _likelihood_poisson._poisson_interval.signatures == [(numba.int64, numba.float64)]
 
 
 # utilities

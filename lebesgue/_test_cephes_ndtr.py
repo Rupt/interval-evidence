@@ -22,5 +22,5 @@ def test_signatures():
     # call with integers
     _cephes_ndtr.ndtr(0)
 
-    # check only f8 signatures are compiled
-    assert _cephes_ndtr.ndtr.signatures == [(numba.f8,)]
+    # check only numba.float64 signatures are compiled
+    assert _cephes_ndtr.ndtr.signatures == [(numba.numba.float64,)]

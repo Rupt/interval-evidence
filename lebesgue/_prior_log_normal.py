@@ -1,6 +1,6 @@
 """Implement the log-normal prior."""
 import numpy
-from numba import f8
+import numba
 
 from . import _core
 from ._bayes import Prior
@@ -18,7 +18,7 @@ def log_normal(mu, sigma):
     return Prior((mu, 1 / sigma), _log_normal_between)
 
 
-@_core.jit(cache=True)
+@numba.njit(cache=True)
 def _log_normal_between(args, lo, hi):
     mu, tau = args
     if lo > 0:
@@ -37,7 +37,7 @@ def _log_normal_between(args, lo, hi):
     return gaussian_dcdf(lo, hi)
 
 
-@_core.jit(f8(f8, f8), cache=True)
+@numba.njit(numba.float64(numba.float64, numba.float64), cache=True)
 def gaussian_dcdf(lo, hi):
     """Return cdf(hi) - cdf(lo) with reduced truncation error."""
     offset = numpy.copysign(0.5, hi) - numpy.copysign(0.5, lo)

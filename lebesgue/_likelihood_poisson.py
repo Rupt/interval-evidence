@@ -3,7 +3,6 @@ from collections.abc import Callable
 
 import numba
 import numpy
-from numba import f8, i8
 from numba.types import Tuple
 
 from . import _bayes, _core
@@ -25,7 +24,7 @@ def poisson(n):
 # root finding iterations
 
 
-@_core.jit
+@numba.njit
 def _halley_log(x, y):
     u = numpy.log(x)
     # order for case when y ~ 1 so x << 1, u ~ -1
@@ -34,7 +33,7 @@ def _halley_log(x, y):
     return numpy.exp(u)
 
 
-@_core.jit
+@numba.njit
 def _halley_lin(x, y):
     f = x - 1 - numpy.log(x) - y
     x -= x * (x - 1) * f / ((x - 1) * (x - 1) - 0.5 * f)
@@ -44,7 +43,7 @@ def _halley_lin(x, y):
 # low branch
 
 
-@_core.jit
+@numba.njit
 def _invg_lo_a(y):
     v = numpy.sqrt(y)
     c0 = 1.0
@@ -53,7 +52,7 @@ def _invg_lo_a(y):
     return c2 * y - c1 * v + c0
 
 
-@_core.jit
+@numba.njit
 def _invg_lo_b(y):
     a = numpy.exp(-1 - y)
     r = 54 / 5
@@ -65,7 +64,7 @@ def _invg_lo_b(y):
     return r
 
 
-@_core.jit
+@numba.njit
 def _invg_lo_c(y):
     c0 = 1.0
     c1 = 1.4142135623730951
@@ -89,7 +88,7 @@ def _invg_lo_c(y):
     return r
 
 
-@_core.jit(cache=True)
+@numba.njit(cache=True)
 def _invg_lo(y):
     if y < 0:
         return numpy.nan
@@ -114,7 +113,7 @@ def _invg_lo(y):
 # high branch
 
 
-@_core.jit
+@numba.njit
 def _invg_hi_a(y):
     v = numpy.sqrt(y)
     c0 = 1.0
@@ -123,7 +122,7 @@ def _invg_hi_a(y):
     return c2 * y + c1 * v + c0
 
 
-@_core.jit
+@numba.njit
 def _invg_hi_b(y):
     # x = -exp(-1 - y)
     # L1 = ln(-x) = -1 - y
@@ -144,7 +143,7 @@ def _invg_hi_b(y):
     return r
 
 
-@_core.jit
+@numba.njit
 def _invg_hi_c(y):
     c0 = 1.0
     c1 = 1.4142135623730951
@@ -168,7 +167,7 @@ def _invg_hi_c(y):
     return r
 
 
-@_core.jit(cache=True)
+@numba.njit(cache=True)
 def _invg_hi(y):
     if y < 0:
         return numpy.nan
@@ -190,7 +189,7 @@ def _invg_hi(y):
 # core
 
 
-@_core.jit(Tuple([f8, f8])(i8, f8), cache=True)
+@numba.njit(Tuple([numba.float64, numba.float64])(numba.int64, numba.float64), cache=True)
 def _poisson_interval(n, r):
     # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
     #        = -n * (x / n - 1 - log(x / n))

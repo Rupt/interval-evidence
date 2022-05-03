@@ -88,7 +88,7 @@ def _integrate_func(interval_func, between_func):
     if cached is not None:
         return cached
 
-    @_core.jit
+    @numba.njit
     def _mass(args, ratio):
         interval_args, between_args = args
         lo, hi = interval_func(interval_args, ratio)

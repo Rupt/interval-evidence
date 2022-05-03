@@ -7,11 +7,9 @@ import numba
 
 from . import _quad_bound
 
-# python-facing
-
 
 @dataclass(frozen=True)
-class Likelihood:
+class _Likelihood:
     _args: Any
     _interval_func: Callable
 
@@ -27,7 +25,7 @@ class Likelihood:
 
 
 @dataclass(frozen=True)
-class Prior:
+class _Prior:
     _args: Any
     _between_func: Callable
 
@@ -45,14 +43,16 @@ class Prior:
 
 @dataclass(frozen=True)
 class Model:
-    likelihood: Likelihood
-    prior: Prior
+    """A Likelihood--Prior pair."""
+
+    likelihood: _Likelihood
+    prior: _Prior
 
     def __post_init__(self):
-        if not isinstance(self.likelihood, Likelihood):
+        if not isinstance(self.likelihood, _Likelihood):
             raise TypeError(self.likelihood)
 
-        if not isinstance(self.prior, Prior):
+        if not isinstance(self.prior, _Prior):
             raise TypeError(self.prior)
 
     def integrate(self, *, rtol=1e-2):
@@ -74,7 +74,7 @@ class Model:
         return self.prior.between(lo, hi)
 
 
-# numba-facing
+# caching reduces recompilation, which is expecsive
 _integrate_func_cache = {}
 
 

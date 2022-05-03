@@ -4,9 +4,9 @@ from . import _bayes, _likelihood_poisson, _prior_log_normal, _testing
 
 
 def test_args_likelihood():
-    assert _testing.raises(lambda: _bayes.Likelihood(0, None), TypeError)
+    assert _testing.raises(lambda: _bayes._Likelihood(0, None), TypeError)
 
-    likelihood = _bayes.Likelihood(None, lambda args, ratio: (0.0, 0.0))
+    likelihood = _bayes._Likelihood(None, lambda args, ratio: (0.0, 0.0))
 
     assert _testing.raises(lambda: likelihood.interval(None), TypeError)
     assert _testing.raises(lambda: likelihood.interval(1.1), ValueError)
@@ -17,9 +17,9 @@ def test_args_likelihood():
 
 
 def test_args_prior():
-    assert _testing.raises(lambda: _bayes.Prior(0, None), TypeError)
+    assert _testing.raises(lambda: _bayes._Prior(0, None), TypeError)
 
-    prior = _bayes.Prior(None, lambda args, lo, hi: 0.0)
+    prior = _bayes._Prior(None, lambda args, lo, hi: 0.0)
 
     assert _testing.raises(lambda: prior.between(None, 0.0), TypeError)
     assert _testing.raises(lambda: prior.between(0.0, -1.0), ValueError)

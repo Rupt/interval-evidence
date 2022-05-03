@@ -2,11 +2,11 @@
 import numba
 import numpy
 
-from ._bayes import Prior
-from ._cephes_ndtr import ndtr
+from . import _cephes_ndtr
+from ._bayes import _Prior
 
 
-def log_normal(mu, sigma):
+def log_normal(mu: float, sigma: float) -> _Prior:
     """Return a log-normal prior for given mu, sigma."""
     mu = float(mu)
 
@@ -14,7 +14,7 @@ def log_normal(mu, sigma):
     if not sigma > 0:
         raise ValueError(sigma)
 
-    return Prior((mu, 1 / sigma), _log_normal_between)
+    return _Prior((mu, 1 / sigma), _log_normal_between)
 
 
 @numba.njit(cache=True)
@@ -41,7 +41,7 @@ def gaussian_dcdf(lo, hi):
     """Return cdf(hi) - cdf(lo) with reduced truncation error."""
     offset = numpy.copysign(0.5, hi) - numpy.copysign(0.5, lo)
 
-    flo = numpy.copysign(ndtr(-abs(lo)), lo)
-    fhi = numpy.copysign(ndtr(-abs(hi)), hi)
+    flo = numpy.copysign(_cephes_ndtr.ndtr(-abs(lo)), lo)
+    fhi = numpy.copysign(_cephes_ndtr.ndtr(-abs(hi)), hi)
 
     return flo - fhi + offset

@@ -3,19 +3,27 @@ import functools
 
 import numba
 
-from ._bayes import Prior
+from ._bayes import _Prior
 
 
-def plus(x, prior):
-    """Return a prior shifted by x"""
+def plus(x: float, prior: _Prior) -> _Prior:
+    """Return a Prior for `prior' shifted by x.
+
+    Arguments:
+        x: shift amount
+        prior: another _Prior object to transform
+    """
     x = float(x)
-    if not isinstance(prior, Prior):
+    if not isinstance(prior, _Prior):
         raise TypeError(prior)
 
     args = (x, prior._args)
     between_func = _plus_between(prior._between_func)
 
-    return Prior(args, between_func)
+    return _Prior(args, between_func)
+
+
+# caching reduces recompilation, which is expecsive
 
 
 @functools.lru_cache(maxsize=None)

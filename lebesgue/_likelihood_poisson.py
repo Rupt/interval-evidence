@@ -1,9 +1,8 @@
 """ Implement the Poisson likelihood function. """
 import numba
 import numpy
-from numba.types import Tuple
 
-from ._bayes import Likelihood
+from ._bayes import _Likelihood
 
 
 def poisson(n):
@@ -13,7 +12,7 @@ def poisson(n):
     n = int(n)
     if not n >= 0:
         raise ValueError(n)
-    return Likelihood(n, _poisson_interval)
+    return _Likelihood(n, _poisson_interval)
 
 
 # inverse order for numba declarations
@@ -186,9 +185,7 @@ def _invg_hi(y):
 # core
 
 
-@numba.njit(
-    Tuple([numba.float64, numba.float64])(numba.int64, numba.float64), cache=True
-)
+@numba.njit(numba.typeof((0.0, 0.0))(numba.int64, numba.float64), cache=True)
 def _poisson_interval(n, r):
     # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
     #        = -n * (x / n - 1 - log(x / n))

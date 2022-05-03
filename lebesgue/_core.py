@@ -8,12 +8,6 @@ try:
 except ImportError:
     cache = functools.lru_cache(maxsize=None)
 
-try:
-    # wishful thinking...
-    from numba import jitclass
-except ImportError:
-    from numba.experimental import jitclass
-
 jit = functools.partial(numba.jit, nopython=True)
 
 

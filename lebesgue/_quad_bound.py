@@ -9,125 +9,143 @@ import numpy
 from . import _core
 
 
-@_core.jit
-def _quad_bound(model, rtol):
-    # 2 ** -1022 is the smallest positive normal float
-    nscan = 1022
-    atol = 2.0**-nscan
+def generate(func):
+    """
+    Return callable integrators for func on [0, 1].
 
-    fs = numpy.empty(nscan + 1)
+    The result can be compiled and cached at a given location like so:
 
-    # exponential scan
-    zhi = 0.0
-    zlo = 0.0
-    hi = 1.0
+        _quad_bound_func = generate(func1)
 
-    fs[0] = fhi = model._mass(hi)
-    for i in range(1, nscan + 1):
-        size = lo = 0.5 * hi
-        fs[i] = flo = model._mass(lo)
+        @_core.jit(cache=True)
+        def quad_bound_func(args, rtol):
+            return _quad_bound_func(args, rtol)
 
-        zlo += size * fhi
+    Arguments:
+        func: f8(Any, f8)
 
-        # account for mass in the tail slice
-        tol = max(atol, rtol * (zlo + flo * size))
+    """
 
-        err_tail = (1.0 - flo) * size
-        if err_tail * i * 2 < tol:
-            break
+    @_core.jit
+    def _quad_bound(args, rtol):
+        # 2 ** -1022 is the smallest positive normal float
+        nscan = 1022
+        atol = 2.0**-nscan
 
-        hi = lo
-        fhi = flo
+        fs = numpy.empty(nscan + 1)
 
-    nbins = i
+        # exponential scan
+        zhi = 0.0
+        zlo = 0.0
+        hi = 1.0
 
-    # distribute tolerance to large boxes such that
-    # they are large enough to comfortably pull us below tol
-    err_thresh = tol * (0.5 / nbins)
+        fs[0] = fhi = func(args, hi)
+        for i in range(1, nscan + 1):
+            size = lo = 0.5 * hi
+            fs[i] = flo = func(args, lo)
 
-    nkept = 0.0
-    tol_kept = tol - err_tail
+            zlo += size * fhi
 
-    size = 1.0
-    fhi = fs[0]
-    for i in range(1, nbins + 1):
-        size *= 0.5
-        flo = fs[i]
+            # account for mass in the tail slice
+            tol = max(atol, rtol * (zlo + flo * size))
 
-        err = flo * size - fhi * size
-        keep = err > err_thresh
+            err_tail = (1.0 - flo) * size
+            if err_tail * i * 2 < tol:
+                break
 
-        nkept += keep
-        tol_kept -= (not keep) * err
+            hi = lo
+            fhi = flo
 
-        fhi = flo
+        nbins = i
 
-    if nkept > 0.0:
-        err_thresh = tol_kept / nkept
-    else:
-        err_thresh = numpy.nan
+        # distribute tolerance to large boxes such that
+        # they are large enough to comfortably pull us below tol
+        err_thresh = tol * (0.5 / nbins)
 
-    # refinement
-    zlo = 0.0
-    zhi = 0.0
+        nkept = 0.0
+        tol_kept = tol - err_tail
 
-    hi = 1.0
-    fhi = fs[0]
-    for i in range(1, nbins + 1):
-        size = lo = 0.5 * hi
-        flo = fs[i]
+        size = 1.0
+        fhi = fs[0]
+        for i in range(1, nbins + 1):
+            size *= 0.5
+            flo = fs[i]
 
-        err = flo * size - fhi * size
+            err = flo * size - fhi * size
+            keep = err > err_thresh
 
-        if err > err_thresh:
-            cut = err - err_thresh
-            ilo, ihi = _quad_bound_recurse(model, cut, lo, hi, flo, fhi)
+            nkept += keep
+            tol_kept -= (not keep) * err
+
+            fhi = flo
+
+        if nkept > 0.0:
+            err_thresh = tol_kept / nkept
         else:
-            ilo, ihi = fhi * size, flo * size
+            err_thresh = numpy.nan
 
-        zlo += ilo
-        zhi += ihi
+        # refinement
+        zlo = 0.0
+        zhi = 0.0
 
-        hi = lo
-        fhi = flo
+        hi = 1.0
+        fhi = fs[0]
+        for i in range(1, nbins + 1):
+            size = lo = 0.5 * hi
+            flo = fs[i]
 
-    zlo += flo * size
-    zhi += 1.0 * size
-    return zlo, zhi
+            err = flo * size - fhi * size
 
+            if err > err_thresh:
+                cut = err - err_thresh
+                ilo, ihi = _recurse(args, cut, lo, hi, flo, fhi)
+            else:
+                ilo, ihi = fhi * size, flo * size
 
-@_core.jit
-def _quad_bound_recurse(model, cut, lo, hi, flo, fhi):
-    size = 0.5 * (hi - lo)
-    mid = lo + size
-    fmid = model._mass(mid)
+            zlo += ilo
+            zhi += ihi
 
-    # the box is halved, so err = 2 * err_new
-    err_top = fmid * size - fhi * size
-    err_bot = flo * size - fmid * size
-    err_new = err_top + err_bot
+            hi = lo
+            fhi = flo
 
-    cut_new = cut - err_new
+        zlo += flo * size
+        zhi += 1.0 * size
+        return zlo, zhi
 
-    cut_top = err_top * (cut_new / err_new)
-    cut_bot = err_bot * (cut_new / err_new)
+    @_core.jit
+    def _recurse(args, cut, lo, hi, flo, fhi):
+        size = 0.5 * (hi - lo)
+        mid = lo + size
+        fmid = func(args, mid)
 
-    # prefer lumping together to recursing equally down both sides
-    if cut_new < err_bot - cut_top:
-        cut_bot = cut_new
-        cut_top = 0.0
-    elif cut_new < err_top - cut_bot:
-        cut_bot = 0.0
-        cut_top = cut_new
+        # the box is halved, so err = 2 * err_new
+        err_top = fmid * size - fhi * size
+        err_bot = flo * size - fmid * size
+        err_new = err_top + err_bot
 
-    if cut_top > 0:
-        lo_top, hi_top = _quad_bound_recurse(model, cut_top, mid, hi, fmid, fhi)
-    else:
-        lo_top, hi_top = fhi * size, fmid * size
+        cut_new = cut - err_new
 
-    if cut_bot > 0:
-        lo_bot, hi_bot = _quad_bound_recurse(model, cut_bot, lo, mid, flo, fmid)
-    else:
-        lo_bot, hi_bot = fmid * size, flo * size
+        cut_top = err_top * (cut_new / err_new)
+        cut_bot = err_bot * (cut_new / err_new)
 
-    return lo_bot + lo_top, hi_bot + hi_top
+        # prefer lumping together to recursing equally down both sides
+        if cut_new < err_bot - cut_top:
+            cut_bot = cut_new
+            cut_top = 0.0
+        elif cut_new < err_top - cut_bot:
+            cut_bot = 0.0
+            cut_top = cut_new
+
+        if cut_top > 0:
+            lo_top, hi_top = _recurse(args, cut_top, mid, hi, fmid, fhi)
+        else:
+            lo_top, hi_top = fhi * size, fmid * size
+
+        if cut_bot > 0:
+            lo_bot, hi_bot = _recurse(args, cut_bot, lo, mid, flo, fmid)
+        else:
+            lo_bot, hi_bot = fmid * size, flo * size
+
+        return lo_bot + lo_top, hi_bot + hi_top
+
+    return _quad_bound

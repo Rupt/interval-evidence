@@ -3,12 +3,8 @@ from types import SimpleNamespace
 
 import scipy.integrate
 
-from . import (
-    _bayes,
+from . import (  # _bayes,; _likelihood_poisson,; _prior_log_normal,; _prior_plus,
     _core,
-    _likelihood_poisson,
-    _prior_log_normal,
-    _prior_plus,
     _quad_bound,
 )
 
@@ -20,10 +16,10 @@ def test_fpow():
     his = [0.5, 0.6, 1.0]
 
     for k, lo, hi in itertools.product(ks, los, his):
-        func, integral = make_fpow(k, lo, hi)
+        args, integral = make_fpow(k, lo, hi)
 
         rtol = 1e-2
-        zlo, zhi = _quad_bound._quad_bound(func, rtol=rtol)
+        zlo, zhi = quad_bound_fpow(args, rtol=rtol)
         assert zlo <= integral <= zhi
         assert zhi - zlo <= rtol * zlo
 
@@ -59,27 +55,26 @@ def test_model():
 def make_fpow(k, lo, hi):
     assert lo < hi, (lo, hi)
 
-    func = Fpow(int(k), float(lo), float(hi))
+    args = (int(k), float(lo), float(hi))
 
     integral = ((1 - lo) ** (k + 1) - (1 - hi) ** (k + 1)) / (k + 1)
     # jacobian factor for the rescaling
     integral /= hi - lo
 
-    return func, integral
+    return args, integral
 
 
-@_core.jitclass
-class Fpow:
-    _k: int
-    _lo: float
-    _hi: float
+@_core.jit
+def fpow(args, x):
+    k, lo, hi = args
+    # resale such that 0 -> lo, 1 -> hi
+    x = lo + (hi - lo) * x
+    return (1 - x) ** k
 
-    def __init__(self, k, lo, hi):
-        self._k = k
-        self._lo = lo
-        self._hi = hi
 
-    def _mass(self, x):
-        # resale such that 0 -> lo, 1 -> hi
-        x = self._lo + (self._hi - self._lo) * x
-        return (1 - x) ** self._k
+_quad_bound_fpow = _quad_bound.generate(fpow)
+
+
+@_core.jit(cache=True)
+def quad_bound_fpow(args, rtol):
+    return _quad_bound_fpow(args, rtol)

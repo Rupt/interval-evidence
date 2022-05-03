@@ -92,9 +92,9 @@ def ndtr(a):
     z = abs(x)
 
     if z < SQRT1_2:
-        return 0.5 + 0.5 * erf(x)
+        return 0.5 + 0.5 * _erf(x)
 
-    y = 0.5 * erfc(z)
+    y = 0.5 * _erfc(z)
 
     if x > 0:
         return 1.0 - y
@@ -102,8 +102,8 @@ def ndtr(a):
     return y
 
 
-@_core.jit(cache=True)
-def erfc(a):
+@_core.jit
+def _erfc(a):
     x = abs(a)
 
     if x < 1.0:
@@ -112,8 +112,8 @@ def erfc(a):
     return _erfc_x_ge_1(a)
 
 
-@_core.jit(cache=True)
-def erf(a):
+@_core.jit
+def _erf(a):
     x = abs(a)
 
     if x > 1.0:
@@ -185,5 +185,3 @@ def p1evl(x, coef):
 # specialization
 
 _core.specialize(ndtr, f8(f8))
-_core.specialize(erf, f8(f8))
-_core.specialize(erfc, f8(f8))

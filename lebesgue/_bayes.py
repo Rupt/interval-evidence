@@ -89,12 +89,12 @@ def _integrate_func(interval_func, between_func):
         return cached
 
     @_core.jit
-    def mass_func(args, ratio):
+    def _mass(args, ratio):
         interval_args, between_args = args
         lo, hi = interval_func(interval_args, ratio)
         return between_func(between_args, lo, hi)
 
-    integrate_func = _quad_bound.generate(mass_func)
+    integrate_func = _quad_bound.generate(_mass)
 
     _integrate_func_cache[key] = integrate_func
 

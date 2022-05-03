@@ -10,22 +10,18 @@ def plus(x, prior):
     x = float(x)
     if not isinstance(prior, Prior):
         raise TypeError(prior)
-    cls = _plus_class(numba.typeof(prior._prior))
-    return Prior(cls(x, prior._prior))
+
+    args = (x, prior._args)
+    between_func = _plus_between(prior._between_func)
+
+    return Prior(args, between_func)
 
 
 @_core.cache
-def _plus_class(prior_type):
-    # @_core.jitclass
-    class _Plus:
-        _x: float
-        _prior: prior_type
+def _plus_between(between_func):
+    @_core.jit
+    def _between(args, lo, hi):
+        x, args_inner = args
+        return between_func(args_inner, lo - x, hi - x)
 
-        def __init__(self, x, prior):
-            self._x = x
-            self._prior = prior
-
-        def _between(self, lo, hi):
-            return self._prior._between(lo - self._x, hi - self._x)
-
-    return _Plus
+    return _between

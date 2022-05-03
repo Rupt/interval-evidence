@@ -8,13 +8,15 @@ import numba
 
 from . import _bayes, _likelihood_poisson, _prior_log_normal, _prior_plus
 
-# poisson x log_normal
-_eg_likelihood_poisson = _likelihood_poisson.poisson(0)
-_eg_prior_log_normal = _prior_log_normal.log_normal(0.0, 1.0)
+example_likelihood_poisson = _likelihood_poisson.poisson(0)
+example_prior_log_normal = _prior_log_normal.log_normal(0.0, 1.0)
+example_prior_plus_log_normal = _prior_plus.plus(0.0, example_prior_log_normal)
 
+
+# poisson x log_normal
 key = (
-    _eg_likelihood_poisson._interval_func,
-    _eg_prior_log_normal._between_func,
+    example_likelihood_poisson._interval_func,
+    example_prior_log_normal._between_func,
 )
 
 _poisson_log_normal = _bayes._integrate_func(*key)
@@ -29,11 +31,9 @@ _bayes._integrate_func_cache[key] = poisson_log_normal
 
 
 # poisson x plus(log_normal)
-_eg_prior_plus_log_normal = _prior_plus.plus(0.0, _eg_prior_log_normal)
-
 key = (
-    _eg_likelihood_poisson._interval_func,
-    _eg_prior_plus_log_normal._between_func,
+    example_likelihood_poisson._interval_func,
+    example_prior_plus_log_normal._between_func,
 )
 
 _poisson_plus_log_normal = _bayes._integrate_func(*key)

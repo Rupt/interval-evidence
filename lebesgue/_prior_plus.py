@@ -17,8 +17,8 @@ def plus(x: float, prior: _Prior) -> _Prior:
     if not isinstance(prior, _Prior):
         raise TypeError(prior)
 
-    args = (x, prior._args)
-    between_func = _plus_between(prior._between_func)
+    args = (x, prior.args)
+    between_func = _plus_between(prior.between_func)
 
     return _Prior(args, between_func)
 

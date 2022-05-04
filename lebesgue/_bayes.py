@@ -11,12 +11,12 @@ from . import _quad_bound
 
 @dataclass(frozen=True)
 class _Likelihood:
-    _args: Any
-    _interval_func: Callable
+    args: Any
+    interval_func: Callable
 
     def __post_init__(self):
-        if not isinstance(self._interval_func, Callable):
-            raise TypeError(self._interval_func)
+        if not isinstance(self.interval_func, Callable):
+            raise TypeError(self.interval_func)
 
     def interval(self, ratio: float) -> (float, float):
         """Return (lo, hi) representing an interval of likelihood above ratio.
@@ -30,17 +30,17 @@ class _Likelihood:
         ratio = float(ratio)
         if not 0 <= ratio <= 1:
             raise ValueError(ratio)
-        return self._interval_func(self._args, ratio)
+        return self.interval_func(self.args, ratio)
 
 
 @dataclass(frozen=True)
 class _Prior:
-    _args: Any
-    _between_func: Callable
+    args: Any
+    between_func: Callable
 
     def __post_init__(self):
-        if not isinstance(self._between_func, Callable):
-            raise TypeError(self._between_func)
+        if not isinstance(self.between_func, Callable):
+            raise TypeError(self.between_func)
 
     def between(self, lo: float, hi: float) -> float:
         """Return the probability mass between lo and hi.
@@ -54,10 +54,10 @@ class _Prior:
         hi = float(hi)
         if not lo <= hi:
             raise ValueError((lo, hi))
-        return self._between_func(self._args, lo, hi)
+        return self.between_func(self.args, lo, hi)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, init=False)
 class Model:
     """A Likelihood--Prior pair.
 
@@ -70,12 +70,23 @@ class Model:
     likelihood: _Likelihood
     prior: _Prior
 
-    def __post_init__(self):
-        if not isinstance(self.likelihood, _Likelihood):
-            raise TypeError(self.likelihood)
+    mass_func: Callable
+    integrate_func: Callable
 
-        if not isinstance(self.prior, _Prior):
-            raise TypeError(self.prior)
+    def __init__(self, likelihood: _Likelihood, prior: _Prior) -> None:
+        if not isinstance(likelihood, _Likelihood):
+            raise TypeError(likelihood)
+
+        if not isinstance(prior, _Prior):
+            raise TypeError(prior)
+
+        mass_func = _model_mass(likelihood.interval_func, prior.between_func)
+        integrate_func = _quad_bound.generate(mass_func)
+
+        object.__setattr__(self, "likelihood", likelihood)
+        object.__setattr__(self, "prior", prior)
+        object.__setattr__(self, "mass_func", mass_func)
+        object.__setattr__(self, "integrate_func", integrate_func)
 
     def integrate(self, *, rtol: float = 1e-2) -> (float, float):
         """Return numerical bounds on the integral of likelihood over prior.
@@ -92,14 +103,8 @@ class Model:
         # small tol is slow and unlikely to be useful
         assert rtol >= 1e-7, rtol
 
-        mass = _model_mass(
-            self.likelihood._interval_func,
-            self.prior._between_func,
-        )
-
-        args = (self.likelihood._args, self.prior._args)
-        integrate_func = _quad_bound.generate(mass)
-        return integrate_func(args, rtol)
+        args = (self.likelihood.args, self.prior.args)
+        return self.integrate_func(args, rtol)
 
     def mass(self, ratio: float) -> float:
         """Return the prior mass inside the interval at likelihood ratio."""
@@ -111,8 +116,8 @@ class Model:
 def _model_mass(interval_func, between_func):
     @numba.njit
     def _mass(args, ratio):
-        interval_args, between_args = args
-        lo, hi = interval_func(interval_args, ratio)
-        return between_func(between_args, lo, hi)
+        args_interval, args_between = args
+        lo, hi = interval_func(args_interval, ratio)
+        return between_func(args_between, lo, hi)
 
     return _mass

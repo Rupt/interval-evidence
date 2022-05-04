@@ -16,8 +16,8 @@ example_prior_plus_log_normal = _prior_plus.plus(0.0, example_prior_log_normal)
 
 # poisson x log_normal
 mass_func = _bayes._model_mass(
-    example_likelihood_poisson._interval_func,
-    example_prior_log_normal._between_func,
+    example_likelihood_poisson.interval_func,
+    example_prior_log_normal.between_func,
 )
 
 _poisson_log_normal = _quad_bound.generate(mass_func)
@@ -33,8 +33,8 @@ _quad_bound._generate_cache[mass_func] = poisson_log_normal
 
 # poisson x plus(log_normal)
 mass_func = _bayes._model_mass(
-    example_likelihood_poisson._interval_func,
-    example_prior_plus_log_normal._between_func,
+    example_likelihood_poisson.interval_func,
+    example_prior_plus_log_normal.between_func,
 )
 
 _poisson_plus_log_normal = _quad_bound.generate(mass_func)

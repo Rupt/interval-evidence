@@ -1,6 +1,6 @@
 import numpy
 
-from . import _likelihood_poisson, _prior_normal, _prior_plus, _testing
+from . import _likelihood_poisson, _prior_add, _prior_normal, _testing
 
 
 def test_shift():
@@ -13,16 +13,16 @@ def test_shift():
 
         # such that lo + x == lo_previous
         ref = prior.between(lo - x, hi - x)
-        chk = _prior_plus.plus(x, prior).between(lo, hi)
+        chk = _prior_add.add(x, prior).between(lo, hi)
 
         assert ref == chk, (ref, chk)
 
 
 def test_args():
     prior = _prior_normal.log_normal(-4, 2.0)
-    assert _testing.raises(lambda: _prior_plus.plus(None, prior), TypeError)
+    assert _testing.raises(lambda: _prior_add.add(None, prior), TypeError)
 
     not_prior = _likelihood_poisson.poisson(3)
-    assert _testing.raises(lambda: _prior_plus.plus(3, not_prior), TypeError)
+    assert _testing.raises(lambda: _prior_add.add(3, not_prior), TypeError)
 
-    assert not _testing.raises(lambda: _prior_plus.plus(0.0, prior))
+    assert not _testing.raises(lambda: _prior_add.add(0.0, prior))

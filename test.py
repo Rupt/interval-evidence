@@ -6,8 +6,8 @@ import lebesgue._test_bayes
 import lebesgue._test_cephes_ndtr
 import lebesgue._test_likelihood_poisson
 import lebesgue._test_models
+import lebesgue._test_prior_add
 import lebesgue._test_prior_normal
-import lebesgue._test_prior_plus
 import lebesgue._test_prior_trunc
 import lebesgue._test_quad_bound
 
@@ -29,14 +29,14 @@ def main():
         lebesgue._test_likelihood_poisson.test_invg_lo,
         lebesgue._test_likelihood_poisson.test_invg_hi,
         # m
-        lebesgue._test_models.test_poisson_plus_log_normal,
-        lebesgue._test_models.test_poisson_plus_trunc_normal,
+        lebesgue._test_models.test_poisson_add_log_normal,
+        lebesgue._test_models.test_poisson_add_trunc_normal,
         # p
         lebesgue._test_prior_normal.test_gaussian_dcdf,
         lebesgue._test_prior_normal.test_between,
         lebesgue._test_prior_normal.test_args,
-        lebesgue._test_prior_plus.test_shift,
-        lebesgue._test_prior_plus.test_args,
+        lebesgue._test_prior_add.test_shift,
+        lebesgue._test_prior_add.test_args,
         lebesgue._test_prior_trunc.test_values,
         lebesgue._test_prior_trunc.test_args,
         # q

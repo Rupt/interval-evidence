@@ -6,7 +6,7 @@ import numba
 from ._bayes import _Prior
 
 
-def plus(x: float, prior: _Prior) -> _Prior:
+def add(x: float, prior: _Prior) -> _Prior:
     """Return a Prior for `prior' shifted by x.
 
     Arguments:
@@ -18,12 +18,12 @@ def plus(x: float, prior: _Prior) -> _Prior:
         raise TypeError(prior)
 
     args = (x, prior.args)
-    between_func = _plus_between(prior.between_func)
+    between_func = _add_between(prior.between_func)
     return _Prior(args, between_func)
 
 
 @functools.lru_cache(maxsize=None)
-def _plus_between(between_func):
+def _add_between(between_func):
     @numba.njit
     def between(args, lo, hi):
         x, args_inner = args

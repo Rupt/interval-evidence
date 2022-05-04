@@ -1,20 +1,21 @@
 import itertools
 
+import numpy
 import scipy.integrate
 
-from . import _bayes, _likelihood_poisson, _prior_normal, _prior_plus
+from . import Model
+from .likelihood import poisson
+from .prior import log_normal, normal, plus, trunc
 
 
-def test_poisson_log_normal():
-    ns = [1, 2]
-    mus = [-1, 2]
+def test_poisson_plus_log_normal():
+    ns = [0, 3]
+    shifts = [0, 2]
+    mus = [0, 5]
     sigmas = [0.5, 1.5]
 
-    for n, mu, sigma in itertools.product(ns, mus, sigmas):
-        model = _bayes.Model(
-            _likelihood_poisson.poisson(n),
-            _prior_normal.log_normal(mu, sigma),
-        )
+    for n, shift, mu, sigma in itertools.product(ns, shifts, mus, sigmas):
+        model = Model(poisson(n), plus(shift, log_normal(mu, sigma)))
 
         rtol = 1e-2
         zlo, zhi = model.integrate(rtol=rtol)
@@ -28,18 +29,15 @@ def test_poisson_log_normal():
         assert zhi >= chk - chk_err
 
 
-def test_poisson_plus_log_normal():
-    ns = [0, 3]
-    shifts = [0, 2]
-    mus = [0, 5]
+def test_poisson_plus_trunc_normal():
+    ns = [3, 4]
+    shifts = [0, 0.2]
+    mus = [-1, 2]
+    sigmas = [0.5, 1.5]
 
-    for n, shift, mu in itertools.product(ns, shifts, mus):
-        model = _bayes.Model(
-            _likelihood_poisson.poisson(n),
-            _prior_plus.plus(
-                shift,
-                _prior_normal.log_normal(mu, 1.0),
-            ),
+    for n, shift, mu, sigma in itertools.product(ns, shifts, mus, sigmas):
+        model = Model(
+            poisson(n), plus(0.0, trunc(shift, numpy.inf, normal(mu, sigma)))
         )
 
         rtol = 1e-2

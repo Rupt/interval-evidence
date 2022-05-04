@@ -29,8 +29,8 @@ def main():
         lebesgue._test_likelihood_poisson.test_invg_lo,
         lebesgue._test_likelihood_poisson.test_invg_hi,
         # m
-        lebesgue._test_models.test_poisson_log_normal,
         lebesgue._test_models.test_poisson_plus_log_normal,
+        lebesgue._test_models.test_poisson_plus_trunc_normal,
         # p
         lebesgue._test_prior_normal.test_gaussian_dcdf,
         lebesgue._test_prior_normal.test_between,

@@ -23,7 +23,7 @@ def log(prior: _Prior) -> _Prior:
 @functools.lru_cache(maxsize=None)
 def _log_between(between_func):
     @numba.njit
-    def _between(args, lo, hi):
+    def between(args, lo, hi):
         if lo > 0:
             lo_new = numpy.log(lo)
         else:
@@ -36,4 +36,4 @@ def _log_between(between_func):
 
         return between_func(args, lo_new, hi_new)
 
-    return _between
+    return between

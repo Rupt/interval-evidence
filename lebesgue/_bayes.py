@@ -114,9 +114,9 @@ class Model:
 @functools.lru_cache(maxsize=None)
 def _model_mass(interval_func, between_func):
     @numba.njit
-    def _mass(args, ratio):
+    def mass(args, ratio):
         args_interval, args_between = args
         lo, hi = interval_func(args_interval, ratio)
         return between_func(args_between, lo, hi)
 
-    return _mass
+    return mass

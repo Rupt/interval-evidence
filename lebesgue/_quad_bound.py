@@ -49,7 +49,7 @@ def integrator(func: Callable) -> Callable:
 
 def _integrator_inner(func):
     @numba.njit
-    def _quad_bound(args, rtol):
+    def quad_bound(args, rtol):
         # 2 ** -1022 is the smallest positive normal float
         nscan = 1022
         atol = 2.0**-nscan
@@ -120,7 +120,7 @@ def _integrator_inner(func):
 
             if err > err_thresh:
                 cut = err - err_thresh
-                ilo, ihi = _recurse(args, cut, lo, hi, flo, fhi)
+                ilo, ihi = recurse(args, cut, lo, hi, flo, fhi)
             else:
                 ilo, ihi = fhi * size, flo * size
 
@@ -135,7 +135,7 @@ def _integrator_inner(func):
         return zlo, zhi
 
     @numba.njit
-    def _recurse(args, cut, lo, hi, flo, fhi):
+    def recurse(args, cut, lo, hi, flo, fhi):
         size = 0.5 * (hi - lo)
         mid = lo + size
         fmid = func(args, mid)
@@ -159,15 +159,15 @@ def _integrator_inner(func):
             cut_top = cut_new
 
         if cut_top > 0:
-            lo_top, hi_top = _recurse(args, cut_top, mid, hi, fmid, fhi)
+            lo_top, hi_top = recurse(args, cut_top, mid, hi, fmid, fhi)
         else:
             lo_top, hi_top = fhi * size, fmid * size
 
         if cut_bot > 0:
-            lo_bot, hi_bot = _recurse(args, cut_bot, lo, mid, flo, fmid)
+            lo_bot, hi_bot = recurse(args, cut_bot, lo, mid, flo, fmid)
         else:
             lo_bot, hi_bot = fmid * size, flo * size
 
         return lo_bot + lo_top, hi_bot + hi_top
 
-    return _quad_bound
+    return quad_bound

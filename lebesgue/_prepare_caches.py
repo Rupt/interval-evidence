@@ -23,7 +23,7 @@ def poisson_log_normal(args, ratio):
     return poisson_log_normal_integrate(args, ratio)
 
 
-_quad_bound._generate_cache[model.mass_func] = poisson_log_normal
+_quad_bound._integrator_cache[model.mass_func] = poisson_log_normal
 
 
 # poisson | plus log normal
@@ -37,4 +37,4 @@ def poisson_plus_log_normal(args, ratio):
     return poisson_plus_log_normal_integrate(args, ratio)
 
 
-_quad_bound._generate_cache[model.mass_func] = poisson_plus_log_normal
+_quad_bound._integrator_cache[model.mass_func] = poisson_plus_log_normal

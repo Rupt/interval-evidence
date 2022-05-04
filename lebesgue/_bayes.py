@@ -81,7 +81,7 @@ class Model:
             raise TypeError(prior)
 
         mass_func = _model_mass(likelihood.interval_func, prior.between_func)
-        integrate_func = _quad_bound.generate(mass_func)
+        integrate_func = _quad_bound.integrator(mass_func)
 
         object.__setattr__(self, "likelihood", likelihood)
         object.__setattr__(self, "prior", prior)

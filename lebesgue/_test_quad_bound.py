@@ -15,7 +15,7 @@ def test_fpow():
         args, integral = make_fpow(k, lo, hi)
 
         rtol = 1e-2
-        zlo, zhi = quad_bound_fpow(args, rtol=rtol)
+        zlo, zhi = _quad_bound.integrator(fpow)(args, rtol=rtol)
         assert zlo <= integral <= zhi
         assert zhi - zlo <= rtol * zlo
 
@@ -43,9 +43,12 @@ def fpow(args, x):
     return (1 - x) ** k
 
 
-_quad_bound_fpow = _quad_bound.generate(fpow)
+_integrate_fpow = _quad_bound.integrator(fpow)
 
 
 @numba.njit(cache=True)
-def quad_bound_fpow(args, rtol):
-    return _quad_bound_fpow(args, rtol)
+def integrate_fpow(args, rtol):
+    return _integrate_fpow(args, rtol)
+
+
+_quad_bound._integrator_cache[fpow] = integrate_fpow

@@ -9,10 +9,10 @@ from collections.abc import Callable
 import numba
 import numpy
 
-_generate_cache = {}
+_integrator_cache = {}
 
 
-def generate(func: Callable) -> Callable:
+def integrator(func: Callable) -> Callable:
     """
     Return a function to integrate func(args, x) on [0, 1].
 
@@ -26,28 +26,28 @@ def generate(func: Callable) -> Callable:
 
     ```
     # at a top level location
-    _quad_bound_func = _quad_bound.generate(func)
+    _integrate_func = _quad_bound.integrator(func)
 
 
     @numba.njit(cache=True)
-    def quad_bound_func(args, rtol):
-        return _quad_bound_func(args, rtol)
+    def integrate_func(args, rtol):
+        return _integrate_func(args, rtol)
 
 
-    _quad_bound._generate_cache[func] = quad_bound_func
+    _quad_bound._integrator_cache[func] = integrate_func
     ```
 
     """
-    cached = _generate_cache.get(func)
+    cached = _integrator_cache.get(func)
     if cached is not None:
         return cached
 
-    integrate_func = _generate(func)
-    _generate_cache[func] = integrate_func
+    integrate_func = _integrator_inner(func)
+    _integrator_cache[func] = integrate_func
     return integrate_func
 
 
-def _generate(func):
+def _integrator_inner(func):
     @numba.njit
     def _quad_bound(args, rtol):
         # 2 ** -1022 is the smallest positive normal float

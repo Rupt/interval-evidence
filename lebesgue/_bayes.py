@@ -14,10 +14,6 @@ class _Likelihood:
     args: Any
     interval_func: Callable
 
-    def __post_init__(self):
-        if not isinstance(self.interval_func, Callable):
-            raise TypeError(self.interval_func)
-
     def interval(self, ratio: float) -> (float, float):
         """Return (lo, hi) representing an interval of likelihood above ratio.
 
@@ -37,10 +33,6 @@ class _Likelihood:
 class _Prior:
     args: Any
     between_func: Callable
-
-    def __post_init__(self):
-        if not isinstance(self.between_func, Callable):
-            raise TypeError(self.between_func)
 
     def between(self, lo: float, hi: float) -> float:
         """Return the probability mass between lo and hi.
@@ -70,13 +62,6 @@ class Model:
     likelihood: _Likelihood
     prior: _Prior
 
-    def __post_init__(self):
-        if not isinstance(self.likelihood, _Likelihood):
-            raise TypeError(self.likelihood)
-
-        if not isinstance(self.prior, _Prior):
-            raise TypeError(self.prior)
-
     @property
     def args(self) -> tuple:
         return (self.likelihood.args, self.prior.args)
@@ -104,7 +89,8 @@ class Model:
         rtol = float(rtol)
         # tiny tol (< 2 ** -51?) can cause runaway recursion
         # small tol is slow and unlikely to be useful
-        assert rtol >= 1e-7, rtol
+        if not rtol >= 1e-7:
+            raise ValueError(rtol)
 
         return self.integrate_func(self.args, rtol)
 

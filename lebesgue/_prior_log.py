@@ -13,9 +13,6 @@ def log(prior: _Prior) -> _Prior:
     Arguments:
         prior: another _Prior object to transform
     """
-    if not isinstance(prior, _Prior):
-        raise TypeError(prior)
-
     between_func = _log_between(prior.between_func)
     return _Prior(prior.args, between_func)
 

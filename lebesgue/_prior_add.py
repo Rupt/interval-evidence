@@ -14,9 +14,6 @@ def add(x: float, prior: _Prior) -> _Prior:
         prior: another _Prior object to transform
     """
     x = float(x)
-    if not isinstance(prior, _Prior):
-        raise TypeError(prior)
-
     args = (x, prior.args)
     between_func = _add_between(prior.between_func)
     return _Prior(args, between_func)

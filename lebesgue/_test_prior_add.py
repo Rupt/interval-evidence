@@ -23,6 +23,8 @@ def test_args():
     assert _testing.raises(lambda: _prior_add.add(None, prior), TypeError)
 
     not_prior = _likelihood_poisson.poisson(3)
-    assert _testing.raises(lambda: _prior_add.add(3, not_prior), TypeError)
+    assert _testing.raises(
+        lambda: _prior_add.add(3, not_prior), AttributeError
+    )
 
     assert not _testing.raises(lambda: _prior_add.add(0.0, prior))

@@ -1,11 +1,11 @@
 import numpy
 
-from . import _bayes, _likelihood_poisson, _prior_normal, _testing
+from . import _bayes, _testing
+from .likelihood import poisson
+from .prior import log_normal
 
 
 def test_args_likelihood():
-    assert _testing.raises(lambda: _bayes._Likelihood(0, None), TypeError)
-
     likelihood = _bayes._Likelihood(None, lambda args, ratio: (0.0, 0.0))
 
     assert _testing.raises(lambda: likelihood.interval(None), TypeError)
@@ -17,8 +17,6 @@ def test_args_likelihood():
 
 
 def test_args_prior():
-    assert _testing.raises(lambda: _bayes._Prior(0, None), TypeError)
-
     prior = _bayes._Prior(None, lambda args, lo, hi: 0.0)
 
     assert _testing.raises(lambda: prior.between(None, 0.0), TypeError)
@@ -28,14 +26,19 @@ def test_args_prior():
 
 
 def test_args_model():
-    likelihood = _likelihood_poisson.poisson(0)
-    prior = _prior_normal.log_normal(0, 1)
+    likelihood = poisson(0)
+    prior = log_normal(0, 1)
+    model = _bayes.Model(likelihood, prior)
 
-    assert _testing.raises(lambda: _bayes.Model(None, None), TypeError)
-    assert _testing.raises(lambda: _bayes.Model(None, prior), TypeError)
-    assert _testing.raises(lambda: _bayes.Model(likelihood, None), TypeError)
-    assert _testing.raises(lambda: _bayes.Model(prior, likelihood), TypeError)
     assert not _testing.raises(lambda: _bayes.Model(likelihood, prior))
+
+    assert _testing.raises(lambda: model.mass(None), TypeError)
+    assert _testing.raises(lambda: model.mass(1.1), ValueError)
+    assert _testing.raises(lambda: model.mass(-0.1), ValueError)
+
+    assert _testing.raises(lambda: model.integrate(rtol=None), TypeError)
+    assert _testing.raises(lambda: model.integrate(rtol=0), ValueError)
+    assert not _testing.raises(lambda: model.integrate())
 
 
 def test_monotonic():
@@ -48,10 +51,7 @@ def test_monotonic():
         sigma = rng.exponential() + 1e-3
         n = rng.geometric(0.1)
 
-        model = _bayes.Model(
-            _likelihood_poisson.poisson(n),
-            _prior_normal.log_normal(mu, sigma),
-        )
+        model = _bayes.Model(poisson(n), log_normal(mu, sigma))
 
         mlast = model.mass(xs[0])
         for xi in xs[1:]:
@@ -61,8 +61,8 @@ def test_monotonic():
 
 
 def test_model_mass():
-    likelihood = _likelihood_poisson.poisson(0)
-    prior = _prior_normal.log_normal(0, 1)
+    likelihood = poisson(0)
+    prior = log_normal(0, 1)
 
     mass = _bayes._model_mass(likelihood.interval_func, prior.between_func)
 

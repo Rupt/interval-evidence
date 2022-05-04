@@ -4,13 +4,15 @@ Bound integrals by numerical quadrature.
 Appropriate functions are weakly decreasing on the unit interval, as are prior
 masses above likelihood ratios.
 """
+from collections.abc import Callable
+
 import numba
 import numpy
 
 
-def generate(func):
+def generate(func: Callable) -> Callable:
     """
-    Return callable integrators for func on [0, 1].
+    Return a function to integrate func(args, x) on [0, 1].
 
     The result can be compiled and cached at a given location like so:
 
@@ -22,7 +24,7 @@ def generate(func):
             return _quad_bound_func(args, rtol)
 
     Arguments:
-        func: numba.float64(Any, numba.float64)
+        func: numba.float64(args: Any, rtol:numba.float64)
 
     """
 

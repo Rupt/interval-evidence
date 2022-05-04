@@ -8,6 +8,7 @@ import lebesgue._test_likelihood_poisson
 import lebesgue._test_models
 import lebesgue._test_prior_normal
 import lebesgue._test_prior_plus
+import lebesgue._test_prior_trunc
 import lebesgue._test_quad_bound
 
 
@@ -22,13 +23,11 @@ def main():
         lebesgue._test_bayes.test_model_mass,
         # c
         lebesgue._test_cephes_ndtr.test_ndtr,
-        lebesgue._test_cephes_ndtr.test_signatures,
         # l
         lebesgue._test_likelihood_poisson.test_args,
         lebesgue._test_likelihood_poisson.test_poisson_interval,
         lebesgue._test_likelihood_poisson.test_invg_lo,
         lebesgue._test_likelihood_poisson.test_invg_hi,
-        lebesgue._test_likelihood_poisson.test_signatures,
         # m
         lebesgue._test_models.test_poisson_log_normal,
         lebesgue._test_models.test_poisson_plus_log_normal,
@@ -38,6 +37,8 @@ def main():
         lebesgue._test_prior_normal.test_args,
         lebesgue._test_prior_plus.test_shift,
         lebesgue._test_prior_plus.test_args,
+        lebesgue._test_prior_trunc.test_values,
+        lebesgue._test_prior_trunc.test_args,
         # q
         lebesgue._test_quad_bound.test_fpow,
     ]

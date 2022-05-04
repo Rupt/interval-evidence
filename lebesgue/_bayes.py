@@ -1,4 +1,5 @@
 """Manage likelihoods and priors."""
+import functools
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -116,12 +117,19 @@ def _integrate_func(interval_func, between_func):
     if cached is not None:
         return cached
 
+    mass = _model_mass(interval_func, between_func)
+
+    integrate_func = _quad_bound.generate(mass)
+    _integrate_func_cache[key] = integrate_func
+    return integrate_func
+
+
+@functools.lru_cache(maxsize=None)
+def _model_mass(interval_func, between_func):
     @numba.njit
     def _mass(args, ratio):
         interval_args, between_args = args
         lo, hi = interval_func(interval_args, ratio)
         return between_func(between_args, lo, hi)
 
-    integrate_func = _quad_bound.generate(_mass)
-    _integrate_func_cache[key] = integrate_func
-    return integrate_func
+    return _mass

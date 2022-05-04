@@ -28,8 +28,8 @@ def test_args_prior():
 
 
 def test_args_model():
-    prior = _prior_log_normal.log_normal(0, 1)
     likelihood = _likelihood_poisson.poisson(0)
+    prior = _prior_log_normal.log_normal(0, 1)
 
     assert _testing.raises(lambda: _bayes.Model(None, None), TypeError)
     assert _testing.raises(lambda: _bayes.Model(None, prior), TypeError)
@@ -58,3 +58,20 @@ def test_monotonic():
             mi = model.mass(xi)
             assert mlast >= mi, (mlast, xi, mi)
             mlast = mi
+
+
+def test_model_mass():
+    likelihood = _likelihood_poisson.poisson(0)
+    prior = _prior_log_normal.log_normal(0, 1)
+
+    mass = _bayes._model_mass(likelihood._interval_func, prior._between_func)
+
+    # caching works
+    assert mass is _bayes._model_mass(likelihood._interval_func, prior._between_func)
+
+    model = _bayes.Model(likelihood, prior)
+
+    args = (likelihood._args, prior._args)
+
+    for x in numpy.linspace(0, 1, 14):
+        assert model.mass(x) == mass(args, x)

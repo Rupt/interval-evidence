@@ -19,6 +19,7 @@ def main():
         lebesgue._test_bayes.test_args_prior,
         lebesgue._test_bayes.test_args_model,
         lebesgue._test_bayes.test_monotonic,
+        lebesgue._test_bayes.test_model_mass,
         # c
         lebesgue._test_cephes_ndtr.test_ndtr,
         lebesgue._test_cephes_ndtr.test_signatures,

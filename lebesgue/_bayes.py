@@ -98,27 +98,13 @@ class Model:
         )
 
         args = (self.likelihood._args, self.prior._args)
-        return _integrate_func(mass)(args, rtol)
+        integrate_func = _quad_bound.generate(mass)
+        return integrate_func(args, rtol)
 
     def mass(self, ratio: float) -> float:
         """Return the prior mass inside the interval at likelihood ratio."""
         lo, hi = self.likelihood.interval(ratio)
         return self.prior.between(lo, hi)
-
-
-# caching reduces recompilation, which is expensive
-_integrate_func_cache = {}
-
-
-def _integrate_func(mass_func):
-    cached = _integrate_func_cache.get(mass_func)
-
-    if cached is not None:
-        return cached
-
-    integrate_func = _quad_bound.generate(mass_func)
-    _integrate_func_cache[mass_func] = integrate_func
-    return integrate_func
 
 
 @functools.lru_cache(maxsize=None)

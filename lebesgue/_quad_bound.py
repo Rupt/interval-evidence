@@ -9,25 +9,45 @@ from collections.abc import Callable
 import numba
 import numpy
 
+_generate_cache = {}
+
 
 def generate(func: Callable) -> Callable:
     """
     Return a function to integrate func(args, x) on [0, 1].
 
-    The result can be compiled and cached at a given location like so:
+    Arguments:
+        func: numba.float64(args: Any, x:numba.float64)
+            !! assumed to be non-increasing with x and to return values in [0, 1] !!
 
-        _quad_bound_func = _quad_bound.generate(func1)
+    compilation can be slow
+
+    cache with numba to reduce repeat compilations like so:
+
+    ```
+        # at a top level location
+        _quad_bound_func = _quad_bound.generate(func)
 
 
         @numba.njit(cache=True)
         def quad_bound_func(args, rtol):
             return _quad_bound_func(args, rtol)
 
-    Arguments:
-        func: numba.float64(args: Any, rtol:numba.float64)
+
+        _quad_bound._generate_cache[func] = quad_bound_func
+    ```
 
     """
+    cached = _generate_cache.get(func)
+    if cached is not None:
+        return cached
 
+    integrate_func = _generate(func)
+    _generate_cache[func] = integrate_func
+    return integrate_func
+
+
+def _generate(func):
     @numba.njit
     def _quad_bound(args, rtol):
         # 2 ** -1022 is the smallest positive normal float

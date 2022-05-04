@@ -34,10 +34,13 @@ def _trunc_between(between_func):
 
         norm = between_func(args_inner, lo_trunc, hi_trunc)
 
+        lo_new = max(lo, lo_trunc)
+        hi_new = min(hi, hi_trunc)
+
+        if not lo_new < hi_new:
+            return 0.0
+
         # beware div0 errors
-        return (
-            between_func(args_inner, max(lo, lo_trunc), min(hi, hi_trunc))
-            / norm
-        )
+        return between_func(args_inner, lo_new, hi_new) / norm
 
     return between

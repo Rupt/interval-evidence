@@ -1,10 +1,11 @@
 import numpy
 
-from . import _prior_normal, _prior_trunc, _testing
+from . import _testing
+from .prior import normal, trunc
 
 
 def test_values():
-    prior = _prior_normal.normal(0, 1)
+    prior = normal(0, 1)
 
     pairs = [
         (-1e6, 1e6),
@@ -16,7 +17,7 @@ def test_values():
     ]
 
     for lo, hi in pairs:
-        trunc_prior = _prior_trunc.trunc(lo, hi, prior)
+        trunc_prior = trunc(lo, hi, prior)
 
         # full interval is normalized
         assert trunc_prior.between(-numpy.inf, numpy.inf) == 1
@@ -31,14 +32,15 @@ def test_values():
         chk = trunc_prior.between(lo_inside, hi_inside)
         assert ref == chk, (ref, chk)
 
+    # a case we previously failed with negative between
+    trunc_prior = trunc(-2.5, -0.5, normal(-1, 0.5))
+    chk = trunc_prior.between(1, 5)
+    assert chk >= 0, chk
+
 
 def test_args():
-    prior = _prior_normal.normal(0, 1)
+    prior = normal(0, 1)
 
-    assert _testing.raises(lambda: _prior_trunc.trunc(1, 0, prior), ValueError)
-    assert _testing.raises(
-        lambda: _prior_trunc.trunc(1, None, prior), TypeError
-    )
-    assert _testing.raises(
-        lambda: _prior_trunc.trunc(None, 1, prior), TypeError
-    )
+    assert _testing.raises(lambda: trunc(1, 0, prior), ValueError)
+    assert _testing.raises(lambda: trunc(1, None, prior), TypeError)
+    assert _testing.raises(lambda: trunc(None, 1, prior), TypeError)

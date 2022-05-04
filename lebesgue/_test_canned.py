@@ -33,10 +33,9 @@ def test_poisson_trunc_normal():
     shifts = [0, 0.2]
 
     for n, mu, sigma, shift in itertools.product(ns, mus, sigmas, shifts):
-        # TODO seeing non-termination here; diagnose / fix
-        # lo = mu - 3 * sigma
-        # hi = mu + 3 * sigma
-        model = poisson_trunc_normal(n, mu, sigma, shift=shift)
+        lo = mu - 3 * sigma
+        hi = mu + 3 * sigma
+        model = poisson_trunc_normal(n, mu, sigma, shift=shift, lo=lo, hi=hi)
 
         rtol = 1e-2
         zlo, zhi = model.integrate(rtol=rtol)

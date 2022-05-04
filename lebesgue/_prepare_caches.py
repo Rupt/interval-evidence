@@ -6,49 +6,35 @@ The odd layout here enables numba's caching.
 """
 import numba
 
-# TODO fix black isort fight here
-from . import (
-    _bayes,
-    _likelihood_poisson,
-    _prior_log_normal,
-    _prior_plus,
-    _quad_bound,
-)
+from . import _quad_bound
+from ._bayes import Model
+from ._likelihood_poisson import poisson
+from ._prior_log_normal import log_normal
+from ._prior_plus import plus
 
-example_likelihood_poisson = _likelihood_poisson.poisson(0)
-example_prior_log_normal = _prior_log_normal.log_normal(0.0, 1.0)
-example_prior_plus_log_normal = _prior_plus.plus(0.0, example_prior_log_normal)
+# poisson | log normal
+model = Model(poisson(0), log_normal(0, 1))
 
-
-# poisson x log_normal
-mass_func = _bayes._model_mass(
-    example_likelihood_poisson.interval_func,
-    example_prior_log_normal.between_func,
-)
-
-_poisson_log_normal = _quad_bound.generate(mass_func)
+poisson_log_normal_integrate = model.integrate_func
 
 
 @numba.njit(cache=True)
 def poisson_log_normal(args, ratio):
-    return _poisson_log_normal(args, ratio)
+    return poisson_log_normal_integrate(args, ratio)
 
 
-_quad_bound._generate_cache[mass_func] = poisson_log_normal
+_quad_bound._generate_cache[model.mass_func] = poisson_log_normal
 
 
-# poisson x plus(log_normal)
-mass_func = _bayes._model_mass(
-    example_likelihood_poisson.interval_func,
-    example_prior_plus_log_normal.between_func,
-)
+# poisson | plus log normal
+model = Model(poisson(0), plus(1, log_normal(0, 1)))
 
-_poisson_plus_log_normal = _quad_bound.generate(mass_func)
+poisson_plus_log_normal_integrate = model.integrate_func
 
 
 @numba.njit(cache=True)
 def poisson_plus_log_normal(args, ratio):
-    return _poisson_plus_log_normal(args, ratio)
+    return poisson_plus_log_normal_integrate(args, ratio)
 
 
-_quad_bound._generate_cache[mass_func] = poisson_plus_log_normal
+_quad_bound._generate_cache[model.mass_func] = poisson_plus_log_normal

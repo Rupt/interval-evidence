@@ -1,0 +1,39 @@
+""" Transform a prior to apply in log space. """
+import functools
+
+import numba
+import numpy
+
+from ._bayes import _Prior
+
+
+def log(prior: _Prior) -> _Prior:
+    """Return a Prior for `prior' applied in log space.
+
+    Arguments:
+        prior: another _Prior object to transform
+    """
+    if not isinstance(prior, _Prior):
+        raise TypeError(prior)
+
+    between_func = _log_between(prior.between_func)
+    return _Prior(prior.args, between_func)
+
+
+@functools.lru_cache(maxsize=None)
+def _log_between(between_func):
+    @numba.njit
+    def _between(args, lo, hi):
+        if lo > 0:
+            lo_new = numpy.log(lo)
+        else:
+            lo_new = -numpy.inf
+
+        if hi > 0:
+            hi_new = numpy.log(hi)
+        else:
+            hi_new = -numpy.inf
+
+        return between_func(args, lo_new, hi_new)
+
+    return _between

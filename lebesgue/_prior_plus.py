@@ -1,4 +1,4 @@
-""" The "plus" prior shifts another prior by a constant. """
+""" Shift a prior by a constant. """
 import functools
 
 import numba
@@ -19,11 +19,7 @@ def plus(x: float, prior: _Prior) -> _Prior:
 
     args = (x, prior.args)
     between_func = _plus_between(prior.between_func)
-
     return _Prior(args, between_func)
-
-
-# caching reduces recompilation, which is expecsive
 
 
 @functools.lru_cache(maxsize=None)

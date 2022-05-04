@@ -9,7 +9,7 @@ import numba
 from . import _quad_bound
 from ._bayes import Model
 from ._likelihood_poisson import poisson
-from ._prior_log_normal import log_normal
+from ._prior_normal import log_normal
 from ._prior_plus import plus
 
 # poisson | log normal

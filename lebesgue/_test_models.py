@@ -3,7 +3,7 @@ import itertools
 
 import scipy.integrate
 
-from . import _bayes, _likelihood_poisson, _prior_log_normal, _prior_plus
+from . import _bayes, _likelihood_poisson, _prior_normal, _prior_plus
 
 
 def test_poisson_log_normal():
@@ -14,7 +14,7 @@ def test_poisson_log_normal():
     for n, mu, sigma in itertools.product(ns, mus, sigmas):
         model = _bayes.Model(
             _likelihood_poisson.poisson(n),
-            _prior_log_normal.log_normal(mu, sigma),
+            _prior_normal.log_normal(mu, sigma),
         )
 
         rtol = 1e-2
@@ -39,7 +39,7 @@ def test_poisson_plus_log_normal():
             _likelihood_poisson.poisson(n),
             _prior_plus.plus(
                 shift,
-                _prior_log_normal.log_normal(mu, 1.0),
+                _prior_normal.log_normal(mu, 1.0),
             ),
         )
 

@@ -92,13 +92,13 @@ class Model:
         # small tol is slow and unlikely to be useful
         assert rtol >= 1e-7, rtol
 
-        args = (self.likelihood._args, self.prior._args)
-        integrate_func = _integrate_func(
+        mass = _model_mass(
             self.likelihood._interval_func,
             self.prior._between_func,
         )
 
-        return integrate_func(args, rtol)
+        args = (self.likelihood._args, self.prior._args)
+        return _integrate_func(mass)(args, rtol)
 
     def mass(self, ratio: float) -> float:
         """Return the prior mass inside the interval at likelihood ratio."""
@@ -110,17 +110,14 @@ class Model:
 _integrate_func_cache = {}
 
 
-def _integrate_func(interval_func, between_func):
-    key = (interval_func, between_func)
-    cached = _integrate_func_cache.get(key)
+def _integrate_func(mass_func):
+    cached = _integrate_func_cache.get(mass_func)
 
     if cached is not None:
         return cached
 
-    mass = _model_mass(interval_func, between_func)
-
-    integrate_func = _quad_bound.generate(mass)
-    _integrate_func_cache[key] = integrate_func
+    integrate_func = _quad_bound.generate(mass_func)
+    _integrate_func_cache[mass_func] = integrate_func
     return integrate_func
 
 

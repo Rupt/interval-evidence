@@ -18,23 +18,23 @@ def generate(func: Callable) -> Callable:
 
     Arguments:
         func: numba.float64(args: Any, x:numba.float64)
-            !! assumed to be non-increasing with x and to return values in [0, 1] !!
+            assumed to be non-increasing with x and to return values in [0, 1]
 
     compilation can be slow
 
     cache with numba to reduce repeat compilations like so:
 
     ```
-        # at a top level location
-        _quad_bound_func = _quad_bound.generate(func)
+    # at a top level location
+    _quad_bound_func = _quad_bound.generate(func)
 
 
-        @numba.njit(cache=True)
-        def quad_bound_func(args, rtol):
-            return _quad_bound_func(args, rtol)
+    @numba.njit(cache=True)
+    def quad_bound_func(args, rtol):
+        return _quad_bound_func(args, rtol)
 
 
-        _quad_bound._generate_cache[func] = quad_bound_func
+    _quad_bound._generate_cache[func] = quad_bound_func
     ```
 
     """

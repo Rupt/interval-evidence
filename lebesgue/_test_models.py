@@ -22,7 +22,9 @@ def test_poisson_log_normal():
         assert zhi - zlo <= rtol * zlo
 
         # quad comes with an absolute error estimate; be generous with it
-        chk, chk_err = scipy.integrate.quad(model.mass, 0, 1, epsabs=0, epsrel=1e-8)
+        chk, chk_err = scipy.integrate.quad(
+            model.mass, 0, 1, epsabs=0, epsrel=1e-8
+        )
         assert zlo <= chk + chk_err
         assert zhi >= chk - chk_err
 
@@ -46,6 +48,8 @@ def test_poisson_plus_log_normal():
         assert zhi - zlo <= rtol * zlo
 
         # quad comes with an absolute error estimate; be generous with it
-        chk, chk_err = scipy.integrate.quad(model.mass, 0, 1, epsabs=0, epsrel=1e-8)
+        chk, chk_err = scipy.integrate.quad(
+            model.mass, 0, 1, epsabs=0, epsrel=1e-8
+        )
         assert zlo <= chk + chk_err
         assert zhi >= chk - chk_err

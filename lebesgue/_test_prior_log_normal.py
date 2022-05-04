@@ -36,9 +36,15 @@ def test_between():
 
 
 def test_args():
-    assert _testing.raises(lambda: _prior_log_normal.log_normal(None, 1), TypeError)
-    assert _testing.raises(lambda: _prior_log_normal.log_normal(1, None), TypeError)
-    assert _testing.raises(lambda: _prior_log_normal.log_normal(2, -1), ValueError)
+    assert _testing.raises(
+        lambda: _prior_log_normal.log_normal(None, 1), TypeError
+    )
+    assert _testing.raises(
+        lambda: _prior_log_normal.log_normal(1, None), TypeError
+    )
+    assert _testing.raises(
+        lambda: _prior_log_normal.log_normal(2, -1), ValueError
+    )
     assert not _testing.raises(lambda: _prior_log_normal.log_normal(3, 0.1))
 
 

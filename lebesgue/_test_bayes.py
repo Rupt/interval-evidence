@@ -67,7 +67,9 @@ def test_model_mass():
     mass = _bayes._model_mass(likelihood.interval_func, prior.between_func)
 
     # caching works
-    assert mass is _bayes._model_mass(likelihood.interval_func, prior.between_func)
+    assert mass is _bayes._model_mass(
+        likelihood.interval_func, prior.between_func
+    )
 
     model = _bayes.Model(likelihood, prior)
 

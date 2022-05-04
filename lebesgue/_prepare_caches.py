@@ -7,7 +7,13 @@ The odd layout here enables numba's caching.
 import numba
 
 # TODO fix black isort fight here
-from . import _bayes, _likelihood_poisson, _prior_log_normal, _prior_plus, _quad_bound
+from . import (
+    _bayes,
+    _likelihood_poisson,
+    _prior_log_normal,
+    _prior_plus,
+    _quad_bound,
+)
 
 example_likelihood_poisson = _likelihood_poisson.poisson(0)
 example_prior_log_normal = _prior_log_normal.log_normal(0.0, 1.0)

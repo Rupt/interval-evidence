@@ -57,11 +57,11 @@ class _Prior:
         return self.between_func(self.args, lo, hi)
 
 
-@dataclass(frozen=True, init=False)
+@dataclass(frozen=True)
 class Model:
     """A Likelihood--Prior pair.
 
-    Arguments:
+    Fields:
         likelihood: observed data component; gives intervals above ratios
         prior: distribution of probability; gives proportions between limits
 
@@ -70,23 +70,22 @@ class Model:
     likelihood: _Likelihood
     prior: _Prior
 
-    mass_func: Callable
-    integrate_func: Callable
+    def __post_init__(self):
+        if not isinstance(self.likelihood, _Likelihood):
+            raise TypeError(self.likelihood)
 
-    def __init__(self, likelihood: _Likelihood, prior: _Prior) -> None:
-        if not isinstance(likelihood, _Likelihood):
-            raise TypeError(likelihood)
+        if not isinstance(self.prior, _Prior):
+            raise TypeError(self.prior)
 
-        if not isinstance(prior, _Prior):
-            raise TypeError(prior)
+    @property
+    def mass_func(self) -> Callable:
+        interval_func = self.likelihood.interval_func
+        between_func = self.prior.between_func
+        return _model_mass(interval_func, between_func)
 
-        mass_func = _model_mass(likelihood.interval_func, prior.between_func)
-        integrate_func = _quad_bound.integrator(mass_func)
-
-        object.__setattr__(self, "likelihood", likelihood)
-        object.__setattr__(self, "prior", prior)
-        object.__setattr__(self, "mass_func", mass_func)
-        object.__setattr__(self, "integrate_func", integrate_func)
+    @property
+    def integrate_func(self) -> Callable:
+        return _quad_bound.integrator(self.mass_func)
 
     def integrate(self, *, rtol: float = 1e-2) -> (float, float):
         """Return numerical bounds on the integral of likelihood over prior.

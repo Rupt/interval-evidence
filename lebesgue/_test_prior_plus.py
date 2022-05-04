@@ -1,4 +1,3 @@
-""" The "plus" prior shifts another prior by a constant. """
 import numpy
 
 from . import _likelihood_poisson, _prior_normal, _prior_plus, _testing

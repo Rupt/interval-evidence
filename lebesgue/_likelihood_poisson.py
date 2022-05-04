@@ -191,7 +191,8 @@ def _invg_hi(y):
 
 
 @numba.njit(numba.typeof((0.0, 0.0))(numba.int64, numba.float64), cache=True)
-def _poisson_interval(n, r):
+def _poisson_interval(n, ratio):
+    # r = ratio
     # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))
     #        = -n * (x / n - 1 - log(x / n))
     # => -log(r) / n = (x / n) - 1 - log(x / n) = g(x / n)
@@ -199,9 +200,12 @@ def _poisson_interval(n, r):
     if n < 0:
         return numpy.nan, numpy.nan
 
-    if n == 0 or r == 0.0:
-        # r = e^-x => x = -log(r)
-        return 0.0, -numpy.log(r)
+    if ratio == 0:
+        return 0.0, numpy.inf
 
-    y = -numpy.log(r) / n
+    if n == 0:
+        # r = e^-x => x = -log(r)
+        return 0.0, -numpy.log(ratio)
+
+    y = -numpy.log(ratio) / n
     return n * _invg_lo(y), n * _invg_hi(y)

@@ -1,4 +1,3 @@
-import numba
 import numpy
 import scipy.special
 
@@ -15,12 +14,3 @@ def test_ndtr():
 
     for x, y_ref in zip(x, scipy.special.ndtr(x)):
         assert _cephes_ndtr.ndtr(x) == y_ref
-
-
-def test_signatures():
-    """Verify that only float arguments are compiled for."""
-    # call with integers
-    _cephes_ndtr.ndtr(0)
-
-    # check only numba.float64 signatures are compiled
-    assert _cephes_ndtr.ndtr.signatures == [(numba.numba.float64,)]

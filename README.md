@@ -23,6 +23,8 @@ Run tests
 ```bash
 make test
 
+NUMBA_DISABLE_JIT=1 make test
+
 ```
 
 

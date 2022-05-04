@@ -1,4 +1,3 @@
-import numba
 import numpy
 
 from . import _likelihood_poisson, _testing
@@ -58,13 +57,6 @@ def test_invg_hi():
         y_chk = gfunc(x_chk)
 
         assert ulp_min(x_ref, y_ref, x_chk, y_chk) <= 1
-
-
-def test_signatures():
-    _likelihood_poisson._poisson_interval(1.0, 1)
-    assert _likelihood_poisson._poisson_interval.signatures == [
-        (numba.int64, numba.float64)
-    ]
 
 
 # utilities

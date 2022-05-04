@@ -1,4 +1,3 @@
-"""Define tests for full bayes models."""
 import itertools
 
 import scipy.integrate

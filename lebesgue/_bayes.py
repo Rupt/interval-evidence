@@ -78,6 +78,10 @@ class Model:
             raise TypeError(self.prior)
 
     @property
+    def args(self) -> tuple:
+        return (self.likelihood.args, self.prior.args)
+
+    @property
     def mass_func(self) -> Callable:
         interval_func = self.likelihood.interval_func
         between_func = self.prior.between_func
@@ -102,8 +106,7 @@ class Model:
         # small tol is slow and unlikely to be useful
         assert rtol >= 1e-7, rtol
 
-        args = (self.likelihood.args, self.prior.args)
-        return self.integrate_func(args, rtol)
+        return self.integrate_func(self.args, rtol)
 
     def mass(self, ratio: float) -> float:
         """Return the prior mass inside the interval at likelihood ratio."""

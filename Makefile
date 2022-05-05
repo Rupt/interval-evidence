@@ -12,8 +12,8 @@ help:
 
 .PHONY: test
 test:
-	python test.py
 	NUMBA_DISABLE_JIT=1 python test.py
+	python test.py
 
 
 .PHONY: bench

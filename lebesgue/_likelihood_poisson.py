@@ -100,9 +100,6 @@ we define a distance function
 to allow either to be accurate. Numerical experiments find D <= 2 for the lo 
 half and D <= 1 for the hi half.
 
-
--- Rupert Tombs 2022
-
 """
 # inverse order for numba declarations
 

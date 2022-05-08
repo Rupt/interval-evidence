@@ -11,7 +11,7 @@ def test_args():
     assert not _test.raises(lambda: _likelihood_poisson.poisson(1))
 
 
-def test_poisson_interval():
+def test_interval():
     rng = numpy.random.Generator(numpy.random.Philox(6))
 
     xs = rng.normal(size=10)

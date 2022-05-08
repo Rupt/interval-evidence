@@ -1,18 +1,14 @@
 import numpy
 
-from . import _likelihood_poisson, _testing
+from . import _likelihood_poisson, _test
 
 
 def test_args():
-    assert _testing.raises(
-        lambda: _likelihood_poisson.poisson(None), TypeError
-    )
-    assert _testing.raises(lambda: _likelihood_poisson.poisson(-1), ValueError)
-    assert _testing.raises(
-        lambda: _likelihood_poisson.poisson(0.5), ValueError
-    )
-    assert not _testing.raises(lambda: _likelihood_poisson.poisson(0))
-    assert not _testing.raises(lambda: _likelihood_poisson.poisson(1))
+    assert _test.raises(lambda: _likelihood_poisson.poisson(None), TypeError)
+    assert _test.raises(lambda: _likelihood_poisson.poisson(-1), ValueError)
+    assert _test.raises(lambda: _likelihood_poisson.poisson(0.5), ValueError)
+    assert not _test.raises(lambda: _likelihood_poisson.poisson(0))
+    assert not _test.raises(lambda: _likelihood_poisson.poisson(1))
 
 
 def test_poisson_interval():

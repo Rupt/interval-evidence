@@ -1,7 +1,6 @@
 import sys
 import traceback
 
-import lebesgue
 import lebesgue._test_bayes
 import lebesgue._test_cache
 import lebesgue._test_canned

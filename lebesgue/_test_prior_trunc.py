@@ -1,6 +1,6 @@
 import numpy
 
-from . import _testing
+from . import _test
 from .prior import normal, trunc
 
 
@@ -41,6 +41,6 @@ def test_values():
 def test_args():
     prior = normal(0, 1)
 
-    assert _testing.raises(lambda: trunc(1, 0, prior), ValueError)
-    assert _testing.raises(lambda: trunc(1, None, prior), TypeError)
-    assert _testing.raises(lambda: trunc(None, 1, prior), TypeError)
+    assert _test.raises(lambda: trunc(1, 0, prior), ValueError)
+    assert _test.raises(lambda: trunc(1, None, prior), TypeError)
+    assert _test.raises(lambda: trunc(None, 1, prior), TypeError)

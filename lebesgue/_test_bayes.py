@@ -1,6 +1,6 @@
 import numpy
 
-from . import _bayes, _testing
+from . import _bayes, _test
 from .likelihood import poisson
 from .prior import log_normal
 
@@ -8,21 +8,21 @@ from .prior import log_normal
 def test_args_likelihood():
     likelihood = _bayes._Likelihood(None, lambda args, ratio: (0.0, 0.0))
 
-    assert _testing.raises(lambda: likelihood.interval(None), TypeError)
-    assert _testing.raises(lambda: likelihood.interval(1.1), ValueError)
-    assert _testing.raises(lambda: likelihood.interval(-0.1), ValueError)
-    assert not _testing.raises(lambda: likelihood.interval(1.0))
-    assert not _testing.raises(lambda: likelihood.interval(0.0))
-    assert not _testing.raises(lambda: likelihood.interval(0.3))
+    assert _test.raises(lambda: likelihood.interval(None), TypeError)
+    assert _test.raises(lambda: likelihood.interval(1.1), ValueError)
+    assert _test.raises(lambda: likelihood.interval(-0.1), ValueError)
+    assert not _test.raises(lambda: likelihood.interval(1.0))
+    assert not _test.raises(lambda: likelihood.interval(0.0))
+    assert not _test.raises(lambda: likelihood.interval(0.3))
 
 
 def test_args_prior():
     prior = _bayes._Prior(None, lambda args, lo, hi: 0.0)
 
-    assert _testing.raises(lambda: prior.between(None, 0.0), TypeError)
-    assert _testing.raises(lambda: prior.between(0.0, -1.0), ValueError)
-    assert not _testing.raises(lambda: prior.between(1.0, 1.0))
-    assert not _testing.raises(lambda: prior.between(1.0, 2.0))
+    assert _test.raises(lambda: prior.between(None, 0.0), TypeError)
+    assert _test.raises(lambda: prior.between(0.0, -1.0), ValueError)
+    assert not _test.raises(lambda: prior.between(1.0, 1.0))
+    assert not _test.raises(lambda: prior.between(1.0, 2.0))
 
 
 def test_args_model():
@@ -30,15 +30,15 @@ def test_args_model():
     prior = log_normal(0, 1)
     model = _bayes.Model(likelihood, prior)
 
-    assert not _testing.raises(lambda: _bayes.Model(likelihood, prior))
+    assert not _test.raises(lambda: _bayes.Model(likelihood, prior))
 
-    assert _testing.raises(lambda: model.mass(None), TypeError)
-    assert _testing.raises(lambda: model.mass(1.1), ValueError)
-    assert _testing.raises(lambda: model.mass(-0.1), ValueError)
+    assert _test.raises(lambda: model.mass(None), TypeError)
+    assert _test.raises(lambda: model.mass(1.1), ValueError)
+    assert _test.raises(lambda: model.mass(-0.1), ValueError)
 
-    assert _testing.raises(lambda: model.integrate(rtol=None), TypeError)
-    assert _testing.raises(lambda: model.integrate(rtol=0), ValueError)
-    assert not _testing.raises(lambda: model.integrate())
+    assert _test.raises(lambda: model.integrate(rtol=None), TypeError)
+    assert _test.raises(lambda: model.integrate(rtol=0), ValueError)
+    assert not _test.raises(lambda: model.integrate())
 
 
 def test_monotonic():

@@ -1,7 +1,7 @@
 import numpy
 import scipy.special
 
-from . import _prior_normal, _testing
+from . import _prior_normal, _test
 from .prior import log_normal, normal
 
 
@@ -42,15 +42,15 @@ def test_between():
 
 
 def test_args():
-    assert _testing.raises(lambda: normal(None, 1), TypeError)
-    assert _testing.raises(lambda: normal(1, None), TypeError)
-    assert _testing.raises(lambda: normal(2, -1), ValueError)
-    assert not _testing.raises(lambda: normal(3, 0.1))
+    assert _test.raises(lambda: normal(None, 1), TypeError)
+    assert _test.raises(lambda: normal(1, None), TypeError)
+    assert _test.raises(lambda: normal(2, -1), ValueError)
+    assert not _test.raises(lambda: normal(3, 0.1))
 
-    assert _testing.raises(lambda: log_normal(None, 1), TypeError)
-    assert _testing.raises(lambda: log_normal(1, None), TypeError)
-    assert _testing.raises(lambda: log_normal(2, -1), ValueError)
-    assert not _testing.raises(lambda: log_normal(3, 0.1))
+    assert _test.raises(lambda: log_normal(None, 1), TypeError)
+    assert _test.raises(lambda: log_normal(1, None), TypeError)
+    assert _test.raises(lambda: log_normal(2, -1), ValueError)
+    assert not _test.raises(lambda: log_normal(3, 0.1))
 
 
 # utilities

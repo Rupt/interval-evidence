@@ -1,14 +1,16 @@
 import numpy
 
-from . import _likelihood_poisson, _test
+from .likelihood import poisson
+from ._likelihood_poisson import _invg_lo, _invg_hi
+from ._test import raises
 
 
 def test_args():
-    assert _test.raises(lambda: _likelihood_poisson.poisson(None), TypeError)
-    assert _test.raises(lambda: _likelihood_poisson.poisson(-1), ValueError)
-    assert _test.raises(lambda: _likelihood_poisson.poisson(0.5), ValueError)
-    assert not _test.raises(lambda: _likelihood_poisson.poisson(0))
-    assert not _test.raises(lambda: _likelihood_poisson.poisson(1))
+    assert raises(lambda: poisson(None), TypeError)
+    assert raises(lambda: poisson(-1), ValueError)
+    assert raises(lambda: poisson(0.5), ValueError)
+    assert not raises(lambda: poisson(0))
+    assert not raises(lambda: poisson(1))
 
 
 def test_interval():
@@ -18,7 +20,7 @@ def test_interval():
     ns = [0, 1, 3, 10, 100, 10_000, 1_000_000]
 
     for n in ns:
-        like = _likelihood_poisson.poisson(n)
+        like = poisson(n)
         mu = n
         sigma = 3 * n**0.5
         for x in xs:
@@ -37,7 +39,7 @@ def test_invg_lo():
     for x_ref in xs:
         y_ref = gfunc(x_ref)
 
-        x_chk = _likelihood_poisson._invg_lo(y_ref)
+        x_chk = _invg_lo(y_ref)
         y_chk = gfunc(x_chk)
 
         assert ulp_min(x_ref, y_ref, x_chk, y_chk) <= 2
@@ -49,7 +51,7 @@ def test_invg_hi():
     for x_ref in xs:
         y_ref = gfunc(x_ref)
 
-        x_chk = _likelihood_poisson._invg_hi(y_ref)
+        x_chk = _invg_hi(y_ref)
         y_chk = gfunc(x_chk)
 
         assert ulp_min(x_ref, y_ref, x_chk, y_chk) <= 1

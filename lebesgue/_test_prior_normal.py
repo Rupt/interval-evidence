@@ -1,7 +1,7 @@
 import numpy
 import scipy.special
-
-from . import _prior_normal, _test
+from ._test import raises
+from ._prior_normal import gaussian_dcdf
 from .prior import log_normal, normal
 
 
@@ -13,7 +13,7 @@ def test_gaussian_dcdf():
     xys = rng.normal(scale=3, size=(100, 2))
 
     for xi, yi in xys:
-        chk = _prior_normal.gaussian_dcdf(xi, yi)
+        chk = gaussian_dcdf(xi, yi)
         ref = gaussian_dcdf_ref(xi, yi)
         numpy.testing.assert_allclose(chk, ref, atol=1e-15)
 
@@ -42,15 +42,15 @@ def test_between():
 
 
 def test_args():
-    assert _test.raises(lambda: normal(None, 1), TypeError)
-    assert _test.raises(lambda: normal(1, None), TypeError)
-    assert _test.raises(lambda: normal(2, -1), ValueError)
-    assert not _test.raises(lambda: normal(3, 0.1))
+    assert raises(lambda: normal(None, 1), TypeError)
+    assert raises(lambda: normal(1, None), TypeError)
+    assert raises(lambda: normal(2, -1), ValueError)
+    assert not raises(lambda: normal(3, 0.1))
 
-    assert _test.raises(lambda: log_normal(None, 1), TypeError)
-    assert _test.raises(lambda: log_normal(1, None), TypeError)
-    assert _test.raises(lambda: log_normal(2, -1), ValueError)
-    assert not _test.raises(lambda: log_normal(3, 0.1))
+    assert raises(lambda: log_normal(None, 1), TypeError)
+    assert raises(lambda: log_normal(1, None), TypeError)
+    assert raises(lambda: log_normal(2, -1), ValueError)
+    assert not raises(lambda: log_normal(3, 0.1))
 
 
 # utilities

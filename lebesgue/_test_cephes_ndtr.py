@@ -1,7 +1,7 @@
 import numpy
 import scipy.special
 
-from . import _cephes_ndtr
+from ._cephes_ndtr import ndtr
 
 
 def test_ndtr():
@@ -13,4 +13,4 @@ def test_ndtr():
     x = rng.uniform(-38, 9, size=100)
 
     for x, y_ref in zip(x, scipy.special.ndtr(x)):
-        assert _cephes_ndtr.ndtr(x) == y_ref
+        assert ndtr(x) == y_ref

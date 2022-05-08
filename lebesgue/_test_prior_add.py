@@ -1,6 +1,6 @@
 import numpy
 
-from . import _test
+from ._test import raises
 from .likelihood import poisson
 from .prior import add, log_normal
 
@@ -22,9 +22,9 @@ def test_shift():
 
 def test_args():
     prior = log_normal(-4, 2.0)
-    assert _test.raises(lambda: add(None, prior), TypeError)
+    assert raises(lambda: add(None, prior), TypeError)
 
     not_prior = poisson(3)
-    assert _test.raises(lambda: add(3, not_prior), AttributeError)
+    assert raises(lambda: add(3, not_prior), AttributeError)
 
-    assert not _test.raises(lambda: add(0.0, prior))
+    assert not raises(lambda: add(0.0, prior))

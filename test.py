@@ -3,6 +3,7 @@ import traceback
 
 import lebesgue
 import lebesgue._test_bayes
+import lebesgue._test_cache
 import lebesgue._test_canned
 import lebesgue._test_cephes_ndtr
 import lebesgue._test_likelihood_poisson
@@ -22,6 +23,8 @@ def main():
         lebesgue._test_bayes.test_monotonic,
         lebesgue._test_bayes.test_model_mass,
         # c
+        lebesgue._test_cache.test_caching,
+        lebesgue._test_cache.test_put,
         lebesgue._test_canned.test_poisson_log_normal,
         lebesgue._test_canned.test_poisson_trunc_normal,
         lebesgue._test_cephes_ndtr.test_ndtr,

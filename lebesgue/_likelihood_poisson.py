@@ -271,7 +271,7 @@ def _invg_hi(y):
 # core
 
 
-@numba.njit(numba.typeof((0.0, 0.0))(numba.int64, numba.float64), cache=True)
+@numba.njit(cache=True)
 def _poisson_interval(n, ratio):
     # r = ratio
     # log(r) = log(e ** -x * x ** n / (e ** -n * n ** n))

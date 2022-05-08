@@ -3,7 +3,7 @@ import numba
 import numpy
 
 from ._bayes import Model
-from ._quad_bound import _integrator_cache
+from ._quad_bound import integrator
 from .likelihood import poisson
 from .prior import add, log_normal, normal, trunc
 
@@ -32,7 +32,7 @@ def poisson_trunc_normal(
 # this quirky layout allows numba to cache successfully
 
 
-def integrate_signature(args):
+def _integrate_signature(args):
     pair_float64 = numba.typeof((0.0, 0.0))
     typeof_args = numba.typeof(args)
     return pair_float64(typeof_args, numba.float64)
@@ -44,12 +44,10 @@ _model = poisson_log_normal(0, 0, 1)
 _poisson_log_normal_integrate_func = _model.integrate_func
 
 
-@numba.njit(integrate_signature(_model.args), cache=True)
+@integrator.put(_model.mass_func)
+@numba.njit(_integrate_signature(_model.args), cache=True)
 def _poisson_log_normal_integrate(args, ratio):
     return _poisson_log_normal_integrate_func(args, ratio)
-
-
-_integrator_cache[_model.mass_func] = _poisson_log_normal_integrate
 
 
 # poisson_trunc_normal
@@ -59,9 +57,7 @@ _model = poisson_trunc_normal(0, 0, 1)
 _poisson_trunc_normal_integrate_func = _model.integrate_func
 
 
-@numba.njit(integrate_signature(_model.args), cache=True)
+@integrator.put(_model.mass_func)
+@numba.njit(_integrate_signature(_model.args), cache=True)
 def _poisson_trunc_normal_integrate(args, ratio):
     return _poisson_trunc_normal_integrate_func(args, ratio)
-
-
-_integrator_cache[_model.mass_func] = _poisson_trunc_normal_integrate

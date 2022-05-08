@@ -3,10 +3,10 @@ import functools
 
 import numba
 
-from ._bayes import _Prior
+from ._bayes import Prior
 
 
-def trunc(lo: float, hi: float, prior: _Prior) -> _Prior:
+def trunc(lo: float, hi: float, prior: Prior) -> Prior:
     """
     Return prior truncated and normalized between lo and hi.
 
@@ -23,7 +23,7 @@ def trunc(lo: float, hi: float, prior: _Prior) -> _Prior:
 
     args = (lo, hi, prior.args)
     between_func = _trunc_between(prior.between_func)
-    return _Prior(args, between_func)
+    return Prior(args, between_func)
 
 
 @functools.lru_cache(maxsize=None)

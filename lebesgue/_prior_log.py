@@ -4,17 +4,17 @@ import functools
 import numba
 import numpy
 
-from ._bayes import _Prior
+from ._bayes import Prior
 
 
-def log(prior: _Prior) -> _Prior:
+def log(prior: Prior) -> Prior:
     """Return a Prior for `prior' applied in log space.
 
     Arguments:
-        prior: another _Prior object to transform
+        prior: another Prior object to transform
     """
     between_func = _log_between(prior.between_func)
-    return _Prior(prior.args, between_func)
+    return Prior(prior.args, between_func)
 
 
 @functools.lru_cache(maxsize=None)

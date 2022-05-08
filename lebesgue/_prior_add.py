@@ -3,20 +3,20 @@ import functools
 
 import numba
 
-from ._bayes import _Prior
+from ._bayes import Prior
 
 
-def add(x: float, prior: _Prior) -> _Prior:
+def add(x: float, prior: Prior) -> Prior:
     """Return a Prior for `prior' shifted by x.
 
     Arguments:
         x: shift amount
-        prior: another _Prior object to transform
+        prior: another Prior object to transform
     """
     x = float(x)
     args = (x, prior.args)
     between_func = _add_between(prior.between_func)
-    return _Prior(args, between_func)
+    return Prior(args, between_func)
 
 
 @functools.lru_cache(maxsize=None)

@@ -10,7 +10,7 @@ from . import _quad_bound
 
 
 @dataclass(frozen=True)
-class _Likelihood:
+class Likelihood:
     args: Any
     interval_func: Callable
 
@@ -30,7 +30,7 @@ class _Likelihood:
 
 
 @dataclass(frozen=True)
-class _Prior:
+class Prior:
     args: Any
     between_func: Callable
 
@@ -59,8 +59,8 @@ class Model:
 
     """
 
-    likelihood: _Likelihood
-    prior: _Prior
+    likelihood: Likelihood
+    prior: Prior
 
     @property
     def args(self) -> tuple:

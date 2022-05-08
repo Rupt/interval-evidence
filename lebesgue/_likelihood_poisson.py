@@ -2,10 +2,10 @@
 import numba
 import numpy
 
-from ._bayes import _Likelihood
+from ._bayes import Likelihood
 
 
-def poisson(n: int) -> _Likelihood:
+def poisson(n: int) -> Likelihood:
     """Return a Poisson likelihood for n observed events.
 
     Arguments:
@@ -17,7 +17,7 @@ def poisson(n: int) -> _Likelihood:
     n = int(n)
     if not n >= 0:
         raise ValueError(n)
-    return _Likelihood(n, _poisson_interval)
+    return Likelihood(n, _poisson_interval)
 
 
 """

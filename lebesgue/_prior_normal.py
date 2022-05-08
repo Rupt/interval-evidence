@@ -3,11 +3,11 @@ import numba
 import numpy
 
 from . import _cephes_ndtr
-from ._bayes import _Prior
+from ._bayes import Prior
 from ._prior_log import log
 
 
-def normal(mu: float, sigma: float) -> _Prior:
+def normal(mu: float, sigma: float) -> Prior:
     """Return a normal prior for given mu, sigma.
 
     Arguments:
@@ -20,10 +20,10 @@ def normal(mu: float, sigma: float) -> _Prior:
         raise ValueError(sigma)
 
     tau = 1 / sigma
-    return _Prior((mu, tau), _normal_between)
+    return Prior((mu, tau), _normal_between)
 
 
-def log_normal(mu: float, sigma: float) -> _Prior:
+def log_normal(mu: float, sigma: float) -> Prior:
     """Return a log-normal prior for given mu, sigma.
 
     Arguments:

@@ -6,7 +6,7 @@ from .prior import log_normal
 
 
 def test_args_likelihood():
-    likelihood = _bayes._Likelihood(None, lambda args, ratio: (0.0, 0.0))
+    likelihood = _bayes.Likelihood(None, lambda args, ratio: (0.0, 0.0))
 
     assert _test.raises(lambda: likelihood.interval(None), TypeError)
     assert _test.raises(lambda: likelihood.interval(1.1), ValueError)
@@ -17,7 +17,7 @@ def test_args_likelihood():
 
 
 def test_args_prior():
-    prior = _bayes._Prior(None, lambda args, lo, hi: 0.0)
+    prior = _bayes.Prior(None, lambda args, lo, hi: 0.0)
 
     assert _test.raises(lambda: prior.between(None, 0.0), TypeError)
     assert _test.raises(lambda: prior.between(0.0, -1.0), ValueError)

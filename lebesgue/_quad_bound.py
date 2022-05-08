@@ -27,9 +27,9 @@ def integrator(func: Callable) -> Callable:
 
     ```
     # at a top level location
-    _integrate_func = _quad_bound.integrator(func)
+    _integrate_func = integrator(func)
 
-    @_quad_bound.integrator.put(func)
+    @integrator.put(func)
     @numba.njit(cache=True)
     def integrate_func(args, rtol):
         return _integrate_func(args, rtol)

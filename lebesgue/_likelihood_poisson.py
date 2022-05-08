@@ -19,7 +19,91 @@ def poisson(n: int) -> _Likelihood:
         raise ValueError(n)
     return _Likelihood(n, _poisson_interval)
 
+"""
+Poisson interval implementation details:
 
+We evaluate the two real inverses by choices from polynomial approximations
+each followed by one iteration of Halley's root-finding method.
+
+
+The poisson likelihood is exp(-x) * x ** n / n!, so its log ratio from maximum
+
+    log(f(x) / max f(x)) = -n * (x / n - 1 - log(x / n))                    (1)
+                         = -n * g(x / n) ,                                  (2)
+
+where
+    
+    g(x) = x - 1 - log(x) .                                                 (3)
+
+We find the interval above a given ratio by inverting g and mopping up n.
+
+Some properties of g are:
+
+    g >= 0,
+    
+    unique minimum at g(x=1) == 0,
+    
+    g(x->0) -> +inf,
+    
+    g(x->inf) -> +inf .
+
+
+The Lambert W function is defined such that
+
+    x = W_k(y)    =>    y = x exp(x) .                                      (4)
+    
+W_k is real solutions when k = 0 or k = -1.
+
+The inverses of g are given by
+
+    invg(y) = -W_k(-exp(-1 - y))                                            (5)
+    
+since
+
+    -exp(-1 - y) = x exp(x)    =>    y = (-x) - 1 - log(-x) .               (6)
+
+"On the LambertW function" doi:10.1007/BF02124750 gives asymptotic expansions
+in L1 = ln(exp(-1 - y)) = -1 - y and L2 = ln(-L1) (reproduced on Wikipedia).
+
+k = 0 corresponds to the low 'lo' half with x <= 1.
+k = -1 corresponds to the high 'hi' half with x >= 1.
+
+
+Our implementation is as follows:
+
+lo, small y, use invg(y) = 1 - sqrt(2) * sqrt(y) + (2 / 3) * y .            (7)
+
+lo, large y, use the Taylor expansion of -W_0(-x) at 0.
+
+lo, intermediate y, use a fitted polynomial in sqrt(y) leading with (7).
+    
+
+hi, small y, use invg(y) = 1 + sqrt(2) * sqrt(y) + (2 / 3) * y.             (8)
+    
+hi, large y, use the asymptotic expansion.
+
+hi, intermediate y, use a fitted polynomial in sqrt(y) leading with (8).
+
+
+We consider the solution accurate if either x = invg(g(x)) or y = g(invg(y)).
+This is appropriate since the extreme gradients of g do not always allow exact
+evaluations or inverses.
+
+Approximating the units-(in)-last-place distance as
+
+    ulp(x, x_approx) = abs(x_approx - x) / spacing(x) ,                     (9)
+    
+we define a distance function
+
+    D(x, x_approx, y, y_approx) = min(ulp(x, x_approx), ulp(y, y_approx))  (10)  
+    
+to allow either to be accurate. Numerical experiments find D <= 2 for the lo 
+half and D <= 1 for the hi half.
+
+
+-- Rupert Tombs 2022
+
+"""
 # inverse order for numba declarations
 
 # root finding iterations

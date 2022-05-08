@@ -11,6 +11,12 @@ from . import _quad_bound
 
 @dataclass(frozen=True)
 class Likelihood:
+    """ Package a likelihood interval function with arguments.
+
+    Fields:
+        args: arguments to pass to interval_func
+        interval_func: (args, ratio) -> (lo, hi)
+    """
     args: Any
     interval_func: Callable
 
@@ -31,6 +37,13 @@ class Likelihood:
 
 @dataclass(frozen=True)
 class Prior:
+    """ Package a prior mass between function with arguments.
+
+    Fields:
+        args: arguments to pass to between_func
+        interval_func: (args, lo, hi) -> proportion
+
+    """
     args: Any
     between_func: Callable
 

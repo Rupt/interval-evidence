@@ -128,7 +128,6 @@ def _invg_hi_b(y):
     # x = -exp(-1 - y)
     # L1 = ln(-x) = -1 - y
     # L2 = ln(-L1) = ln(1 + y) = s
-    # s = L2
     # used for y >> 1, so no need for log1p
     s = numpy.log(1 + y)
     c4 = 1 - s * 3 + s * (s * (22 / 12) - s * s * (3 / 12))

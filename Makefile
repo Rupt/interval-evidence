@@ -33,10 +33,10 @@ clean:
 	rm -rf __pycache__ lebesgue/__pycache__
 
 
-env_lebesgue/bin/activate:
-	python3 -m venv env_lebesgue
+env/bin/activate:
+	python3 -m venv env
 	( \
-	source env_lebesgue/bin/activate; \
+	source env/bin/activate; \
 	pip install --upgrade pip; \
 	pip install scipy numpy numba black isort flake8; \
 	)

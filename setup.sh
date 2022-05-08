@@ -1,2 +1,2 @@
-make env_lebesgue/bin/activate
-source env_lebesgue/bin/activate
+make env/bin/activate
+source env/bin/activate

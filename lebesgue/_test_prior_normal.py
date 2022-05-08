@@ -1,7 +1,8 @@
 import numpy
 import scipy.special
-from ._test import raises
+
 from ._prior_normal import gaussian_dcdf
+from ._test import raises
 from .prior import log_normal, normal
 
 

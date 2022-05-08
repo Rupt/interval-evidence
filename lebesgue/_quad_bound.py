@@ -161,3 +161,9 @@ def integrator(func: Callable) -> Callable:
         return lo_bot + lo_top, hi_bot + hi_top
 
     return quad_bound
+
+
+def integrator_signature(args):
+    pair_float64 = numba.typeof((0.0, 0.0))
+    typeof_args = numba.typeof(args)
+    return pair_float64(typeof_args, numba.float64)

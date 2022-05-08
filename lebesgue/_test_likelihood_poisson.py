@@ -1,8 +1,8 @@
 import numpy
 
-from .likelihood import poisson
-from ._likelihood_poisson import _invg_lo, _invg_hi
+from ._likelihood_poisson import _invg_hi, _invg_lo
 from ._test import raises
+from .likelihood import poisson
 
 
 def test_args():

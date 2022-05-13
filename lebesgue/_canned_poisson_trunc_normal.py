@@ -32,6 +32,9 @@ def gamma1_trunc_normal(
     return Model(gamma1(shape), add(shift, trunc(lo, hi, normal(mu, sigma))))
 
 
+# integrator caching
+
+
 example_model = poisson_trunc_normal(0, 0, 1)
 
 integrate_func = example_model.integrate_func

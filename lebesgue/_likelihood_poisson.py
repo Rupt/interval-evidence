@@ -1,4 +1,4 @@
-""" Implement the Poisson likelihood function. """
+""" Implement the Poisson likelihood function and friends. """
 from ._bayes import Likelihood
 from ._invg import ginterval
 

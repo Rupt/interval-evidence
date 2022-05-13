@@ -1,6 +1,11 @@
 import scipy.integrate
 
-from .canned import poisson_log_normal, poisson_trunc_normal
+from .canned import (
+    gamma1_log_normal,
+    gamma1_trunc_normal,
+    poisson_log_normal,
+    poisson_trunc_normal,
+)
 
 
 def test_poisson_log_normal():
@@ -43,3 +48,14 @@ def test_poisson_trunc_normal():
         )
         assert zlo <= chk + chk_err
         assert zhi >= chk - chk_err
+
+
+def test_same_funcs():
+    assert (
+        poisson_log_normal(0, 1, 2).integrate_func
+        is gamma1_log_normal(0, 1, 2).integrate_func
+    )
+    assert (
+        gamma1_trunc_normal(0, 1, 2).integrate_func
+        is gamma1_trunc_normal(0, 1, 2).integrate_func
+    )

@@ -12,9 +12,21 @@ def poisson(n: int) -> Likelihood:
         n: number of observed events; non-negative integer
 
     """
-    if not n == int(n) or not n == float(n):
+    if not int(n) == float(n):
         raise ValueError(n)
-    n = float(int(n))
-    if not n >= 0:
-        raise ValueError(n)
-    return Likelihood(n, ginterval)
+    return gamma1(int(n))
+
+
+def gamma1(shape: float) -> Likelihood:
+    """Return a Gamma likelihood for x=1 observed and given shape.
+
+    Possibly useful as a continuous extrapolation of Poisson.
+
+    Arguments:
+        shape: `alpha' argument
+
+    """
+    shape = float(shape)
+    if not shape >= 0:
+        raise ValueError(shape)
+    return Likelihood(shape, ginterval)

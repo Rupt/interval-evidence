@@ -30,6 +30,7 @@ def run_tests():
         _test_cache.test_put,
         _test_canned.test_poisson_log_normal,
         _test_canned.test_poisson_trunc_normal,
+        _test_canned.test_same_funcs,
         _test_cephes_ndtr.test_ndtr,
         # i
         _test_invg.test_invg_lo,
@@ -40,6 +41,8 @@ def run_tests():
         _test_likelihood_normal.test_interval,
         _test_likelihood_poisson.test_args,
         _test_likelihood_poisson.test_interval,
+        _test_likelihood_poisson.test_gamma1_args,
+        _test_likelihood_poisson.test_gamma1_interval,
         # p
         _test_prior_normal.test_gaussian_dcdf,
         _test_prior_normal.test_between,

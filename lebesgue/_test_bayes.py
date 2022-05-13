@@ -39,7 +39,6 @@ def test_args_model():
 
     assert raises(lambda: model.integrate(rtol=None), TypeError)
     assert raises(lambda: model.integrate(rtol=0), ValueError)
-    assert not raises(lambda: model.integrate())
 
 
 def test_monotonic():

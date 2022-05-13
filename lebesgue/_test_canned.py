@@ -1,17 +1,15 @@
-import itertools
-
 import scipy.integrate
 
 from .canned import poisson_log_normal, poisson_trunc_normal
 
 
 def test_poisson_log_normal():
-    ns = [0, 3]
-    mus = [0, 5]
-    sigmas = [0.5, 1.5]
-    shifts = [0, 2]
+    n_mu_sigma_shifts = [
+        (0, 0, 0.5, 0),
+        (3, 1, 1.5, 2),
+    ]
 
-    for n, mu, sigma, shift in itertools.product(ns, mus, sigmas, shifts):
+    for n, mu, sigma, shift in n_mu_sigma_shifts:
         model = poisson_log_normal(n, mu, sigma, shift=shift)
 
         rtol = 1e-2
@@ -27,19 +25,17 @@ def test_poisson_log_normal():
 
 
 def test_poisson_trunc_normal():
-    ns = [3, 4]
-    mus = [-1, 2]
-    sigmas = [0.5, 1.5]
-    shifts = [0, 0.2]
+    n_mu_sigma_shift_lo_his = [
+        (0, -1, 0.5, 0, 0, 1),
+        (3, 2, 1.5, 0.2, 1, 2.5),
+    ]
 
-    for n, mu, sigma, shift in itertools.product(ns, mus, sigmas, shifts):
-        lo = mu - 3 * sigma
-        hi = mu + 3 * sigma
+    for n, mu, sigma, shift, lo, hi in n_mu_sigma_shift_lo_his:
         model = poisson_trunc_normal(n, mu, sigma, shift=shift, lo=lo, hi=hi)
 
         rtol = 1e-2
         zlo, zhi = model.integrate(rtol=rtol)
-        assert zhi - zlo <= rtol * zlo
+        assert zhi - zlo <= rtol * zlo, (zlo, zhi)
 
         # quad comes with an absolute error estimate; be generous with it
         chk, chk_err = scipy.integrate.quad(

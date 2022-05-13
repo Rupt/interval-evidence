@@ -21,10 +21,10 @@ def poisson_trunc_normal(
 
 example_model = poisson_trunc_normal(0, 0, 1)
 
-poisson_trunc_normal_integrate_func = example_model.integrate_func
+integrate_func = example_model.integrate_func
 
 
 @integrator.put(example_model.mass_func)
 @numba.njit(integrator_signature(example_model.args), cache=True)
-def poisson_trunc_normal_integrate(args, ratio):
-    return poisson_trunc_normal_integrate_func(args, ratio)
+def integrate(args, ratio):
+    return integrate_func(args, ratio)

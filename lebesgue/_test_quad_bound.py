@@ -9,9 +9,9 @@ from ._quad_bound import integrator
 
 def test_fpow():
     """Check bounds for the simple function fpow."""
-    ks = [0, 1, 3, 10]
-    los = [0.0, 0.1, 0.4]
-    his = [0.5, 0.6, 1.0]
+    ks = [0, 1, 10]
+    los = [0.0, 0.4]
+    his = [0.5, 1.0]
 
     for k, lo, hi in itertools.product(ks, los, his):
         args, integral = make_fpow(k, lo, hi)

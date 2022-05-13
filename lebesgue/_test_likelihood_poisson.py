@@ -1,6 +1,5 @@
 import numpy
 
-from ._likelihood_poisson import _invg_hi, _invg_lo
 from ._test import raises
 from .likelihood import poisson
 
@@ -33,30 +32,6 @@ def test_interval():
             numpy.testing.assert_allclose(ratio, poisson_ratio(n, hi))
 
 
-def test_invg_lo():
-    xs = numpy.linspace(1e-3, 1, 1000)
-
-    for x_ref in xs:
-        y_ref = gfunc(x_ref)
-
-        x_chk = _invg_lo(y_ref)
-        y_chk = gfunc(x_chk)
-
-        assert ulp_min(x_ref, y_ref, x_chk, y_chk) <= 2
-
-
-def test_invg_hi():
-    xs = numpy.linspace(1, 1e3, 1000)
-
-    for x_ref in xs:
-        y_ref = gfunc(x_ref)
-
-        x_chk = _invg_hi(y_ref)
-        y_chk = gfunc(x_chk)
-
-        assert ulp_min(x_ref, y_ref, x_chk, y_chk) <= 1
-
-
 # utilities
 
 
@@ -71,15 +46,3 @@ def poisson_ratio(n, x):
         return 0.0
 
     return numpy.exp(n - x + n * numpy.log(x / n))
-
-
-def gfunc(x):
-    return x - 1 - numpy.log(x)
-
-
-def ulp_min(x_ref, y_ref, x_chk, y_chk):
-    # either close in the function or its inverse
-    return min(
-        abs(x_ref - x_chk) / numpy.spacing(x_ref),
-        abs(y_ref - y_chk) / numpy.spacing(y_ref),
-    )

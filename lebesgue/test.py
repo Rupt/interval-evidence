@@ -6,6 +6,7 @@ from . import (
     _test_cache,
     _test_canned,
     _test_cephes_ndtr,
+    _test_invg,
     _test_likelihood_normal,
     _test_likelihood_poisson,
     _test_prior_add,
@@ -30,13 +31,15 @@ def run_tests():
         _test_canned.test_poisson_log_normal,
         _test_canned.test_poisson_trunc_normal,
         _test_cephes_ndtr.test_ndtr,
+        # i
+        _test_invg.test_invg_lo,
+        _test_invg.test_invg_hi,
+        _test_invg.test_ginterval,
         # l
         _test_likelihood_normal.test_args,
         _test_likelihood_normal.test_interval,
         _test_likelihood_poisson.test_args,
         _test_likelihood_poisson.test_interval,
-        _test_likelihood_poisson.test_invg_lo,
-        _test_likelihood_poisson.test_invg_hi,
         # p
         _test_prior_normal.test_gaussian_dcdf,
         _test_prior_normal.test_between,

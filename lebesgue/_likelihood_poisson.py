@@ -12,7 +12,7 @@ def poisson(n: int) -> Likelihood:
         n: number of observed events; non-negative integer
 
     """
-    if not int(n) == float(n):
+    if not n == float(int(n)):
         raise ValueError(n)
     return gamma1(int(n))
 

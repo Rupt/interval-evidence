@@ -1,5 +1,3 @@
-import itertools
-
 import numba
 import numpy
 
@@ -9,11 +7,13 @@ from ._quad_bound import integrator
 
 def test_fpow():
     """Check bounds for the simple function fpow."""
-    ks = [0, 1, 10]
-    los = [0.0, 0.4]
-    his = [0.5, 1.0]
-
-    for k, lo, hi in itertools.product(ks, los, his):
+    k_lo_his = [
+        (0, 0, 1),
+        (10, 0.1, 0.9),
+        (100, 0, 0.5),
+        (1000, 0, 0.8),
+    ]
+    for k, lo, hi in k_lo_his:
         args, integral = make_fpow(k, lo, hi)
 
         rtol = 1e-2

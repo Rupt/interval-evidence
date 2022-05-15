@@ -21,7 +21,7 @@ def test_interval():
         (1.0, 2.0),
     ]
 
-    ratios = numpy.linspace(0.0, 1.0, 13)
+    ratios = numpy.linspace(0.0, 1.0, 5)
 
     for (mu, sigma), ratio in itertools.product(mu_sigmas, ratios):
         lo, hi = normal(mu, sigma).interval(ratio)

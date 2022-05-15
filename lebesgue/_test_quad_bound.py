@@ -7,11 +7,13 @@ from ._quad_bound import integrator
 
 def test_fpow():
     """Check bounds for the simple function fpow."""
+
+    # very large k (>~1e20) can lead to numerical failure in fpow
     k_lo_his = [
         (0, 0, 1),
         (10, 0.1, 0.9),
         (100, 0, 0.5),
-        (1000, 0, 0.8),
+        (1e15, 0, 0.8),
     ]
     for k, lo, hi in k_lo_his:
         args, integral = make_fpow(k, lo, hi)
@@ -44,7 +46,7 @@ def test_normal():
 def make_fpow(k, lo, hi):
     assert lo < hi, (lo, hi)
 
-    args = (int(k), float(lo), float(hi))
+    args = (float(k), float(lo), float(hi))
 
     integral = ((1 - lo) ** (k + 1) - (1 - hi) ** (k + 1)) / (k + 1)
     # jacobian factor for the rescaling

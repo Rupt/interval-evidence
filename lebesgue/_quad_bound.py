@@ -69,8 +69,9 @@ def integrator(func: Callable) -> Callable:
 
         # distribute tolerance to large boxes such that
         # they are large enough to comfortably pull us below tol
-        err_thresh = tol * (0.5 / nbins)
+        thresh = tol * (0.5 / nbins)
 
+        # work out how much area we have to work with in boxes above thresh
         nkept = 0.0
         tol_kept = tol - err_tail
 
@@ -81,8 +82,8 @@ def integrator(func: Callable) -> Callable:
             flo = fs[i]
 
             err = flo * size - fhi * size
-            keep = err > err_thresh
 
+            keep = err > thresh
             nkept += keep
             tol_kept -= (not keep) * err
 
@@ -93,7 +94,7 @@ def integrator(func: Callable) -> Callable:
         else:
             err_thresh = numpy.nan
 
-        # refinement
+        # recursive refinement in each box
         zlo = 0.0
         zhi = 0.0
 
@@ -132,28 +133,19 @@ def integrator(func: Callable) -> Callable:
         err_bot = flo * size - fmid * size
         err_new = err_top + err_bot
 
+        # after eliminating half the box, cut_new can be negative
         cut_new = cut - err_new
 
+        if not cut_new > 0:
+            return fmid * size + fhi * size, flo * size + fmid * size
+
+        # might like to evenly distribute tol, but it it somewhat fiddly and
+        # gives no measurable benefit; simply distribute cut proportionally
         cut_top = err_top * (cut_new / err_new)
         cut_bot = err_bot * (cut_new / err_new)
 
-        # prefer lumping together to recursing equally down both sides
-        if cut_new < err_bot - cut_top:
-            cut_bot = cut_new
-            cut_top = 0.0
-        elif cut_new < err_top - cut_bot:
-            cut_bot = 0.0
-            cut_top = cut_new
-
-        if cut_top > 0:
-            lo_top, hi_top = recurse(args, cut_top, mid, hi, fmid, fhi)
-        else:
-            lo_top, hi_top = fhi * size, fmid * size
-
-        if cut_bot > 0:
-            lo_bot, hi_bot = recurse(args, cut_bot, lo, mid, flo, fmid)
-        else:
-            lo_bot, hi_bot = fmid * size, flo * size
+        lo_top, hi_top = recurse(args, cut_top, mid, hi, fmid, fhi)
+        lo_bot, hi_bot = recurse(args, cut_bot, lo, mid, flo, fmid)
 
         return lo_bot + lo_top, hi_bot + hi_top
 

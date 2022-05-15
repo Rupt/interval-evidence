@@ -1,4 +1,4 @@
-""" Truncate priors to their segments between two limits. """
+"""Truncate priors to their segments between two limits."""
 import functools
 
 import numba
@@ -7,14 +7,12 @@ from ._bayes import Prior
 
 
 def trunc(lo: float, hi: float, prior: Prior) -> Prior:
-    """
-    Return prior truncated and normalized between lo and hi.
+    """Return prior truncated and normalized between lo and hi.
 
     Arguments:
         lo: lower bound
         hi: upper bound (> lo)
         prior: inner prior to modify
-
     """
     lo = float(lo)
     hi = float(hi)

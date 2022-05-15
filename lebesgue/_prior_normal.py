@@ -1,4 +1,4 @@
-""" Implement the normal (Gaussian) prior. """
+"""Implement the normal (Gaussian) prior."""
 import numba
 import numpy
 

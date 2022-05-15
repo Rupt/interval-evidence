@@ -1,5 +1,4 @@
-"""
-Implement the normal cumulative distirbution fucntion and frields.
+"""Implement the normal cumulative distribution function and friends.
 
 Based on cephes in scipy:
 https://github.com/scipy/scipy/blob/68a35309d0879466c0253b820001965eecc424af/scipy/special/cephes/ndtr.c
@@ -156,7 +155,6 @@ def _erf(a):
     x = abs(a)
 
     if x > 1.0:
-        # yes this passes is x, not a
         r = 1.0 - _erfc_x_ge_1(x)
         return numpy.copysign(r, a)
 

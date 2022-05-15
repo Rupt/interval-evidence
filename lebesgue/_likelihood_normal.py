@@ -1,4 +1,4 @@
-""" Implement the normal (Gaussian) likelihood. """
+"""Implement the normal (Gaussian) likelihood."""
 import numba
 import numpy
 

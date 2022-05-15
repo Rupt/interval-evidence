@@ -1,4 +1,4 @@
-""" Transform a prior to apply in log space. """
+"""Transform a prior to apply in log space."""
 import functools
 
 import numba

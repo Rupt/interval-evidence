@@ -1,5 +1,4 @@
-"""
-Poisson/Gamma interval implementation.
+"""Poisson/Gamma interval implementation.
 
 We evaluate the two real inverses by choices from polynomial approximations
 each followed by one iteration of Halley's root-finding method.

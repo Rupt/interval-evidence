@@ -1,5 +1,4 @@
-"""
-Bound integrals by numerical quadrature.
+"""Bound integrals by numerical quadrature.
 
 Appropriate functions are weakly decreasing on the unit interval, as are prior
 masses above likelihood ratios.
@@ -14,8 +13,7 @@ from ._cache import MutableCache
 
 @MutableCache
 def integrator(func: Callable) -> Callable:
-    """
-    Return a function to integrate func(args, x) on [0, 1].
+    """Return a function to integrate func(args, x) on [0, 1].
 
     Arguments:
         func: numba.float64(args: Any, x:numba.float64)
@@ -35,7 +33,6 @@ def integrator(func: Callable) -> Callable:
         return _integrate_func(args, rtol)
 
     ```
-
     """
 
     @numba.njit

@@ -1,4 +1,4 @@
-""" Shift a prior by a constant. """
+"""Shift a prior by a constant."""
 import functools
 
 import numba

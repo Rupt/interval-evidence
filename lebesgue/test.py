@@ -54,6 +54,7 @@ def run_tests():
         # q
         _test_quad_bound.test_fpow,
         _test_quad_bound.test_normal,
+        _test_quad_bound.test_next_pow2,
     ]
 
     for test in tests:

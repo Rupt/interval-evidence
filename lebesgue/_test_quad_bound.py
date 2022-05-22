@@ -2,7 +2,7 @@ import numba
 import numpy
 
 from . import Model, likelihood, prior
-from ._quad_bound import integrator
+from ._quad_bound import _next_pow2, integrator
 
 
 def test_fpow():
@@ -38,6 +38,16 @@ def test_normal():
         lo, hi = normal_normal(*args).integrate()
         # reference has far higher precision
         assert lo <= integral_ref <= hi
+
+
+def test_next_pow2():
+    assert _next_pow2(0.001) == 1
+    assert _next_pow2(1) == 1
+    assert _next_pow2(1.001) == 2
+    assert _next_pow2(512) == 512
+    assert _next_pow2(512.1) == 1024
+    assert _next_pow2(2**52) == 2**52
+    assert _next_pow2(2**52 + 1) == 2**53
 
 
 # utilities

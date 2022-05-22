@@ -71,49 +71,57 @@ def integrator(func: Callable) -> Callable:
         # they are large enough to comfortably pull us below tol
         thresh = tol * (0.5 / nbins)
 
-        # work out how much area we have to work with in boxes above thresh
-        nkept = 0.0
+        # refine selection tolderance based on boxes surviving initial thresh
+        nlost = 0
         tol_kept = tol - err_tail
 
         size = 1.0
         fhi = fs[0]
-        for i in range(1, nbins + 1):
+        for flo in fs[1 : nbins + 1]:
             size *= 0.5
-            flo = fs[i]
 
             err = flo * size - fhi * size
 
-            keep = err > thresh
-            nkept += keep
-            tol_kept -= (not keep) * err
+            if not err > thresh:
+                tol_kept -= err
+                nlost += 1
 
             fhi = flo
 
-        if nkept > 0.0:
+        nkept = nbins - nlost
+        if nkept > 0:
             err_thresh = tol_kept / nkept
         else:
             err_thresh = numpy.nan
 
-        # recursive refinement in each box
+        # refine each bin with a linear scan
         zlo = 0.0
         zhi = 0.0
 
         hi = 1.0
         fhi = fs[0]
-        for i in range(1, nbins + 1):
+        for flo in fs[1 : nbins + 1]:
             size = lo = 0.5 * hi
-            flo = fs[i]
 
             err = flo * size - fhi * size
 
-            if err > err_thresh:
-                cut = err - err_thresh
-                ilo, ihi = recurse(args, cut, lo, hi, flo, fhi)
-            else:
-                ilo, ihi = fhi * size, flo * size
+            # doubling steps halves err remaining after scan
+            ngrid = _next_pow2(err / err_thresh)
+            step = (hi - lo) / max(1, ngrid)
 
-            zlo += ilo
-            zhi += ihi
+            # accumulate the middle section of the sum before adding on
+            # head and tail for lo and hi bounds
+            zmid = 0.0
+            xlo = hi
+            for i in range(1, ngrid):
+                # for suitably chosen hi lo and ngrid (powers of 2), repeated
+                # subtraction of step can be exact arithmetic
+                xlo -= step
+                zmid += func(args, xlo)
+
+            # step is constant, so factor it out
+            zlo += (fhi + zmid) * step
+            zhi += (zmid + flo) * step
 
             hi = lo
             fhi = flo
@@ -122,34 +130,17 @@ def integrator(func: Callable) -> Callable:
         zhi += 1.0 * size
         return zlo, zhi
 
-    @numba.njit
-    def recurse(args, cut, lo, hi, flo, fhi):
-        size = 0.5 * (hi - lo)
-        mid = lo + size
-        fmid = func(args, mid)
-
-        # the box is halved, so err = 2 * err_new
-        err_top = fmid * size - fhi * size
-        err_bot = flo * size - fmid * size
-        err_new = err_top + err_bot
-
-        # after eliminating half the box, cut_new can be negative
-        cut_new = cut - err_new
-
-        if not cut_new > 0:
-            return fmid * size + fhi * size, flo * size + fmid * size
-
-        # might like to evenly distribute tol, but it it somewhat fiddly and
-        # gives no measurable benefit; simply distribute cut proportionally
-        cut_top = err_top * (cut_new / err_new)
-        cut_bot = err_bot * (cut_new / err_new)
-
-        lo_top, hi_top = recurse(args, cut_top, mid, hi, fmid, fhi)
-        lo_bot, hi_bot = recurse(args, cut_bot, lo, mid, flo, fmid)
-
-        return lo_bot + lo_top, hi_bot + hi_top
-
     return quad_bound
+
+
+@numba.njit(numba.int64(numba.float64))
+def _next_pow2(x):
+    """Return the least non-negative power of 2 >= x."""
+    if not x > 0:
+        return 0
+    x = max(1, x)
+    two_inverse_eps = 2.0**53
+    return int(numpy.spacing(numpy.nextafter(x, 0)) * two_inverse_eps)
 
 
 def integrator_signature(args):

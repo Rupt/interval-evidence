@@ -113,7 +113,7 @@ def integrator(func: Callable) -> Callable:
             # head and tail for lo and hi bounds
             zmid = 0.0
             xlo = hi
-            for i in range(1, ngrid):
+            for i in range(1, int(ngrid)):
                 # for suitably chosen hi lo and ngrid (powers of 2), repeated
                 # subtraction of step can be exact arithmetic
                 xlo -= step
@@ -133,14 +133,14 @@ def integrator(func: Callable) -> Callable:
     return quad_bound
 
 
-@numba.njit(numba.int64(numba.float64))
+@numba.njit(numba.float64(numba.float64))
 def _next_pow2(x):
     """Return the least non-negative power of 2 >= x."""
     if not x > 0:
         return 0
     x = max(1, x)
     two_inverse_eps = 2.0**53
-    return int(numpy.spacing(numpy.nextafter(x, 0)) * two_inverse_eps)
+    return numpy.spacing(numpy.nextafter(x, 0)) * two_inverse_eps
 
 
 def integrator_signature(args):

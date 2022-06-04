@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+PYFILES := {lebesgue,test,pyhf_stuff}/*.py
 
 
 .PHONY: help
@@ -23,9 +24,9 @@ bench:
 
 .PHONY: fmt
 fmt:
-	isort lebesgue/*.py *.py pyhf_stuff/*.py --profile black --line-length 79
-	black lebesgue/*.py *.py pyhf_stuff/*.py -l79
-	flake8 lebesgue/*.py pyhf_stuff/*.py; :
+	isort $(PYFILES) --profile black --line-length 79
+	black $(PYFILES) -l79
+	flake8 $(PYFILES); :
 
 
 .PHONY: clean

@@ -9,3 +9,5 @@ per-file-ignores =
     lebesgue/likelihood.py:F401,
     lebesgue/prior.py:F401,
     lebesgue/canned.py:F401,
+    test/__init__.py:F401,
+    pyhf_stuff/__init__.py:F401,

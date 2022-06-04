@@ -1,6 +1,7 @@
+from test import raises
+
 import numpy
 
-from ._test import raises
 from .prior import normal, trunc
 
 

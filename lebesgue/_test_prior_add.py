@@ -1,6 +1,7 @@
+from test import raises
+
 import numpy
 
-from ._test import raises
 from .likelihood import poisson
 from .prior import add, log_normal
 

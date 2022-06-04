@@ -1,5 +1,4 @@
-import sys
-import traceback
+from test import test_funcs
 
 from . import (
     _test_bayes,
@@ -57,13 +56,4 @@ def run_tests():
         _test_quad_bound.test_next_pow2,
     ]
 
-    for test in tests:
-        try:
-            test()
-            print(end=".", flush=True)
-        except AssertionError:
-            print(end="!", flush=True)
-            print(file=sys.stderr)
-            traceback.print_exc()
-
-    print()
+    test_funcs(tests)

@@ -1,9 +1,9 @@
 import itertools
+from test import raises
 
 import numpy
 
 from ._likelihood_normal import normal
-from ._test import raises
 
 
 def test_args():

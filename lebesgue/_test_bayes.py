@@ -1,7 +1,8 @@
+from test import raises
+
 import numpy
 
 from ._bayes import Likelihood, Model, Prior, _model_mass
-from ._test import raises
 from .likelihood import poisson
 from .prior import log_normal
 

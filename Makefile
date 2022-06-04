@@ -23,9 +23,9 @@ bench:
 
 .PHONY: fmt
 fmt:
-	isort lebesgue/*.py *.py --profile black --line-length 79
-	black lebesgue/*.py *.py -l79
-	flake8 lebesgue/ *.py; :
+	isort lebesgue/*.py *.py pyhf_stuff/*.py --profile black --line-length 79
+	black lebesgue/*.py *.py pyhf_stuff/*.py -l79
+	flake8 lebesgue/*.py pyhf_stuff/*.py; :
 
 
 .PHONY: clean

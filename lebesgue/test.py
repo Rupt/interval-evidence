@@ -11,6 +11,7 @@ from . import (
     _test_prior_add,
     _test_prior_mixture,
     _test_prior_normal,
+    _test_prior_rpwlet,
     _test_prior_trunc,
     _test_quad_bound,
 )
@@ -54,6 +55,7 @@ def run_tests():
         _test_prior_mixture.test_values_pair,
         _test_prior_mixture.test_values_trio,
         _test_prior_mixture.test_args,
+        _test_prior_rpwlet.test_1,
         # q
         _test_quad_bound.test_fpow,
         _test_quad_bound.test_normal,

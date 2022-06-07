@@ -55,7 +55,9 @@ def run_tests():
         _test_prior_mixture.test_values_pair,
         _test_prior_mixture.test_values_trio,
         _test_prior_mixture.test_args,
-        _test_prior_rpwlet.test_1,
+        _test_prior_rpwlet.test_first_example,
+        _test_prior_rpwlet.test_values,
+        _test_prior_rpwlet.test_args,
         # q
         _test_quad_bound.test_fpow,
         _test_quad_bound.test_normal,

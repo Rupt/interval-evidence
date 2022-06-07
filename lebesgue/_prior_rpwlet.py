@@ -63,6 +63,13 @@ def rpwlet(log_rates: Sequence[float], stop: float) -> Prior:
         raise ValueError(stop)
 
     log_rates = numpy.asarray(log_rates, dtype=float)
+    if len(log_rates) < 2:
+        raise ValueError(log_rates)
+
+    # must decrease for the exponential tail to continue
+    if not log_rates[-1] < log_rates[-2]:
+        raise ValueError(log_rates[-2:])
+
     # subtracting max avoids numerical problems for large |values|
     log_rates = log_rates - log_rates.max()
     rates = numpy.exp(log_rates)
@@ -81,8 +88,6 @@ def rpwlet(log_rates: Sequence[float], stop: float) -> Prior:
 
     # (2) => b = -d/dx(rate(stop)) / rate(stop)
     tail_b = rate_dash_stop / rate_stop
-    if not tail_b > 0:
-        raise ValueError(tail_b)
 
     # (1) => a = log(rate(stop)) + b x
     tail_a = log_rate_stop + tail_b * stop
@@ -95,6 +100,7 @@ def rpwlet(log_rates: Sequence[float], stop: float) -> Prior:
     cmf = numpy.concatenate([[0], numpy.cumsum(masses)])
     norm = 1 / (cmf[-1] + tail_mass)
 
+    # prepare arguments
     cmf_norm = cmf * norm
     pdf_norm = rates * norm
 
@@ -103,32 +109,7 @@ def rpwlet(log_rates: Sequence[float], stop: float) -> Prior:
 
     args = (stop, pdf_norm, cmf_norm, tail_b, tail_c, tail_e)
 
-    def cdf(x):
-        nboxes = len(pdf_norm) - 1
-
-        delta = stop / nboxes
-        indexf = x / delta
-
-        # tail integral
-        if not indexf < nboxes:
-            return tail_e - numpy.exp(tail_c - tail_b * x)
-
-        # piecewise linear
-        i = int(indexf)
-        frac = indexf - i
-
-        # integrate density in this box, where density linearly increases
-        # pdf = pdf_lo + (pdf_hi - pdf_lo) * frac
-        pdf_lo = pdf_norm[i]
-        pdf_hi = pdf_norm[i + 1]
-        box_mass = delta * frac * (pdf_lo + 0.5 * (pdf_hi - pdf_lo) * frac)
-
-        return cmf_norm[i] + box_mass
-
-    for x in [0, 1, 2, 10, 20, 21]:
-        print(cdf(x))
-        print(_rpwlet_between(args, 0, x))
-        print(_rpwlet_between(args, 1, x))
+    return Prior(args, _rpwlet_between)
 
 
 @numba.njit

@@ -3,7 +3,7 @@ from test import raises
 import numpy
 import scipy.special
 
-from ._prior_normal import gaussian_dcdf
+from ._prior_normal import _gaussian_dcdf
 from .prior import log_normal, normal
 
 
@@ -15,7 +15,7 @@ def test_gaussian_dcdf():
     xys = rng.normal(scale=3, size=(100, 2))
 
     for xi, yi in xys:
-        chk = gaussian_dcdf(xi, yi)
+        chk = _gaussian_dcdf(xi, yi)
         ref = gaussian_dcdf_ref(xi, yi)
         numpy.testing.assert_allclose(chk, ref, atol=1e-15)
 

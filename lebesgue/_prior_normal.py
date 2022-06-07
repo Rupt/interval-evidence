@@ -36,11 +36,11 @@ def log_normal(mu: float, sigma: float) -> Prior:
 @numba.njit
 def _normal_between(args, lo, hi):
     mu, tau = args
-    return gaussian_dcdf((lo - mu) * tau, (hi - mu) * tau)
+    return _gaussian_dcdf((lo - mu) * tau, (hi - mu) * tau)
 
 
 @numba.njit
-def gaussian_dcdf(lo, hi):
+def _gaussian_dcdf(lo, hi):
     offset = numpy.copysign(0.5, hi) - numpy.copysign(0.5, lo)
 
     flo = numpy.copysign(_cephes_ndtr.ndtr(-abs(lo)), lo)

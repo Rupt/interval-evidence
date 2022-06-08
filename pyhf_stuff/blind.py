@@ -23,6 +23,21 @@ def model_logpdf_blind(model, pars, data, blind_bins):
     return _model_logpdf_masked(model, pars, data, mask)
 
 
+class Model:
+    """Wrapper around pyhf.Model with regions blinded."""
+
+    def __init__(self, model: pyhf.Model, blind_bins):
+        self.model = model
+        self.blind_bins = blind_bins
+
+    def logpdf(self, pars, data):
+        return model_logpdf_blind(self.model, pars, data, self.blind_bins)
+
+    # forward failed attributes to the pyhf.Model
+    def __getattr__(self, name):
+        return self.model.__getattribute__(name)
+
+
 def _make_mask(model, blind_bins):
     """Return a mask to blind data in specified blind_bins."""
     channel_to_slice = model.config.channel_slices
@@ -74,7 +89,6 @@ def _model_logpdf_masked(model, pars, data, mask):
             f"{model.config.nmaindata + model.config.nauxdata} was expected"
         )
 
-    # nan != nan
     pdf = _model_make_pdf_masked(model, pars, mask)
 
     actualdata = data[:len_actualdata]
@@ -114,8 +128,12 @@ def _main_model_make_pdf_masked(main_model, pars, mask):
 
     lambdas_data = main_model.expected_data(pars)
 
-    # pyhf nans for poisson(0 | 0.0), so settle for a tiny mean
-    tiny = numpy.finfo(numpy.float64).tiny
+    # pyhf nans for poisson(0 | 0.0), so settle for a tiny mean.
+    # This makes a constant addition to logpdf, so makes no difference
+    # to derivative-based or maximum-relative fits.
+    # Furthermore, only very small values will be changed by adding tiny, so
+    # in typical cases its impact is exactly zero.
+    tiny = numpy.finfo(lambdas_data.dtype).tiny
     lambdas_blinded = tensorlib.where(mask, lambdas_data, tiny)
 
     return pyhf.probability.Independent(

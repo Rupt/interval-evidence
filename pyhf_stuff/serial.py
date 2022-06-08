@@ -13,15 +13,18 @@ def dump_region(path, workspace):
     os.makedirs(path, exist_ok=True)
 
     outpath = os.path.join(path, REGION_FILENAME)
-    with gzip.open(outpath, "w") as outfile:
-        outfile.write(json.dumps(workspace).encode())
+
+    # gzip adds a timestamp which makes git think identical files have changed
+    # Avoid that by setting that timestamp to a constant value
+    outfile = gzip.GzipFile(outpath, "w", mtime=0)
+    outfile.write(json.dumps(workspace).encode())
+    outfile.close()
 
 
 def load_region(path):
     inpath = os.path.join(path, REGION_FILENAME)
     with gzip.open(inpath, "r") as infile:
         workspace = json.loads(infile.read().decode())
-
     return workspace
 
 

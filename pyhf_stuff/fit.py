@@ -129,11 +129,14 @@ def interval(region, *, levels=(0.5, 2, 4.5)):
 
         return minimum.fun, -maximum.fun
 
-    level_to_lo_hi = {}
-    for level in levels:
-        level_to_lo_hi[level] = minmax_given_level(level)
+    levels = list(levels)
 
-    return level_to_lo_hi
+    intervals = [minmax_given_level(level) for level in levels]
+
+    return {
+        "levels": levels,
+        "intervals": intervals,
+    }
 
 
 @contextmanager
@@ -150,13 +153,41 @@ def _suppress_bounds_warning():
         yield
 
 
-# linear scan
+# linear scan, like numpy.linspace
 
 
 def linspace(region, start, stop, num):
     state = region_state(region)
-    state.objective
-    ...
+
+    def optimum_given_yield(yield_):
+        constaint = scipy.optimize.NonlinearConstraint(
+            state.yield_value,
+            yield_,
+            yield_,
+            jac=state.yield_grad,
+        )
+
+        optimum = scipy.optimize.minimize(
+            state.objective_value_and_grad,
+            state.init,
+            bounds=state.bounds,
+            jac=True,
+            method="SLSQP",
+            constraints=constaint,
+        )
+
+        return optimum.fun
+
+    levels = [
+        optimum_given_yield(yield_)
+        for yield_ in numpy.linspace(start, stop, num)
+    ]
+
+    return {
+        "start": start,
+        "stop": stop,
+        "levels": levels,
+    }
 
 
 # region functions
@@ -176,7 +207,7 @@ def region_state(region):
 
 
 class RegionState:
-    """Store jax-jitted functions and parameters for a region."""
+    """Parameters and jax-jitted functions for a region."""
 
     def __init__(self, region):
         model = region.workspace.model()

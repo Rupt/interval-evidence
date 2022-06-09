@@ -12,6 +12,7 @@ def main():
     print(fit.filename(fit.cabinetry_post), fit.cabinetry_post(region_1))
     print(fit.filename(fit.normal), fit.normal(region_1))
     print(fit.filename(fit.interval), fit.interval(region_1))
+    print(fit.filename(fit.linspace), fit.linspace(region_1, 0, 4, 11))
 
 
 if __name__ == "__main__":

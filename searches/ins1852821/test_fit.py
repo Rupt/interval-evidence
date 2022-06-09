@@ -12,6 +12,8 @@ def main():
     print(test)
     test = fit.cabinetry_post(region_1)
     print(test)
+    test = fit.normal(region_1)
+    print(test)
 
 
 if __name__ == "__main__":

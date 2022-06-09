@@ -4,8 +4,11 @@ import weakref
 import cabinetry
 import jax
 import numpy
+import scipy
 
 from . import blind
+
+# cabinetry
 
 
 def cabinetry_post(region):
@@ -27,84 +30,139 @@ def _cabinetry_fit(model, data, signal_region_name):
 
     index = model.config.channels.index(signal_region_name)
     yield_ = numpy.sum(prediction.model_yields[index])
-    err = prediction.total_stdev_model_channels[index]
-    return yield_, err
+    error = prediction.total_stdev_model_channels[index]
+    return {
+        "yield": yield_,
+        "error": error,
+    }
+
+
+# expansion for Gaussian approximation
 
 
 def normal(region):
-    funcs = region_functions(region)
-    funcs.objective
-    ...
+    state = region_state(region)
+
+    optimum = scipy.optimize.minimize(
+        state.objective_value_and_grad,
+        state.init,
+        bounds=state.bounds,
+        jac=True,
+        method="L-BFGS-B",
+    )
+
+    # if gaussian, then covariance is inverse hessian
+    cov = state.objective_hess_inv(optimum.x)
+
+    # approximate signal region yield (log) linearly from gradients
+    yield_value, yield_grad = state.yield_value_and_grad(optimum.x)
+
+    yield_std = _quadratic_form(cov, yield_grad) ** 0.5
+
+    # d/dx log(f(x)) = f'(x) / f(x)
+    yield_log_std = _quadratic_form(cov, yield_grad / yield_value) ** 0.5
+
+    # values are 0-dim jax arrays; cast to floats
+    return {
+        "linear": {
+            "yield": float(yield_value),
+            "error": float(yield_std),
+        },
+        "log": {
+            "yield": float(numpy.log(yield_value)),
+            "error": float(yield_log_std),
+        },
+    }
+
+
+def _quadratic_form(matrix, vector):
+    return matrix.dot(vector).dot(vector)
+
+
+# levels of fixed values
 
 
 def interval(region, level):
-    funcs = region_functions(region)
-    funcs.objective
+    state = region_state(region)
+    state.objective
     ...
 
 
+# linear scan
+
+
 def linspace(region, start, stop, num):
-    funcs = region_functions(region)
-    funcs.objective
+    state = region_state(region)
+    state.objective
     ...
 
 
 # region functions
 
+# cache to avoid recompilation, weakref to clean up if the region object no
+# longer exists elsewhere
 _region_functions_cache = weakref.WeakKeyDictionary()
 
 
-def region_functions(region):
+def region_state(region):
     if region in _region_functions_cache:
         return _region_functions_cache[region]
 
-    result = RegionFunctions(region)
+    result = RegionState(region)
     _region_functions_cache[region] = result
     return result
 
 
-class RegionFunctions:
-    """Store various jax-jitted functions to avoid recompilation."""
+class RegionState:
+    """Store jax-jitted functions and parameters for a region."""
 
     def __init__(self, region):
         model = region.workspace.model()
         data = region.workspace.data(model)
         model_blind = blind.Model(model, {region.signal_region_name})
 
+        # parameters
+        self.init = numpy.array(model.config.suggested_init())
+        self.bounds = numpy.array(model.config.suggested_bounds())
+
         # "logpdf" minimization objective
         @jax.value_and_grad
-        def objective(x):
+        def objective_value_and_grad(x):
             (logpdf,) = model_blind.logpdf(x, data)
             return -logpdf
 
         def objective_value(x):
-            value, _ = objective(x)
+            value, _ = objective_value_and_grad(x)
             return value
 
         def objective_grad(x):
-            _, grad = objective(x)
+            _, grad = objective_value_and_grad(x)
             return grad
+
+        def objective_hess_inv(x):
+            return jax.numpy.linalg.inv(jax.hessian(objective_value)(x))
 
         # signal region yield
         slice_ = model.config.channel_slices[region.signal_region_name]
 
         @jax.value_and_grad
-        def yield_(x):
+        def yield_value_and_grad(x):
             (result,) = model.expected_actualdata(x)[slice_]
             return result
 
         def yield_value(x):
-            value, _ = yield_(x)
+            value, _ = yield_value_and_grad(x)
             return value
 
         def yield_grad(x):
-            _, grad = yield_(x)
+            _, grad = yield_value_and_grad(x)
             return grad
 
-        self.objective = jax.jit(objective)
+        self.objective_value_and_grad = jax.jit(objective_value_and_grad)
         self.objective_value = jax.jit(objective_value)
         self.objective_grad = jax.jit(objective_grad)
+        self.objective_hess_inv = jax.jit(objective_hess_inv)
 
-        self.yield_ = jax.jit(yield_)
+        self.yield_value_and_grad = jax.jit(yield_value_and_grad)
         self.yield_value = jax.jit(yield_value)
         self.yield_grad = jax.jit(yield_grad)

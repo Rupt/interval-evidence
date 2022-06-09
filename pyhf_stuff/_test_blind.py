@@ -3,7 +3,7 @@ from test import raises
 import numpy
 import pyhf
 
-from .blind import Model, model_logpdf_blind
+from .blind import Model, _make_mask, model_logpdf_blind
 
 
 def test_simple_model_blind():
@@ -38,10 +38,6 @@ def test_simple_model_blind():
 
     # check (channel, bin) form
     assert f() == f_blind({(channel_name, 0)}) + loglikelihood
-
-    assert raises(lambda: f_blind({(channel_name, 1)}), IndexError)
-    assert raises(lambda: f_blind({("foo", 0)}), KeyError)
-    assert raises(lambda: f_blind({"foo"}), KeyError)
 
 
 def test_model():
@@ -79,3 +75,8 @@ def test_model():
     assert model_blind.schema is model.schema
     assert model_blind.spec is model.spec
     assert model_blind.version is model.version
+
+    channel_name = model.config.channels[0]
+    assert raises(lambda: _make_mask(model, {(channel_name, 1)}), IndexError)
+    assert raises(lambda: _make_mask(model, {("foo", 0)}), KeyError)
+    assert raises(lambda: _make_mask(model, {"foo"}), KeyError)

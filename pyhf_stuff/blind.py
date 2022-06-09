@@ -8,7 +8,7 @@ def model_logpdf_blind(model, blind_bins, pars, data):
 
     Args:
         model: pyhf.pdf.Model-like
-        blind_bins: Sequence of either
+        blind_bins: dataclass of either
             pair (channel_name, bin_index)
             or str channel_name.
             str channel_name requires that the channel has one bin only.
@@ -23,20 +23,19 @@ def model_logpdf_blind(model, blind_bins, pars, data):
 
 
 class Model:
-    """Wrapper around pyhf.Model with regions blinded."""
+    """Wrapper around pyhf.Model with selected channel bins blinded."""
 
     def __init__(self, model, blind_bins):
         self.model = model
         self.blind_bins = blind_bins
-        self._mask = _make_mask(model, blind_bins)
 
     def make_pdf(self, pars):
         pdf = self.model.make_pdf(pars)
-
-        # pdf = Simultaneous([Independent(Poisson), constraint])
+        # pdf ~ Simultaneous([Independent(Poisson), constraint])
         main, constraint = pdf
 
-        poisson_masked = PoissonMasked(main.expected_data(), self._mask)
+        mask = _make_mask(self.model, self.blind_bins)
+        poisson_masked = PoissonMasked(main.expected_data(), mask)
 
         return pyhf.probability.Simultaneous(
             [
@@ -69,15 +68,13 @@ def _make_mask(model, blind_bins):
 
         channel, bin_ = channelbin
 
-        slice_ = channel_to_slice[channel]
-        assert slice_.step is None
-        slice_range = range(slice_.start, slice_.stop)
+        mask_slice = mask[channel_to_slice[channel]]
 
-        nbins = len(slice_range)
+        nbins = len(mask_slice)
         if str_form and nbins != 1:
             raise ValueError(f"missing bin index: {channel=} with {nbins=}")
 
-        mask[slice_range[bin_]] = False
+        mask_slice[bin_] = False
 
     return mask
 

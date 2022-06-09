@@ -10,14 +10,20 @@ cabinetry  # TODO hides flake warning
 
 
 def cabinetry_post(region):
-    funcs = region_functions(region)
-    funcs.objective
+    model = region.workspace.model()
+    data = region.workspace.data(model)
     ...
 
 
 def cabinetry_pre(region):
-    funcs = region_functions(region)
-    funcs.objective
+    data = region.workspace.data(model)
+    model = blind.Model(region.workspace.model(), {region.signal_region_name})
+
+    fit_result = cabinetry.fit.fit(model, data)
+
+    prediction = cabinetry.model_utils.prediction(model, fit_result)
+
+    # TODO find index of signal region
     ...
 
 

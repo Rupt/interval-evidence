@@ -9,35 +9,56 @@ from . import blind
 cabinetry  # TODO hides flake warning
 
 
-def cabinetry_post(model):
+def cabinetry_post(region):
+    funcs = region_functions(region)
+    funcs.objective
     ...
 
 
-def cabinetry_pre(model):
+def cabinetry_pre(region):
+    funcs = region_functions(region)
+    funcs.objective
     ...
 
 
-def normal(model):
+def normal(region):
+    funcs = region_functions(region)
+    funcs.objective
     ...
 
 
-def interval(model, level):
+def interval(region, level):
+    funcs = region_functions(region)
+    funcs.objective
     ...
 
 
-def linspace(model, start, stop, num):
+def linspace(region, start, stop, num):
+    funcs = region_functions(region)
+    funcs.objective
     ...
 
 
-# TODO cache eaach with WeakKeyDict?
+# region functions
+
 _region_functions_cache = weakref.WeakKeyDictionary()
+
+
+def region_functions(region):
+    if region in _region_functions_cache:
+        return _region_functions_cache[region]
+
+    result = RegionFunctions(region)
+    _region_functions_cache[region] = result
+    return result
 
 
 class RegionFunctions:
     """Store various jax-jitted functions to avoid recompilation."""
 
     def __init__(self, region):
-        model, data = model_and_data(region)
+        model = region.workspace.model()
+        data = region.workspace.data(model)
         model_blind = blind.Model(model, {region.signal_region_name})
 
         # "logpdf" minimization objective
@@ -77,9 +98,3 @@ class RegionFunctions:
         self.yield_ = jax.jit(yield_)
         self.yield_value = jax.jit(yield_value)
         self.yield_grad = jax.jit(yield_grad)
-
-
-def model_and_data(region):
-    model = region.workspace.model()
-    data = region.workspace.data(model)
-    return model, data

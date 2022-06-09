@@ -16,6 +16,10 @@ class Region:
         if self.signal_region_name not in self.workspace.channel_slices:
             raise ValueError(self.signal_region_name)
 
+    # avoid hashing the spooky scary dicts inside us
+    def __hash__(self):
+        return object.__hash__(self)
+
 
 # serialization
 

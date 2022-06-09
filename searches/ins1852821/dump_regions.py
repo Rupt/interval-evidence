@@ -9,6 +9,15 @@ HEPDATA = "ins1852821"
 
 
 def main():
+    for name, workspace in generate_regions():
+        region.dump(
+            name,
+            workspace,
+            os.path.join(BASEPATH, region.strip_cuts(name)),
+        )
+
+
+def generate_regions():
     spec = serial.load_json_gz(
         os.path.join(BASEPATH, HEPDATA + "_bkg.json.gz")
     )
@@ -34,11 +43,7 @@ def main():
 
     # serialize regions for each
     for name in sorted(signal_regions):
-        region.dump(
-            name,
-            region.prune(workspace, name, *control_regions),
-            os.path.join(BASEPATH, region.strip_cuts(name)),
-        )
+        yield name, region.prune(workspace, name, *control_regions)
 
 
 if __name__ == "__main__":

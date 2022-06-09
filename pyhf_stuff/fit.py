@@ -10,12 +10,10 @@ from . import blind
 
 # cabinetry
 
-
 def cabinetry_post(region):
     model = region.workspace.model()
     data = region.workspace.data(model)
     return _cabinetry_fit(model, data, region.signal_region_name)
-
 
 def cabinetry_pre(region):
     model = blind.Model(region.workspace.model(), {region.signal_region_name})
@@ -38,7 +36,6 @@ def _cabinetry_fit(model, data, signal_region_name):
 
 
 # expansion for Gaussian approximation
-
 
 def normal(region):
     state = region_state(region)
@@ -166,3 +163,9 @@ class RegionState:
         self.yield_value_and_grad = jax.jit(yield_value_and_grad)
         self.yield_value = jax.jit(yield_value)
         self.yield_grad = jax.jit(yield_grad)
+
+
+# utilities
+
+def filename(func):
+    return func.__name__ + ".json"

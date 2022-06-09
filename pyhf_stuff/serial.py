@@ -2,8 +2,6 @@
 import gzip
 import json
 
-# utilities
-
 
 def dump_json_human(obj, path):
     with open(path, "w") as file_:

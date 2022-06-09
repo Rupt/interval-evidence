@@ -3,28 +3,32 @@ import weakref
 
 import cabinetry
 import jax
+import numpy
 
 from . import blind
-
-cabinetry  # TODO hides flake warning
 
 
 def cabinetry_post(region):
     model = region.workspace.model()
     data = region.workspace.data(model)
-    ...
+    return _cabinetry_fit(model, data, region.signal_region_name)
 
 
 def cabinetry_pre(region):
-    data = region.workspace.data(model)
     model = blind.Model(region.workspace.model(), {region.signal_region_name})
+    data = region.workspace.data(model)
+    return _cabinetry_fit(model, data, region.signal_region_name)
 
-    fit_result = cabinetry.fit.fit(model, data)
 
-    prediction = cabinetry.model_utils.prediction(model, fit_result)
+def _cabinetry_fit(model, data, signal_region_name):
+    prediction = cabinetry.model_utils.prediction(
+        model, fit_results=cabinetry.fit.fit(model, data)
+    )
 
-    # TODO find index of signal region
-    ...
+    index = model.config.channels.index(signal_region_name)
+    yield_ = numpy.sum(prediction.model_yields[index])
+    err = prediction.total_stdev_model_channels[index]
+    return yield_, err
 
 
 def normal(region):

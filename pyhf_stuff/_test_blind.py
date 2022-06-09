@@ -13,36 +13,35 @@ def test_simple_model_blind():
 
     nobs = 54
 
-    data = numpy.concatenate([[nobs], model.config.auxdata])
     parameters = model.config.suggested_init()
+    data = numpy.concatenate([[nobs], model.expected_data(parameters)[1:]])
     channel_name = model.config.channels[0]
 
-    def logf():
-        (x,) = model.logpdf(parameters, data)
-        return x
+    def f():
+        return model.logpdf(parameters, data)
 
-    def logf_blind(blind_bins):
-        (x,) = model_logpdf_blind(model, parameters, data, blind_bins)
-        return x
+    def f_blind(blind_bins):
+        return model_logpdf_blind(model, blind_bins, parameters, data)
 
     # check we recover the same result with nothing blinded
-    assert logf() == logf_blind([])
+    assert f() == f_blind([])
 
     # check that constraint + loglikelihood recovers total
-    expected_data = model.make_pdf(numpy.array(parameters)).expected_data()
+    expected_data = model.make_pdf(
+        pyhf.tensorlib.astensor(parameters)
+    ).expected_data()
     slice_ = model.config.channel_slices[channel_name]
     mu = expected_data[slice_]
 
     loglikelihood = pyhf.probability.Poisson(mu).log_prob(nobs)
-
-    assert logf() == logf_blind({channel_name}) + loglikelihood
+    assert f() == f_blind({channel_name}) + loglikelihood
 
     # check (channel, bin) form
-    assert logf() == logf_blind({(channel_name, 0)}) + loglikelihood
+    assert f() == f_blind({(channel_name, 0)}) + loglikelihood
 
-    assert raises(lambda: logf_blind({(channel_name, 1)}), IndexError)
-    assert raises(lambda: logf_blind({("foo", 0)}), KeyError)
-    assert raises(lambda: logf_blind({"foo"}), KeyError)
+    assert raises(lambda: f_blind({(channel_name, 1)}), IndexError)
+    assert raises(lambda: f_blind({("foo", 0)}), KeyError)
+    assert raises(lambda: f_blind({"foo"}), KeyError)
 
 
 def test_model():
@@ -59,12 +58,12 @@ def test_model():
 
     assert model_blind.logpdf(parameters, data) == model_logpdf_blind(
         model,
+        bins_blind,
         parameters,
         data,
-        bins_blind,
     )
 
-    # I don't know why some of these aren't "is"
+    # methods appear to fail "is", possibly because they bind different objects
     assert model_blind.batch_size is model.batch_size
     assert model_blind.config is model.config
     assert model_blind.constraint_logpdf == model.constraint_logpdf
@@ -75,7 +74,6 @@ def test_model():
     assert model_blind.fullpdf_tv is model.fullpdf_tv
     assert model_blind.main_model is model.main_model
     assert model_blind.mainlogpdf == model.mainlogpdf
-    assert model_blind.make_pdf == model.make_pdf
     assert model_blind.nominal_rates is model.nominal_rates
     assert model_blind.pdf == model.pdf
     assert model_blind.schema is model.schema

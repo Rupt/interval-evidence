@@ -11,8 +11,7 @@ HEPDATA = "ins1852821"
 def main():
     for name, workspace in generate_regions():
         region.dump(
-            name,
-            workspace,
+            region.Region(name, workspace),
             os.path.join(BASEPATH, region.strip_cuts(name)),
         )
 

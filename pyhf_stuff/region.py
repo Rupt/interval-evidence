@@ -1,34 +1,45 @@
 """Regions are single-signal-region workspaces. Define utilities."""
 import os
+from dataclasses import dataclass
+
+import pyhf
 
 from . import serial
+
+
+@dataclass(frozen=True)
+class Region:
+    signal_region_name: str
+    workspace: pyhf.Workspace
+
+    def __post_init__(self):
+        if self.signal_region_name not in self.workspace.channel_slices:
+            raise ValueError(self.signal_region_name)
+
 
 # serialization
 
 FILENAME = "region.json.gz"
 
 
-def dump(signal_region_name, workspace, path):
+def dump(region, path):
     os.makedirs(path, exist_ok=True)
 
-    region = {
-        "signal_region_name": signal_region_name,
-        "workspace": workspace,
+    region_json = {
+        "signal_region_name": region.signal_region_name,
+        "workspace": region.workspace,
     }
 
-    serial.dump_json_gz(
-        region,
-        os.path.join(path, FILENAME),
-    )
+    serial.dump_json_gz(region_json, os.path.join(path, FILENAME))
 
 
 def load(path):
-    region = serial.load_json_gz(os.path.join(path, FILENAME))
+    region_json = serial.load_json_gz(os.path.join(path, FILENAME))
 
-    signal_region_name = region["signal_region_name"]
-    workspace = region["workspace"]
-
-    return signal_region_name, workspace
+    return Region(
+        region_json["signal_region_name"],
+        pyhf.Workspace(region_json["workspace"]),
+    )
 
 
 # utilities

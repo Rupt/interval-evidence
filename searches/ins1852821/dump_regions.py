@@ -34,11 +34,10 @@ def main():
 
     # serialize regions for each
     for name in sorted(signal_regions):
-        signal_region_name = region.strip_cuts(name)
         region.dump(
-            signal_region_name,
+            name,
             region.prune(workspace, name, *control_regions),
-            os.path.join(BASEPATH, signal_region_name),
+            os.path.join(BASEPATH, region.strip_cuts(name)),
         )
 
 

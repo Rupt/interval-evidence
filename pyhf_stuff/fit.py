@@ -1,5 +1,7 @@
 """Extract staistics from pyhf models."""
+import warnings
 import weakref
+from contextlib import contextmanager
 
 import cabinetry
 import jax
@@ -10,10 +12,12 @@ from . import blind
 
 # cabinetry
 
+
 def cabinetry_post(region):
     model = region.workspace.model()
     data = region.workspace.data(model)
     return _cabinetry_fit(model, data, region.signal_region_name)
+
 
 def cabinetry_pre(region):
     model = blind.Model(region.workspace.model(), {region.signal_region_name})
@@ -36,6 +40,7 @@ def _cabinetry_fit(model, data, signal_region_name):
 
 
 # expansion for Gaussian approximation
+
 
 def normal(region):
     state = region_state(region)
@@ -79,10 +84,70 @@ def _quadratic_form(matrix, vector):
 # levels of fixed values
 
 
-def interval(region, level):
+def interval(region, *, levels=(0.5, 2, 4.5)):
     state = region_state(region)
-    state.objective
-    ...
+
+    optimum = scipy.optimize.minimize(
+        state.objective_value_and_grad,
+        state.init,
+        bounds=state.bounds,
+        jac=True,
+        method="L-BFGS-B",
+    )
+
+    def minmax_given_level(level):
+        constaint = scipy.optimize.NonlinearConstraint(
+            state.objective_value,
+            optimum.fun + level,
+            optimum.fun + level,
+            jac=state.objective_grad,
+        )
+
+        with _suppress_bounds_warning():
+            minimum = scipy.optimize.minimize(
+                state.yield_value_and_grad,
+                state.init,
+                bounds=state.bounds,
+                jac=True,
+                method="SLSQP",
+                constraints=constaint,
+            )
+
+        def negative_yield_value_and_grad(x):
+            value, grad = state.yield_value_and_grad(x)
+            return -value, -grad
+
+        with _suppress_bounds_warning():
+            maximum = scipy.optimize.minimize(
+                negative_yield_value_and_grad,
+                state.init,
+                bounds=state.bounds,
+                jac=True,
+                method="SLSQP",
+                constraints=constaint,
+            )
+
+        return minimum.fun, -maximum.fun
+
+    level_to_lo_hi = {}
+    for level in levels:
+        level_to_lo_hi[level] = minmax_given_level(level)
+
+    return level_to_lo_hi
+
+
+@contextmanager
+def _suppress_bounds_warning():
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            (
+                "Values in x were outside bounds during a "
+                "minimize step, clipping to bounds"
+            ),
+            category=RuntimeWarning,
+        )
+        yield
 
 
 # linear scan
@@ -166,6 +231,7 @@ class RegionState:
 
 
 # utilities
+
 
 def filename(func):
     return func.__name__ + ".json"

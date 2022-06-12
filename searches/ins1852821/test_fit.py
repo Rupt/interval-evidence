@@ -1,20 +1,37 @@
+"""
+time python searches/ins1852821/test_fit.py
+
+"""
+
 import os
 
-from pyhf_stuff import fit, region
+from pyhf_stuff import fit_cabinetry, fit_normal, region
 
 BASEPATH = os.path.dirname(__file__)
 
 
 def main():
-    region_1 = region.load(os.path.join(BASEPATH, "SR0bvetotight"))
+    dir_region = os.path.join(BASEPATH, "SR0bvetotight")
+    region_1 = region.load(dir_region)
 
-    # print(fit.filename(fit.cabinetry_pre), fit.cabinetry_pre(region_1))
-    # print(fit.filename(fit.cabinetry_post), fit.cabinetry_post(region_1))
-    # print(fit.filename(fit.normal), fit.normal(region_1))
+    dir_fit = "fit"
+
+    fit_cab = fit_cabinetry.fit(region_1)
+    fit_cabinetry.dump(fit_cab, os.path.join(dir_region, dir_fit))
+    print(fit_cab)
+    print(fit_cabinetry.load(os.path.join(dir_region, dir_fit)))
+
+    fit_norm = fit_normal.fit(region_1)
+    fit_normal.dump(fit_norm, os.path.join(dir_region, dir_fit))
+    print(fit_norm)
+    print(fit_normal.load(os.path.join(dir_region, dir_fit)))
     # print(fit.filename(fit.interval), fit.interval(region_1))
     # print(fit.filename(fit.linspace), fit.linspace(region_1, 0, 4, 11))
-    print(fit.filename(fit.mcmc_nuts), fit.mcmc_nuts(region_1, 100))
-    # print(fit.filename(fit.mcmc_hmc), fit.mcmc_hmc(region_1, 100))
+
+    # print(
+    # fit.filename(fit_mcmc),
+    # fit_mcmc.mcmc_mala(region_1, 20, (0.0, 20.0), seed=0),
+    # )
 
 
 if __name__ == "__main__":

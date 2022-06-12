@@ -8,6 +8,12 @@ def dump_json_human(obj, path):
         json.dump(obj, file_, indent=4)
 
 
+def load_json(path):
+    with open(path) as file_:
+        obj = json.load(file_)
+    return obj
+
+
 def dump_json_gz(obj, path):
     # gzip adds a timestamp which makes git think identical files have changed
     # Avoid that by setting that timestamp to a constant value

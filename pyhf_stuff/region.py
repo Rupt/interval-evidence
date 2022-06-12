@@ -1,4 +1,4 @@
-"""Regions are single-signal-region workspaces. Define utilities."""
+"""Regions are single-signal-region workspaces."""
 import os
 from dataclasses import dataclass
 
@@ -7,7 +7,7 @@ import pyhf
 from . import serial
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Region:
     signal_region_name: str
     workspace: pyhf.Workspace
@@ -41,8 +41,8 @@ def load(path):
     region_json = serial.load_json_gz(os.path.join(path, FILENAME))
 
     return Region(
-        region_json["signal_region_name"],
-        pyhf.Workspace(region_json["workspace"]),
+        signal_region_name=region_json["signal_region_name"],
+        workspace=pyhf.Workspace(region_json["workspace"]),
     )
 
 

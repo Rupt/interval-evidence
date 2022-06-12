@@ -33,4 +33,5 @@ def test_args():
     assert raises(lambda: regular_linear(0, 0, [1, 2]), ValueError)
     assert raises(lambda: regular_linear(0, -1, [1, 2]), ValueError)
     assert raises(lambda: regular_linear(0, 1, [1]), ValueError)
+    assert raises(lambda: regular_linear(0, 1, []), ValueError)
     assert raises(lambda: regular_linear(numpy.nan, 1, [1, 2]), ValueError)

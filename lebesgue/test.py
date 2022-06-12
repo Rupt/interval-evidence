@@ -12,6 +12,7 @@ from . import (
     _test_prior_mixture,
     _test_prior_normal,
     _test_prior_regular_linear,
+    _test_prior_regular_uniform,
     _test_prior_trunc,
     _test_quad_bound,
 )
@@ -57,6 +58,8 @@ def run_tests():
         _test_prior_mixture.test_args,
         _test_prior_regular_linear.test_values,
         _test_prior_regular_linear.test_args,
+        _test_prior_regular_uniform.test_values,
+        _test_prior_regular_uniform.test_args,
         # q
         _test_quad_bound.test_fpow,
         _test_quad_bound.test_normal,

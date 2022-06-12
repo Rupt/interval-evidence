@@ -1,4 +1,4 @@
-"""A regularly piece-wise linear prior."""
+"""A regularly piece-wise uniform prior."""
 from collections.abc import Sequence
 
 import numba
@@ -7,15 +7,15 @@ import numpy
 from ._bayes import Prior
 
 
-def regular_linear(start: float, stop: float, log_rates: Sequence) -> Prior:
-    """Return a Prior with piecewise linear denisty from start to stop.
+def regular_uniform(start: float, stop: float, log_rates: Sequence) -> Prior:
+    """Return a Prior with piecewise uniform denisty from start to stop.
 
     Arguments:
         start: low edge
         stop: high edge
-        log_rates: log density [+ c] at each edge
+        log_rates: log density [+ c] in each bin
 
-            Edges are located at numpy.linspace(start, stop, len(log_rates))
+            Bin edges are at numpy.linspace(start, stop, len(log_rates) + 1)
     """
     stop = float(stop)
     start = float(start)
@@ -30,27 +30,28 @@ def regular_linear(start: float, stop: float, log_rates: Sequence) -> Prior:
     log_rates -= log_rates.max()
     pdf = numpy.exp(log_rates)
 
-    masses = 0.5 * (pdf[1:] + pdf[:-1])
-    cdf = numpy.concatenate([[0], numpy.cumsum(masses)])
+    cdf = numpy.concatenate([[0], numpy.cumsum(pdf)])
 
     # normalize
     scale = cdf[-1]
-    cdf /= scale
     pdf /= scale
+    cdf /= scale
+    # we don't need the ending 1
+    cdf = cdf[:-1]
 
     args = (start, stop, pdf, cdf)
-    return Prior(args, _regular_linear_between)
+    return Prior(args, _regular_uniform_between)
 
 
 @numba.njit
-def _regular_linear_between(args, lo, hi):
-    big_lo, smol_lo = _regular_linear_cdf(args, lo)
-    big_hi, smol_hi = _regular_linear_cdf(args, hi)
+def _regular_uniform_between(args, lo, hi):
+    big_lo, smol_lo = _regular_uniform_cdf(args, lo)
+    big_hi, smol_hi = _regular_uniform_cdf(args, hi)
     return big_hi - big_lo + (smol_hi - smol_lo)
 
 
 @numba.njit
-def _regular_linear_cdf(args, x):
+def _regular_uniform_cdf(args, x):
     """Return cdf in (big, small) pieces."""
     start, stop, pdf, cdf = args
 
@@ -61,16 +62,13 @@ def _regular_linear_cdf(args, x):
         return 0.0, 0.0
 
     # regular indexing
-    nbins = len(pdf) - 1
+    nbins = len(pdf)
     indexf = nbins * (x - start) / (stop - start)
 
     i = int(indexf)
     frac = indexf - i
 
-    # integrate density in this box, where density linearly increases
-    # pdf = pdf_lo + (pdf_hi - pdf_lo) * frac
-    pdf_lo = pdf[i]
-    pdf_hi = pdf[i + 1]
-    box_mass = frac * (pdf_lo + 0.5 * (pdf_hi - pdf_lo) * frac)
+    # integrate uniform density in this bin
+    box_mass = pdf[i] * frac
 
     return cdf[i], box_mass

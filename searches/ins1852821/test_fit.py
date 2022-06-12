@@ -9,7 +9,9 @@ from pyhf_stuff import (
     fit_cabinetry,
     fit_interval,
     fit_linspace,
+    fit_mcmc_ham,
     fit_mcmc_mala,
+    fit_mcmc_nuts,
     fit_normal,
     mcmc,
     region,
@@ -44,19 +46,41 @@ def main():
     print(fit_lin)
     assert fit_lin == fit_linspace.load(dir_fit)
 
-    nsamples = 100_000
     fit_mal = fit_mcmc_mala.fit(
         region_1,
         25,
         (0.0, 25.0),
         seed=0,
-        nsamples=nsamples,
     )
     fit_mcmc_mala.dump(fit_mal, dir_fit)
     print(fit_mal)
     neff = mcmc.n_by_variance(fit_mal.yields).sum()
-    print(nsamples, neff, neff / nsamples)
+    print(fit_mal.nsamples, neff, neff / fit_mal.nsamples)
     assert fit_mal == fit_mcmc_mala.load(dir_fit)
+
+    fit_ham = fit_mcmc_ham.fit(
+        region_1,
+        25,
+        (0.0, 25.0),
+        seed=0,
+    )
+    fit_mcmc_ham.dump(fit_ham, dir_fit)
+    print(fit_ham)
+    neff = mcmc.n_by_variance(fit_ham.yields).sum()
+    print(fit_ham.nsamples, neff, neff / fit_ham.nsamples)
+    assert fit_ham == fit_mcmc_ham.load(dir_fit)
+
+    fit_nuts = fit_mcmc_nuts.fit(
+        region_1,
+        25,
+        (0.0, 25.0),
+        seed=0,
+    )
+    fit_mcmc_nuts.dump(fit_nuts, dir_fit)
+    print(fit_nuts)
+    neff = mcmc.n_by_variance(fit_nuts.yields).sum()
+    print(fit_nuts.nsamples, neff, neff / fit_nuts.nsamples)
+    assert fit_nuts == fit_mcmc_nuts.load(dir_fit)
 
 
 if __name__ == "__main__":

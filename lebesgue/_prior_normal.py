@@ -1,6 +1,5 @@
 """Implement the normal (Gaussian) prior."""
 import numba
-import numpy
 
 from . import _cephes_ndtr
 from ._bayes import Prior

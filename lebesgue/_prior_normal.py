@@ -41,9 +41,6 @@ def _normal_between(args, lo, hi):
 
 @numba.njit
 def _gaussian_dcdf(lo, hi):
-    offset = numpy.copysign(0.5, hi) - numpy.copysign(0.5, lo)
-
-    flo = numpy.copysign(_cephes_ndtr.ndtr(-abs(lo)), lo)
-    fhi = numpy.copysign(_cephes_ndtr.ndtr(-abs(hi)), hi)
-
-    return flo - fhi + offset
+    big_lo, smol_lo = _cephes_ndtr.ndtr_split(lo)
+    big_hi, smol_hi = _cephes_ndtr.ndtr_split(hi)
+    return big_hi - big_lo + (smol_hi - smol_lo)

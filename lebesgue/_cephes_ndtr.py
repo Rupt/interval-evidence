@@ -117,11 +117,10 @@ def _erf_x_le_1(a):
 @numba.njit
 def _erfc_x_ge_1(a):
     x = abs(a)
-
     z = -a * a
 
     if z < -MAXLOG:
-        return 2.0 * (a < 0)
+        return 2.0 * (a < 0), 0.0
 
     z = numpy.exp(z)
 
@@ -135,9 +134,9 @@ def _erfc_x_ge_1(a):
     y = (z * p) / q
 
     if a < 0:
-        return 2.0 - y
+        return 2.0, -y
 
-    return y
+    return 0.0, y
 
 
 @numba.njit
@@ -145,7 +144,7 @@ def _erfc(a):
     x = abs(a)
 
     if x < 1.0:
-        return 1.0 - _erf_x_le_1(a)
+        return 1.0, -_erf_x_le_1(a)
 
     return _erfc_x_ge_1(a)
 
@@ -155,26 +154,33 @@ def _erf(a):
     x = abs(a)
 
     if x > 1.0:
-        r = 1.0 - _erfc_x_ge_1(x)
-        return numpy.copysign(r, a)
+        big, smol = _erfc_x_ge_1(x)
+        return numpy.copysign(1.0 - big, a), numpy.copysign(smol, a)
 
-    return _erf_x_le_1(a)
+    return 0.0, _erf_x_le_1(a)
 
 
 # core
 
 
-@numba.njit(numba.float64(numba.float64), cache=True)
-def ndtr(a):
+@numba.njit
+def ndtr_split(a):
     x = a * SQRT1_2
     z = abs(x)
 
     if z < SQRT1_2:
-        return 0.5 + 0.5 * _erf(x)
+        big, smol = _erf(x)
+        return 0.5 + 0.5 * big, 0.5 * smol
 
-    y = 0.5 * _erfc(z)
+    big, smol = _erfc(z)
 
     if x > 0:
-        return 1.0 - y
+        return 1.0 - 0.5 * big, -(0.5 * smol)
 
-    return y
+    return 0.5 * big, 0.5 * smol
+
+
+@numba.njit(numba.float64(numba.float64), cache=True)
+def ndtr(a):
+    big, smol = ndtr_split(a)
+    return big + smol

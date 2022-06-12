@@ -25,22 +25,22 @@ def main():
     fit_cab = fit_cabinetry.fit(region_1)
     fit_cabinetry.dump(fit_cab, dir_fit)
     print(fit_cab)
-    print(fit_cabinetry.load(dir_fit))
+    assert fit_cab == fit_cabinetry.load(dir_fit)
 
     fit_norm = fit_normal.fit(region_1)
     fit_normal.dump(fit_norm, dir_fit)
     print(fit_norm)
-    print(fit_normal.load(dir_fit))
+    assert fit_norm == fit_normal.load(dir_fit)
 
     fit_int = fit_interval.fit(region_1)
     fit_interval.dump(fit_int, dir_fit)
     print(fit_int)
-    print(fit_interval.load(dir_fit))
+    assert fit_int == fit_interval.load(dir_fit)
 
     fit_lin = fit_linspace.fit(region_1, 0, 25, 26)
     fit_linspace.dump(fit_lin, dir_fit)
     print(fit_lin)
-    print(fit_linspace.load(dir_fit))
+    assert fit_lin == fit_linspace.load(dir_fit)
 
     # print(
     # fit.filename(fit_mcmc),

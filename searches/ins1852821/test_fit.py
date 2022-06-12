@@ -14,7 +14,7 @@ def main():
     # print(fit.filename(fit.interval), fit.interval(region_1))
     # print(fit.filename(fit.linspace), fit.linspace(region_1, 0, 4, 11))
     print(fit.filename(fit.mcmc_nuts), fit.mcmc_nuts(region_1, 100))
-    #print(fit.filename(fit.mcmc_hmc), fit.mcmc_hmc(region_1, 100))
+    # print(fit.filename(fit.mcmc_hmc), fit.mcmc_hmc(region_1, 100))
 
 
 if __name__ == "__main__":

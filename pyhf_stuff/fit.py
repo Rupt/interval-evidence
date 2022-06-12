@@ -256,8 +256,11 @@ def mcmc_hmc(
             nsamples,
             current_state=chain_state,
             kernel=adaptive_hmc,
-            #trace_fn=lambda x, _: state.yield_value(x),
-            trace_fn=lambda x, pkr: (state.yield_value(x), pkr.inner_results.log_accept_ratio),
+            # trace_fn=lambda x, _: state.yield_value(x),
+            trace_fn=lambda x, pkr: (
+                state.yield_value(x),
+                pkr.inner_results.log_accept_ratio,
+            ),
             num_burnin_steps=burnin,
             num_steps_between_results=thin,
             seed=key,
@@ -268,7 +271,7 @@ def mcmc_hmc(
     print(states.shape)
     print(yields.shape)
     print(is_accepted)
-    #print((yields[:-1] == yields[1:]).astype(float))
+    # print((yields[:-1] == yields[1:]).astype(float))
 
     print(tfp.mcmc.effective_sample_size(yields))
     print(yields.mean(), yields.std())

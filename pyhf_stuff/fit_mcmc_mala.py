@@ -2,11 +2,12 @@ import os
 from dataclasses import asdict, dataclass
 from typing import List
 
+import numpy
 from tensorflow_probability.substrates import jax as tfp
 
 from . import mcmc, serial
 
-FILENAME = "mala.json"
+FILENAME = "mcmc_mala.json"
 
 
 def fit(
@@ -20,6 +21,8 @@ def fit(
     nrepeats=100,
     step_size=0.5,
 ):
+    range_ = numpy.array(range_, dtype=float).tolist()
+
     def kernel_func(logdf):
         return tfp.mcmc.MetropolisAdjustedLangevinAlgorithm(
             logdf,

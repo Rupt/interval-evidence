@@ -42,11 +42,11 @@ def generic_fit(
         return properties.yield_value(x_of_t(t))
 
     # mcmc chain sapling
-    def chain(key, chain_properties):
+    def chain(key, state):
         _, yields = tfp.mcmc.sample_chain(
             kernel=kernel_func(logdf),
             trace_fn=lambda t, _: observable(t),
-            current_properties=chain_properties,
+            current_state=state,
             num_burnin_steps=nburnin,
             num_results=nsamples,
             seed=key,
@@ -126,4 +126,5 @@ def n_by_variance(hists):
     """
     var = numpy.var(hists, axis=0)
     mean = numpy.mean(hists, axis=0)
-    return mean**2 / numpy.maximum(var, mean)
+    # max with 1 avoids div0 when mean is zero
+    return mean**2 / numpy.maximum(var, numpy.maximum(mean, 1))

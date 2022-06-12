@@ -7,7 +7,7 @@ from tensorflow_probability.substrates import jax as tfp
 from .region_properties import region_properties
 
 
-def generic_fit(
+def generic_chain_hist(
     kernel_func,
     region,
     nbins,

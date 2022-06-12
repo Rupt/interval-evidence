@@ -29,7 +29,7 @@ def fit(
             step_size,
         )
 
-    yields = mcmc.generic_fit(
+    yields = mcmc.generic_chain_hist(
         kernel_func,
         region,
         nbins,

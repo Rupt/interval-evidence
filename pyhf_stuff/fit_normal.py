@@ -11,21 +11,22 @@ FILENAME = "normal.json"
 
 
 def fit(region):
-    state = region_properties(region)
+    properties = region_properties(region)
 
     optimum = scipy.optimize.minimize(
-        state.objective_value_and_grad,
-        state.init,
-        bounds=state.bounds,
+        properties.objective_value_and_grad,
+        properties.init,
+        bounds=properties.bounds,
         jac=True,
         method="L-BFGS-B",
     )
+    assert optimum.success
 
     # if gaussian, then covariance is inverse hessian
-    cov = state.objective_hess_inv(optimum.x)
+    cov = properties.objective_hess_inv(optimum.x)
 
     # approximate signal region yield (log) linearly from gradients
-    yield_value, yield_grad = state.yield_value_and_grad(optimum.x)
+    yield_value, yield_grad = properties.yield_value_and_grad(optimum.x)
 
     yield_std = _quadratic_form(cov, yield_grad) ** 0.5
 

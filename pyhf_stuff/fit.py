@@ -7,6 +7,7 @@ import cabinetry
 import jax
 import numpy
 import scipy
+from tensorflow_probability.substrates import jax as tfp
 
 from . import blind
 
@@ -190,10 +191,102 @@ def linspace(region, start, stop, num):
     }
 
 
+# MCMC
+
+
+def mcmc_nuts(
+    region, nsamples=100, *, seed=0, step_size=1e-3, burnin=500, thin=100
+):
+    state = region_state(region)
+
+    # TODO IMPLEMENT BOUNDS
+    # exclude samples? set logpdf to 0?
+
+    # sample
+    @jax.jit
+    def chain(key, chain_state):
+        nuts = tfp.mcmc.NoUTurnSampler(state.logpdf, step_size)
+        nuts = tfp.mcmc.SimpleStepSizeAdaptation(nuts, int(burnin * 0.8))
+        states, trace = tfp.mcmc.sample_chain(
+            nsamples,
+            current_state=chain_state,
+            kernel=nuts,
+            trace_fn=lambda x, _: state.yield_value(x),
+            num_burnin_steps=burnin,
+            num_steps_between_results=thin,
+            seed=key,
+        )
+        return jax.numpy.array(trace)
+
+    yields = chain(jax.random.PRNGKey(seed), state.init)
+
+    print(tfp.mcmc.effective_sample_size(yields))
+    print(yields.mean(), yields.std())
+
+    return {
+        "seed": seed,
+        "step_size": step_size,
+        "burnin": burnin,
+        "thin": thin,
+        "yields": yields.tolist(),
+    }
+
+
+def mcmc_hmc(
+    region, nsamples=100, *, seed=0, step_size=5e-3, burnin=100, thin=1
+):
+    state = region_state(region)
+
+    # TODO IMPLEMENT BOUNDS
+    # exclude samples? set logpdf to 0?
+
+    # sample
+    @jax.jit
+    def chain(key, chain_state):
+        adaptive_hmc = tfp.mcmc.SimpleStepSizeAdaptation(
+            tfp.mcmc.HamiltonianMonteCarlo(
+                target_log_prob_fn=state.logpdf,
+                num_leapfrog_steps=3,
+                step_size=step_size,
+            ),
+            num_adaptation_steps=int(burnin * 0.8),
+        )
+
+        states, trace = tfp.mcmc.sample_chain(
+            nsamples,
+            current_state=chain_state,
+            kernel=adaptive_hmc,
+            #trace_fn=lambda x, _: state.yield_value(x),
+            trace_fn=lambda x, pkr: (state.yield_value(x), pkr.inner_results.log_accept_ratio),
+            num_burnin_steps=burnin,
+            num_steps_between_results=thin,
+            seed=key,
+        )
+        return states, jax.numpy.array(trace)
+
+    states, (yields, is_accepted) = chain(jax.random.PRNGKey(seed), state.init)
+    print(states.shape)
+    print(yields.shape)
+    print(is_accepted)
+    #print((yields[:-1] == yields[1:]).astype(float))
+
+    print(tfp.mcmc.effective_sample_size(yields))
+    print(yields.mean(), yields.std())
+
+    return {
+        "seed": seed,
+        "step_size": step_size,
+        "burnin": burnin,
+        "thin": thin,
+        "yields": yields.tolist(),
+    }
+
+
 # region functions
 
 # cache to avoid recompilation, weakref to clean up if the region object no
 # longer exists elsewhere
+# TODO make this a lazy property on region object
 _region_functions_cache = weakref.WeakKeyDictionary()
 
 
@@ -218,11 +311,16 @@ class RegionState:
         self.init = numpy.array(model.config.suggested_init())
         self.bounds = numpy.array(model.config.suggested_bounds())
 
+        def logpdf(x):
+            (logpdf,) = model_blind.logpdf(x, data)
+            return logpdf
+
+        self.logpdf = logpdf
+
         # "logpdf" minimization objective
         @jax.value_and_grad
         def objective_value_and_grad(x):
-            (logpdf,) = model_blind.logpdf(x, data)
-            return -logpdf
+            return -logpdf(x)
 
         def objective_value(x):
             value, _ = objective_value_and_grad(x)

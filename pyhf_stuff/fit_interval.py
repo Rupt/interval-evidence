@@ -1,19 +1,20 @@
+"""Fit for levels of fixed values."""
 import os
 import warnings
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from typing import List
 
-"""Fit for levels of fixed values."""
 import scipy
 
-from . import serial
+from . import serial, stats
 from .region_properties import region_properties
 
 FILENAME = "interval.json"
+DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 6 + 1)))
 
 
-def fit(region, *, levels=(0.5, 2, 4.5, 8, 12.5, 18)):
+def fit(region, *, levels=DEFAULT_LEVELS):
     properties = region_properties(region)
 
     optimum = scipy.optimize.minimize(

@@ -16,8 +16,8 @@ def fit(
     range_,
     *,
     seed,
-    nburnin=500,
-    nsamples=100_000,
+    nburnin=100,
+    nsamples=20_000,
     nrepeats=100,
     step_size=0.5,
 ):

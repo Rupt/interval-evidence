@@ -60,8 +60,6 @@ def main():
     neff = mcmc.n_by_fit(fit_mal).sum()
     print(fit_mal.nsamples, neff, neff / fit_mal.nsamples)
 
-    return
-
     fit_ham = fit_mcmc_ham.fit(
         region_1,
         25,

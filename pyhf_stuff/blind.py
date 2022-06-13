@@ -8,16 +8,12 @@ def model_logpdf_blind(model, blind_bins, pars, data):
 
     Args:
         model: pyhf.pdf.Model-like
-        blind_bins: dataclass of either
+        blind_bins: sequence of either
             pair (channel_name, bin_index)
-            or str channel_name.
-            str channel_name requires that the channel has one bin only.
+            or
+            str channel_name (if channel has one bin only)
         pars (:obj:`tensor`): The parameter values
         data (:obj:`tensor`): The measurement data
-
-    Returns:
-        Tensor: The "log density" value
-
     """
     return Model(model, blind_bins).logpdf(pars, data)
 

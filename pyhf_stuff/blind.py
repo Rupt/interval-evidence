@@ -6,14 +6,14 @@ import pyhf
 def model_logpdf_blind(model, blind_bins, pars, data):
     """Return a "logpdf" value with blinded channel-bins.
 
-    Args:
+    Arguments:
         model: pyhf.pdf.Model-like
         blind_bins: sequence of either
             pair (channel_name, bin_index)
             or
             str channel_name (if channel has one bin only)
-        pars (:obj:`tensor`): The parameter values
-        data (:obj:`tensor`): The measurement data
+        pars: model parameter
+        data: model data
     """
     return Model(model, blind_bins).logpdf(pars, data)
 

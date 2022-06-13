@@ -29,7 +29,7 @@ def fit(
             step_size,
         )
 
-    yields = mcmc.generic_chain_hist(
+    hists = mcmc.generic_chain_hist(
         kernel_func,
         region,
         nbins,
@@ -39,6 +39,8 @@ def fit(
         nsamples=nsamples,
         nrepeats=nrepeats,
     )
+
+    yields, errors = mcmc._summarize_hists(hists)
 
     return FitMala(
         # histogram arguments
@@ -53,6 +55,7 @@ def fit(
         step_size=step_size,
         # results
         yields=yields.tolist(),
+        errors=errors.tolist(),
     )
 
 
@@ -72,7 +75,8 @@ class FitMala:
     # special arguments
     step_size: float
     # results
-    yields: List[List[int]]
+    yields: List[int]
+    errors: List[float]
 
 
 def dump(fit: FitMala, path):

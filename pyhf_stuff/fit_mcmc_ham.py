@@ -31,7 +31,7 @@ def fit(
             num_leapfrog_steps,
         )
 
-    yields = mcmc.generic_chain_hist(
+    hists = mcmc.generic_chain_hist(
         kernel_func,
         region,
         nbins,
@@ -41,6 +41,8 @@ def fit(
         nsamples=nsamples,
         nrepeats=nrepeats,
     )
+
+    yields, errors = mcmc._summarize_hists(hists)
 
     return FitHam(
         # histogram arguments
@@ -56,6 +58,7 @@ def fit(
         num_leapfrog_steps=num_leapfrog_steps,
         # results
         yields=yields.tolist(),
+        errors=errors.tolist(),
     )
 
 
@@ -76,7 +79,8 @@ class FitHam:
     step_size: float
     num_leapfrog_steps: int
     # results
-    yields: List[List[int]]
+    yields: List[int]
+    errors: List[float]
 
 
 def dump(fit: FitHam, path):

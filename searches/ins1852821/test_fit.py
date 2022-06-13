@@ -54,9 +54,13 @@ def main():
     )
     fit_mcmc_mala.dump(fit_mal, dir_fit)
     print(fit_mal)
-    neff = mcmc.n_by_variance(fit_mal.yields).sum()
-    print(fit_mal.nsamples, neff, neff / fit_mal.nsamples)
     assert fit_mal == fit_mcmc_mala.load(dir_fit)
+    fit_mal = fit_mcmc_mala.load(dir_fit)
+    nsamples = sum(fit_mal.yields)
+    neff = mcmc.n_by_fit(fit_mal).sum()
+    print(fit_mal.nsamples, neff, neff / fit_mal.nsamples)
+
+    return
 
     fit_ham = fit_mcmc_ham.fit(
         region_1,
@@ -66,9 +70,10 @@ def main():
     )
     fit_mcmc_ham.dump(fit_ham, dir_fit)
     print(fit_ham)
-    neff = mcmc.n_by_variance(fit_ham.yields).sum()
-    print(fit_ham.nsamples, neff, neff / fit_ham.nsamples)
     assert fit_ham == fit_mcmc_ham.load(dir_fit)
+    nsamples = sum(fit_ham.yields)
+    neff = mcmc.n_by_fit(fit_ham).sum()
+    print(nsamples, neff, neff / nsamples)
 
     fit_nuts = fit_mcmc_nuts.fit(
         region_1,
@@ -78,9 +83,10 @@ def main():
     )
     fit_mcmc_nuts.dump(fit_nuts, dir_fit)
     print(fit_nuts)
-    neff = mcmc.n_by_variance(fit_nuts.yields).sum()
-    print(fit_nuts.nsamples, neff, neff / fit_nuts.nsamples)
     assert fit_nuts == fit_mcmc_nuts.load(dir_fit)
+    nsamples = sum(fit_nuts.yields)
+    neff = mcmc.n_by_fit(fit_nuts).sum()
+    print(nsamples, neff, neff / nsamples)
 
 
 if __name__ == "__main__":

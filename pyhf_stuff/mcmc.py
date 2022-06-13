@@ -115,6 +115,14 @@ def _histogram(x, bins, range_, *, dtype=jax.numpy.int32):
     return hist.at[i].add(i_float == i_clip)
 
 
+def _summarize_hists(hists, *, axis=0):
+    yields = numpy.sum(hists, axis=axis)
+    # standard error on mean is std / sqrt(n), so
+    # standard error on sum is std / sqrt(n) * n = std * sqrt(n)
+    errors = numpy.std(hists, axis=axis) * hists.shape[axis] ** 0.5
+    return yields, errors
+
+
 def n_by_variance(hists):
     """Return an estimate of the number of independent samples in hist bins.
 
@@ -124,7 +132,17 @@ def n_by_variance(hists):
     Arguments:
         hists: integer counts, shape (nrepeats, nbins)
     """
-    var = numpy.var(hists, axis=0)
     mean = numpy.mean(hists, axis=0)
+    var = numpy.var(hists, axis=0)
+    return n_by_stats(mean, var)
+
+
+def n_by_fit(data_class):
+    mean = numpy.array(data_class.yields) / data_class.nrepeats
+    std = numpy.array(data_class.errors) * data_class.nrepeats**-0.5
+    return _n_by_stats(mean, std**2)
+
+
+def _n_by_stats(mean, var):
     # max with 1 avoids div0 when mean is zero
     return mean**2 / numpy.maximum(var, numpy.maximum(mean, 1))

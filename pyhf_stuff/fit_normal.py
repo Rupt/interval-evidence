@@ -37,7 +37,6 @@ def fit(region):
     return FitNormal(
         yield_linear=float(yield_value),
         error_linear=float(yield_std),
-        yield_log=float(numpy.log(yield_value)),
         error_log=float(yield_log_std),
     )
 
@@ -53,8 +52,11 @@ def _quadratic_form(matrix, vector):
 class FitNormal:
     yield_linear: float
     error_linear: float
-    yield_log: float
     error_log: float
+
+    @property
+    def yield_log(self):
+        return numpy.log(self.yield_linear)
 
 
 def dump(fit: FitNormal, path):

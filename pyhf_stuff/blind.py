@@ -30,8 +30,9 @@ class Model:
         # pdf ~ Simultaneous([Independent(Poisson), constraint])
         main, constraint = pdf
 
-        mask = _make_mask(self.model, self.blind_bins)
-        poisson_masked = PoissonMasked(main.expected_data(), mask)
+        poisson_masked = PoissonMasked(
+            main.expected_data(), _make_mask(self.model, self.blind_bins)
+        )
 
         return pyhf.probability.Simultaneous(
             [

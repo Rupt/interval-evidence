@@ -1,14 +1,142 @@
 """An MCMC implementation using picklable jax code."""
 from functools import partial
+from multiprocessing import get_context
 
 import jax
+import scipy
 
-# partial is awesome
+from .mcmc import _boundary
+from .region_properties import region_properties
+
+# partial is awesome.
+# multiprocessing.Pool requires everything to be pickleable,
+# so we use partial to avoid defining tonnes of container classes.
 
 
 def partial_once(func):
     """Wrap func such that its first call returns a partial wrapper."""
     return partial(partial, func)
+
+
+# pyhf model specifics
+
+
+def region_hist_chain(
+    kernel_func,
+    region,
+    nbins,
+    range_,
+    *,
+    seed,
+    nburnin,
+    nsamples,
+    nrepeats,
+    nprocesses,
+):
+    properties = region_properties(region)
+
+    optimum = scipy.optimize.minimize(
+        properties.objective_value_and_grad,
+        properties.init,
+        bounds=properties.bounds,
+        jac=True,
+        method="L-BFGS-B",
+    )
+
+    cov = properties.objective_hess_inv(optimum.x)
+
+    x_of_t, t_of_x = eye_covariance_transform(optimum.x, cov)
+
+    logdf = logdf_template(
+        x_of_t,
+        properties.model_blind.logpdf,
+        properties.data,
+        properties.bounds,
+    )
+    observable = yields_template(
+        x_of_t,
+        properties.model_blind.expected_actualdata,
+        properties.slice_,
+    )
+
+    kernel = kernel_func(logdf)
+    reducer = histogram(nbins, range_, observable)
+    initializer = zeros(properties.init.shape)
+
+    chain = reduce_chain(
+        kernel,
+        reducer,
+        initializer,
+        nburnin=nburnin,
+        nsamples=nsamples,
+    )
+
+    keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
+
+    if nprocesses > 1:
+        # https://github.com/google/jax/issues/6790
+        # "spawn" avoids Mutex warnings, crashes
+        with get_context("spawn").Pool(nprocesses) as pool:
+            hists = pool.map(call_jit_call(chain), keys)
+    else:
+        hists = jax.jit(jax.vmap(chain()))(keys)
+
+    return jax.numpy.asarray(hists)
+
+
+def _logdf_template(x_of_t, logdf_func, data, bounds):
+    def logdf(t):
+        x = x_of_t(t)
+        (logdf,) = logdf_func(x, data)
+        return logdf + _boundary(x, bounds)
+
+    return logdf
+
+
+logdf_template = partial_once(_logdf_template)
+
+
+def _yields_template(x_of_t, yields_func, slice_):
+    def observable(t):
+        return yields_func(x_of_t(t))[slice_]
+
+    return observable
+
+
+yields_template = partial_once(_yields_template)
+
+# transform
+
+
+def eye_covariance_transform(mean, cov):
+    """Return functions x <=> t; t has identity covariance and zero mean.
+
+    Arguments:
+        mean: shape (n,)
+        cov: shape (n, n), positive definite
+    """
+    # want x(t) such that:
+    #     (x - m).T @ C^-1 @ (x - m) = t @ t    (1)
+    # cholesky decompose:
+    #     C = A @ A.T, C^-1 = A.T^-1 @ A^-1
+    # if x - m = A @ t, then
+    # (1) = t.T @ A.T @ A.T^-1 @ A^-1 @ A @ t = t @ t :)
+    # x = A @ t + m <=> t = A^-1 @ (x - m)
+    chol = jax.numpy.linalg.cholesky(cov)
+    inv_chol = jax.numpy.linalg.inv(chol)
+
+    x_of_t = partial(_linear_out, chol, mean)
+    t_of_x = partial(_linear_in, inv_chol, mean)
+
+    return x_of_t, t_of_x
+
+
+def _linear_out(weight, bias, t):
+    return weight @ t + bias
+
+
+def _linear_in(weight, bias, x):
+    return weight @ (x - bias)
 
 
 # chain execution
@@ -67,9 +195,12 @@ reduce_chain = partial_once(_reduce_chain)
 # transition kernels
 
 
-def _mala(step_size, logdf):
+def _langevin(step_size, logdf):
+
+    value_and_grad = jax.value_and_grad(logdf())
+
     def init(x):
-        logf, logf_grad = jax.value_and_grad(logdf)(x)
+        logf, logf_grad = value_and_grad(x)
         mean = x + 0.5 * step_size * logf_grad
         return logf, mean
 
@@ -96,7 +227,7 @@ def _mala(step_size, logdf):
     return init, step
 
 
-mala = partial_once(_mala)
+langevin = partial_once(_langevin)
 
 
 def _metropolis(kernel):
@@ -125,10 +256,20 @@ def _metropolis(kernel):
 
 metropolis = partial_once(_metropolis)
 
+
+def _mala(step_size, logdf):
+    return _metropolis(langevin(step_size, logdf))
+
+
+mala = partial_once(_mala)
+
 # reductions
 
 
-def _histogram(nbins, range_, func):
+def _histogram(nbins, range_, observable):
+
+    func = observable()
+
     def init(_):
         return jax.numpy.zeros(nbins, dtype=jax.numpy.int32)
 
@@ -156,11 +297,17 @@ zeros = partial_once(_zeros)
 # for multiprocessing
 
 
-def _call_jit_call(func, arg):
-    return jax.jit(func())(arg)
+def call_jit_call(func):
+    cache = None
 
+    def call(arg):
+        nonlocal cache
+        if cache is None:
+            cache = jax.jit(func())
+        return cache(arg)
 
-call_jit_call = partial_once(_call_jit_call)
+    return call
+
 
 # utility
 

@@ -72,6 +72,7 @@ class RegionProperties:
         self.data = numpy.array(data)
         self.init = numpy.array(model_blind.config.suggested_init())
         self.bounds = numpy.array(model_blind.config.suggested_bounds())
+        self.slice_ = slice_
 
         # constraint "logpdf" functions
         self.logdf = logdf

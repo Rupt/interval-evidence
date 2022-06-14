@@ -25,6 +25,24 @@ class Model:
         self.model = model
         self.blind_bins = blind_bins
 
+        # forward missing attributes to the pyhf.Model
+        # TODO improve
+        self.batch_size = self.model.batch_size
+        self.config = self.model.config
+        self.constraint_logpdf = self.model.constraint_logpdf
+        self.constraint_model = self.model.constraint_model
+        self.expected_actualdata = self.model.expected_actualdata
+        self.expected_auxdata = self.model.expected_auxdata
+        self.expected_data = self.model.expected_data
+        self.fullpdf_tv = self.model.fullpdf_tv
+        self.main_model = self.model.main_model
+        self.mainlogpdf = self.model.mainlogpdf
+        self.nominal_rates = self.model.nominal_rates
+        self.pdf = self.model.pdf
+        self.schema = self.model.schema
+        self.spec = self.model.spec
+        self.version = self.model.version
+
     def make_pdf(self, pars):
         pdf = self.model.make_pdf(pars)
         # pdf ~ Simultaneous([Independent(Poisson), constraint])
@@ -44,10 +62,6 @@ class Model:
         )
 
     logpdf = pyhf.Model.logpdf
-
-    # forward missing attributes to the pyhf.Model
-    def __getattr__(self, name):
-        return self.model.__getattribute__(name)
 
 
 def _make_mask(model, blind_bins):

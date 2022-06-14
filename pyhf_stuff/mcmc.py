@@ -42,11 +42,11 @@ def generic_chain_hist(
         return properties.yield_value(x_of_t(t))
 
     # mcmc chain sapling
-    def chain(key, state):
+    def chain(key):
         _, yields = tfp.mcmc.sample_chain(
             kernel=kernel_func(logdf),
             trace_fn=lambda t, _: observable(t),
-            current_state=state,
+            current_state=init,
             num_burnin_steps=nburnin,
             num_results=nsamples,
             seed=key,
@@ -54,8 +54,7 @@ def generic_chain_hist(
         return _histogram(yields, nbins, range_)
 
     keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
-    vchain = jax.jit(jax.vmap(chain, in_axes=(0, None)))
-    return vchain(keys, init)
+    return jax.jit(jax.vmap(chain))(keys)
 
 
 def eye_covariance_transform(mean, cov):

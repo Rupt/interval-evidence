@@ -134,7 +134,7 @@ def n_by_variance(hists):
     """
     mean = numpy.mean(hists, axis=0)
     var = numpy.var(hists, axis=0)
-    return n_by_stats(mean, var)
+    return _n_by_stats(mean, var)
 
 
 def n_by_fit(data_class):

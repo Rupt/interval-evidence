@@ -40,7 +40,6 @@ def region_hist_chain(
     )
 
     cov = properties.objective_hess_inv(optimum.x)
-
     x_of_t, t_of_x = eye_covariance_transform(optimum.x, cov)
 
     logdf = logdf_template(
@@ -80,6 +79,7 @@ def region_hist_chain(
     # process spawning is expensive, but reused processe can reused compiled
     # jax code; maximize reuse on by reusing each on maximal chunks
     chunksize = nrepeats // nprocesses + bool(nrepeats % nprocesses)
+
     # https://github.com/google/jax/issues/6790
     # "spawn" avoids creashes with Mutex warnings
     with get_context("spawn").Pool(nprocesses) as pool:
@@ -88,7 +88,8 @@ def region_hist_chain(
     return jax.numpy.stack(hists)
 
 
-def _logdf_template(x_of_t, logdf_func, data, bounds):
+@partial_once
+def logdf_template(x_of_t, logdf_func, data, bounds):
     def logdf(t):
         x = x_of_t(t)
         (logdf,) = logdf_func(x, data)
@@ -97,20 +98,16 @@ def _logdf_template(x_of_t, logdf_func, data, bounds):
     return logdf
 
 
-logdf_template = partial_once(_logdf_template)
-
-
-def _yields_template(x_of_t, yields_func, slice_):
+@partial_once
+def yields_template(x_of_t, yields_func, slice_):
     def observable(t):
         return yields_func(x_of_t(t))[slice_]
 
     return observable
 
 
-yields_template = partial_once(_yields_template)
-
-
-def _clip_to_x_bounds(init_func, x_of_t, bounds, t_of_x):
+@partial_once
+def clip_to_x_bounds(init_func, x_of_t, bounds, t_of_x):
 
     init_t = init_func()
 
@@ -120,6 +117,3 @@ def _clip_to_x_bounds(init_func, x_of_t, bounds, t_of_x):
         return t_of_x(x_clipped)
 
     return init
-
-
-clip_to_x_bounds = partial_once(_clip_to_x_bounds)

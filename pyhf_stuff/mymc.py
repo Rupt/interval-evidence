@@ -1,5 +1,5 @@
 """An MCMC implementation using picklable jax code."""
-from functools import partial
+from functools import partial, wraps
 
 import jax
 
@@ -10,13 +10,23 @@ import jax
 
 def partial_once(func):
     """Wrap func such that its first call returns a partial wrapper."""
-    return partial(partial, func)
+
+    @wraps(func)
+    def partial_func(*args, _partial_once=True, **kwargs):
+
+        if _partial_once:
+            return partial(partial_func, *args, _partial_once=False, **kwargs)
+
+        return func(*args, **kwargs)
+
+    return partial_func
 
 
 # chain execution
 
 
-def _reduce_chain(
+@partial_once
+def reduce_chain(
     kernel,
     reducer,
     initializer,
@@ -64,13 +74,11 @@ def _reduce_chain(
     return chain
 
 
-reduce_chain = partial_once(_reduce_chain)
-
-
 # transition kernels
 
 
-def _langevin(step_size, logdf):
+@partial_once
+def langevin(step_size, logdf):
 
     value_and_grad = jax.value_and_grad(logdf())
 
@@ -102,10 +110,8 @@ def _langevin(step_size, logdf):
     return init, step
 
 
-langevin = partial_once(_langevin)
-
-
-def _metropolis(kernel):
+@partial_once
+def metropolis(kernel):
 
     init, step_inner = kernel()
 
@@ -129,20 +135,16 @@ def _metropolis(kernel):
     return init, step
 
 
-metropolis = partial_once(_metropolis)
-
-
-def _mala(step_size, logdf):
-    return _metropolis(langevin(step_size, logdf))
-
-
-mala = partial_once(_mala)
+@partial_once
+def mala(step_size, logdf):
+    return metropolis.__wrapped__(langevin(step_size, logdf))
 
 
 # reductions
 
 
-def _histogram(nbins, range_, observable):
+@partial_once
+def histogram(nbins, range_, observable):
 
     func = observable()
 
@@ -154,9 +156,6 @@ def _histogram(nbins, range_, observable):
         return _histogram_reduce(hist, func(x), range_)
 
     return init, reduce_
-
-
-histogram = partial_once(_histogram)
 
 
 # coordinate transforms
@@ -195,17 +194,16 @@ def _linear_in(weight, bias, x):
 # initializers
 
 
-def _zeros(shape, dtype=None):
+@partial_once
+def zeros(shape, dtype=None):
     def init(_):
         return jax.numpy.zeros(shape)
 
     return init
 
 
-zeros = partial_once(_zeros)
-
-
-def _sphere(shape, dtype=None):
+@partial_once
+def sphere(shape, dtype=None):
     # uniquely for the normal distribution, a normalized sample lies uniformly
     # on the unit sphere
     def init(key):
@@ -217,21 +215,20 @@ def _sphere(shape, dtype=None):
     return init
 
 
-sphere = partial_once(_sphere)
-
-
 # for multiprocessing
 
 
 class CallJitCache:
+    __slots__ = ["_func", "_cache"]
+
     def __init__(self, func):
-        self.func = func
-        self.cache = None
+        self._func = func
+        self._cache = None
 
     def __call__(self, arg):
-        if self.cache is None:
-            self.cache = jax.jit(self.func())
-        return self.cache(arg)
+        if self._cache is None:
+            self._cache = jax.jit(self._func())
+        return self._cache(arg)
 
 
 # utility

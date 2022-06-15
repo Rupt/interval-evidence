@@ -98,8 +98,8 @@ def main():
             25,
             (0.0, 25.0),
             seed=0,
-            nsamples=100_000,
-            nrepeats=100,
+            nsamples=100,
+            nrepeats=10,
             nprocesses=1,
         )
         fit_mymc_mala.dump(fit_mal2, dir_fit)

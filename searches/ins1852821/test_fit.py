@@ -48,14 +48,14 @@ def main():
         print(fit_lin)
         assert fit_lin == fit_linspace.load(dir_fit)
 
-    if 0:
+    if 1:
         fit_mal = fit_mcmc_mala.fit(
             region_1,
             25,
             (0.0, 25.0),
             seed=0,
             nsamples=100_000,
-            nrepeats=20,
+            nrepeats=100,
         )
         fit_mcmc_mala.dump(fit_mal, dir_fit)
         print(fit_mal)
@@ -92,7 +92,7 @@ def main():
         neff = mcmc.n_by_fit(fit_nuts).sum()
         print(nsamples, neff, neff / nsamples)
 
-    if 1:
+    if 0:
         fit_mal2 = fit_mymc_mala.fit(
             region_1,
             25,

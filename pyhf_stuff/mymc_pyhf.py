@@ -29,6 +29,7 @@ def region_hist_chain(
     nrepeats,
     nprocesses,
 ):
+    # pyhf stuff
     properties = region_properties(region)
 
     optimum = scipy.optimize.minimize(
@@ -48,20 +49,23 @@ def region_hist_chain(
         properties.data,
         properties.bounds,
     )
+
     observable = yields_template(
         x_of_t,
         properties.model_blind.expected_actualdata,
         properties.slice_,
     )
 
-    kernel = kernel_func(logdf)
-    reducer = histogram(nbins, range_, observable)
     initializer = clip_to_x_bounds(
         sphere(properties.init.shape),
         x_of_t,
         properties.bounds,
         t_of_x,
     )
+
+    # mcmc stuff
+    kernel = kernel_func(logdf)
+    reducer = histogram(nbins, range_, observable)
 
     chain = reduce_chain(
         kernel,

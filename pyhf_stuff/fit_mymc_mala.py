@@ -5,7 +5,7 @@ from typing import List
 
 import numpy
 
-from . import mcmc, mymc, serial
+from . import mcmc, mymc, mymc_pyhf, serial
 
 FILENAME = "mymc_mala.json"
 DEFAULT_NPROCESSES = os.cpu_count() // 2
@@ -27,7 +27,7 @@ def fit(
 
     kernel_func = partial(mymc.mala, step_size)
 
-    hists = mymc.region_hist_chain(
+    hists = mymc_pyhf.region_hist_chain(
         kernel_func,
         region,
         nbins,

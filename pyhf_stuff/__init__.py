@@ -13,5 +13,5 @@ pyhf.set_backend("jax")
 # avoid internal threading to give the user control over multiprocessing
 # in experiments this seems to make no performance difference for our use case
 os.environ["XLA_FLAGS"] = " ".join(
-    "--xla_cpu_multi_thread_eigen=false", "intra_op_parallelism_threads=1"
+    ["--xla_cpu_multi_thread_eigen=false", "intra_op_parallelism_threads=1"]
 )

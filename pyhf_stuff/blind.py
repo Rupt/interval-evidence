@@ -26,7 +26,6 @@ class Model:
         self.blind_bins = blind_bins
 
         # forward missing attributes to the pyhf.Model
-        # TODO improve
         self.batch_size = self.model.batch_size
         self.config = self.model.config
         self.constraint_logpdf = self.model.constraint_logpdf

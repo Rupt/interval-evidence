@@ -219,8 +219,6 @@ def sphere(shape, dtype=None):
 
 
 class CallJitCache:
-    __slots__ = ["_func", "_cache"]
-
     def __init__(self, func):
         self._func = func
         self._cache = None

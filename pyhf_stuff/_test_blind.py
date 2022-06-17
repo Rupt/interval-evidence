@@ -3,7 +3,7 @@ from test import raises
 import numpy
 import pyhf
 
-from .blind import Model, _make_mask, model_logpdf_blind
+from .blind import Model, _make_mask
 
 
 def test_simple_model_blind():
@@ -21,7 +21,7 @@ def test_simple_model_blind():
         return model.logpdf(parameters, data)
 
     def f_blind(blind_bins):
-        return model_logpdf_blind(model, blind_bins, parameters, data)
+        return Model(model, blind_bins).logpdf(parameters, data)
 
     # check we recover the same result with nothing blinded
     assert f() == f_blind([])
@@ -52,11 +52,15 @@ def test_model():
     data = numpy.concatenate([[nobs], model.config.auxdata])
     parameters = model.config.suggested_init()
 
-    assert model_blind.logpdf(parameters, data) == model_logpdf_blind(
-        model,
-        bins_blind,
+    assert model_blind.logpdf(parameters, data) == Model(
+        model, bins_blind
+    ).logpdf(
         parameters,
         data,
+    )
+
+    assert Model(model, {}).logpdf(parameters, data) == model.logpdf(
+        parameters, data
     )
 
     assert isinstance(model_blind, pyhf.Model)

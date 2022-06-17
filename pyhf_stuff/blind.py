@@ -3,29 +3,23 @@ import numpy
 import pyhf
 
 
-def model_logpdf_blind(model, blind_bins, pars, data):
-    """Return a "logpdf" value with blinded channel-bins.
-
-    Arguments:
-        model: pyhf.pdf.Model-like
-        blind_bins: sequence of either
-            pair (channel_name, bin_index)
-            or
-            str channel_name (if channel has one bin only)
-        pars: model parameter
-        data: model data
-    """
-    return Model(model, blind_bins).logpdf(pars, data)
-
-
 class Model(pyhf.Model):
     """Wrapper around pyhf.Model with selected channel bins blinded."""
 
     def __init__(self, model, blind_bins, modifier_set=None):
+        """
+        Arguments:
+            model: pyhf.pdf.Model-like
+            blind_bins: sequence of either
+                pair (channel_name, bin_index)
+                or
+                str channel_name (if channel has one bin only)
+            modifier_set: as for pyhf.Model
+                this is not stored in the model, so you are responsible for it
+        """
         super().__init__(
             model.spec,
             batch_size=model.batch_size,
-            # modifier_set is not stored in the model
             # any validation was already done for model
             validate=False,
             # config_kwargs
@@ -36,7 +30,6 @@ class Model(pyhf.Model):
         )
 
         self.blind_bins = set(blind_bins)
-
 
     def make_pdf(self, pars):
         # pdf ~ Simultaneous([Independent(Poisson), constraint])

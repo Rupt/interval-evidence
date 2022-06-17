@@ -59,22 +59,11 @@ def test_model():
         data,
     )
 
-    # methods appear to fail "is", possibly because they bind different objects
-    assert model_blind.batch_size is model.batch_size
-    assert model_blind.config is model.config
-    assert model_blind.constraint_logpdf == model.constraint_logpdf
-    assert model_blind.constraint_model == model.constraint_model
-    assert model_blind.expected_actualdata == model.expected_actualdata
-    assert model_blind.expected_auxdata == model.expected_auxdata
-    assert model_blind.expected_data == model.expected_data
-    assert model_blind.fullpdf_tv is model.fullpdf_tv
-    assert model_blind.main_model is model.main_model
-    assert model_blind.mainlogpdf == model.mainlogpdf
-    assert model_blind.nominal_rates is model.nominal_rates
-    assert model_blind.pdf == model.pdf
-    assert model_blind.schema is model.schema
-    assert model_blind.spec is model.spec
-    assert model_blind.version is model.version
+    assert isinstance(model_blind, pyhf.Model)
+    assert model_blind.batch_size == model.batch_size
+    assert model_blind.schema == model.schema
+    assert model_blind.spec == model.spec
+    assert model_blind.version == model.version
 
     channel_name = model.config.channels[0]
     assert raises(lambda: _make_mask(model, {(channel_name, 1)}), IndexError)

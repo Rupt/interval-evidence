@@ -18,37 +18,34 @@ def model_logpdf_blind(model, blind_bins, pars, data):
     return Model(model, blind_bins).logpdf(pars, data)
 
 
-class Model:
+class Model(pyhf.Model):
     """Wrapper around pyhf.Model with selected channel bins blinded."""
 
-    def __init__(self, model, blind_bins):
-        self.model = model
-        self.blind_bins = blind_bins
+    def __init__(self, model, blind_bins, modifier_set=None):
+        super().__init__(
+            model.spec,
+            batch_size=model.batch_size,
+            # modifier_set is not stored in the model
+            # any validation was already done for model
+            validate=False,
+            # config_kwargs
+            schema=model.schema,
+            version=model.version,
+            poi_name=model.config.poi_name,
+            modifier_settings=model.config.modifier_settings,
+        )
 
-        # forward missing attributes to the pyhf.Model
-        self.batch_size = self.model.batch_size
-        self.config = self.model.config
-        self.constraint_logpdf = self.model.constraint_logpdf
-        self.constraint_model = self.model.constraint_model
-        self.expected_actualdata = self.model.expected_actualdata
-        self.expected_auxdata = self.model.expected_auxdata
-        self.expected_data = self.model.expected_data
-        self.fullpdf_tv = self.model.fullpdf_tv
-        self.main_model = self.model.main_model
-        self.mainlogpdf = self.model.mainlogpdf
-        self.nominal_rates = self.model.nominal_rates
-        self.pdf = self.model.pdf
-        self.schema = self.model.schema
-        self.spec = self.model.spec
-        self.version = self.model.version
+        self.blind_bins = set(blind_bins)
+
 
     def make_pdf(self, pars):
-        pdf = self.model.make_pdf(pars)
         # pdf ~ Simultaneous([Independent(Poisson), constraint])
+        pdf = super().make_pdf(pars)
         main, constraint = pdf
 
+        # Poisson rates are _private, it that they are the expected_data
         poisson_masked = PoissonMasked(
-            main.expected_data(), _make_mask(self.model, self.blind_bins)
+            main.expected_data(), _make_mask(self, self.blind_bins)
         )
 
         return pyhf.probability.Simultaneous(
@@ -59,8 +56,6 @@ class Model:
             tensorview=pdf.tv,
             batch_size=pdf.batch_size,
         )
-
-    logpdf = pyhf.Model.logpdf
 
 
 def _make_mask(model, blind_bins):

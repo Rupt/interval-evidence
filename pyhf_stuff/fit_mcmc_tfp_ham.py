@@ -5,7 +5,7 @@ from typing import List
 import numpy
 from tensorflow_probability.substrates import jax as tfp
 
-from . import mcmc_tfp, serial
+from . import mcmc_core, mcmc_tfp, serial
 
 FILENAME = "mcmc_tfp_ham.json"
 
@@ -42,9 +42,9 @@ def fit(
         nrepeats=nrepeats,
     )
 
-    yields, errors = mcmc_tfp._summarize_hists(hists)
+    yields, errors = mcmc_core.summarize_hists(hists)
 
-    return FitHam(
+    return FitMcmcTfpHam(
         # histogram arguments
         nbins=nbins,
         range_=range_,
@@ -66,7 +66,7 @@ def fit(
 
 
 @dataclass(frozen=True)
-class FitHam:
+class FitMcmcTfpHam:
     # histogram arguments
     nbins: int
     range_: List[float]
@@ -83,11 +83,11 @@ class FitHam:
     errors: List[float]
 
 
-def dump(fit: FitHam, path):
+def dump(fit: FitMcmcTfpHam, path):
     os.makedirs(path, exist_ok=True)
     serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
 
 
-def load(path) -> FitHam:
+def load(path) -> FitMcmcTfpHam:
     obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitHam(**obj_json)
+    return FitMcmcTfpHam(**obj_json)

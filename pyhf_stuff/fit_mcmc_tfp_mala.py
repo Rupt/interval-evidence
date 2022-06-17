@@ -5,7 +5,7 @@ from typing import List
 import numpy
 from tensorflow_probability.substrates import jax as tfp
 
-from . import mcmc_tfp, serial
+from . import mcmc_core, mcmc_tfp, serial
 
 FILENAME = "mcmc_tfp_mala.json"
 
@@ -40,9 +40,9 @@ def fit(
         nrepeats=nrepeats,
     )
 
-    yields, errors = mcmc_tfp._summarize_hists(hists)
+    yields, errors = mcmc_core.summarize_hists(hists)
 
-    return FitMala(
+    return FitMcmcTfpMala(
         # histogram arguments
         nbins=nbins,
         range_=range_,
@@ -63,7 +63,7 @@ def fit(
 
 
 @dataclass(frozen=True)
-class FitMala:
+class FitMcmcTfpMala:
     # histogram arguments
     nbins: int
     range_: List[float]
@@ -79,11 +79,11 @@ class FitMala:
     errors: List[float]
 
 
-def dump(fit: FitMala, path):
+def dump(fit: FitMcmcTfpMala, path):
     os.makedirs(path, exist_ok=True)
     serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
 
 
-def load(path) -> FitMala:
+def load(path) -> FitMcmcTfpMala:
     obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitMala(**obj_json)
+    return FitMcmcTfpMala(**obj_json)

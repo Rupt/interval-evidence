@@ -5,7 +5,7 @@ from multiprocessing import get_context
 import jax
 import scipy
 
-from .mcmc_jax import (
+from .mcmc_core import (
     CallJitCache,
     eye_covariance_transform,
     histogram,

@@ -5,7 +5,7 @@ from typing import List
 import numpy
 from tensorflow_probability.substrates import jax as tfp
 
-from . import mcmc_tfp, serial
+from . import mcmc_core, mcmc_tfp, serial
 
 FILENAME = "mcmc_tfp_nuts.json"
 
@@ -40,9 +40,9 @@ def fit(
         nrepeats=nrepeats,
     )
 
-    yields, errors = mcmc_tfp._summarize_hists(hists)
+    yields, errors = mcmc_core.summarize_hists(hists)
 
-    return FitNuts(
+    return FitMcmcTfpNuts(
         # histogram arguments
         nbins=nbins,
         range_=range_,
@@ -63,7 +63,7 @@ def fit(
 
 
 @dataclass(frozen=True)
-class FitNuts:
+class FitMcmcTfpNuts:
     # histogram arguments
     nbins: int
     range_: List[float]
@@ -79,11 +79,11 @@ class FitNuts:
     errors: List[float]
 
 
-def dump(fit: FitNuts, path):
+def dump(fit: FitMcmcTfpNuts, path):
     os.makedirs(path, exist_ok=True)
     serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
 
 
-def load(path) -> FitNuts:
+def load(path) -> FitMcmcTfpNuts:
     obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitNuts(**obj_json)
+    return FitMcmcTfpNuts(**obj_json)

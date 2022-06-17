@@ -5,9 +5,9 @@ from typing import List
 import numpy
 from tensorflow_probability.substrates import jax as tfp
 
-from . import mcmc, serial
+from . import mcmc_tfp, serial
 
-FILENAME = "mcmc_nuts.json"
+FILENAME = "mcmc_tfp_mala.json"
 
 
 def fit(
@@ -24,12 +24,12 @@ def fit(
     range_ = numpy.array(range_, dtype=float).tolist()
 
     def kernel_func(logdf):
-        return tfp.mcmc.NoUTurnSampler(
+        return tfp.mcmc.MetropolisAdjustedLangevinAlgorithm(
             logdf,
             step_size,
         )
 
-    hists = mcmc.generic_chain_hist(
+    hists = mcmc_tfp.generic_chain_hist(
         kernel_func,
         region,
         nbins,
@@ -40,9 +40,9 @@ def fit(
         nrepeats=nrepeats,
     )
 
-    yields, errors = mcmc._summarize_hists(hists)
+    yields, errors = mcmc_tfp._summarize_hists(hists)
 
-    return FitNuts(
+    return FitMala(
         # histogram arguments
         nbins=nbins,
         range_=range_,
@@ -63,7 +63,7 @@ def fit(
 
 
 @dataclass(frozen=True)
-class FitNuts:
+class FitMala:
     # histogram arguments
     nbins: int
     range_: List[float]
@@ -79,11 +79,11 @@ class FitNuts:
     errors: List[float]
 
 
-def dump(fit: FitNuts, path):
+def dump(fit: FitMala, path):
     os.makedirs(path, exist_ok=True)
     serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
 
 
-def load(path) -> FitNuts:
+def load(path) -> FitMala:
     obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitNuts(**obj_json)
+    return FitMala(**obj_json)

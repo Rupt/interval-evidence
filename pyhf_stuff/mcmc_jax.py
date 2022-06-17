@@ -159,15 +159,16 @@ def eye_covariance_transform(mean, cov):
     chol = jax.numpy.linalg.cholesky(cov)
     inv_chol = jax.numpy.linalg.inv(chol)
 
-    x_of_t = partial(_linear_out, chol, mean)
-    t_of_x = partial(_linear_in, inv_chol, mean)
+    x_of_t = _linear_out(chol, mean)
+    t_of_x = _linear_in(inv_chol, mean)
     return x_of_t, t_of_x
 
 
+@partial_once
 def _linear_out(weight, bias, t):
     return weight @ t + bias
 
-
+@partial_once
 def _linear_in(weight, bias, x):
     return weight @ (x - bias)
 

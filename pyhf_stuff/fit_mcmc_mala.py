@@ -1,13 +1,14 @@
 import os
 from dataclasses import asdict, dataclass
+from functools import partial
 from typing import List
 
 import numpy
-from tensorflow_probability.substrates import jax as tfp
 
-from . import mcmc, serial
+from . import mcmc, mcmc_jax, mcmc_tfp, serial
 
 FILENAME = "mcmc_mala.json"
+DEFAULT_NPROCESSES = os.cpu_count() // 2
 
 
 def fit(
@@ -18,18 +19,15 @@ def fit(
     seed,
     nburnin=100,
     nsamples=20_000,
-    nrepeats=100,
+    nrepeats=10,
     step_size=0.5,
+    nprocesses=DEFAULT_NPROCESSES,
 ):
     range_ = numpy.array(range_, dtype=float).tolist()
 
-    def kernel_func(logdf):
-        return tfp.mcmc.MetropolisAdjustedLangevinAlgorithm(
-            logdf,
-            step_size,
-        )
+    kernel_func = partial(mcmc_jax.mala, step_size)
 
-    hists = mcmc.generic_chain_hist(
+    hists = mcmc.region_hist_chain(
         kernel_func,
         region,
         nbins,
@@ -38,11 +36,14 @@ def fit(
         nburnin=nburnin,
         nsamples=nsamples,
         nrepeats=nrepeats,
+        nprocesses=nprocesses,
     )
 
-    yields, errors = mcmc._summarize_hists(hists)
+    hists = numpy.array(hists)
 
-    return FitMala(
+    yields, errors = mcmc_tfp._summarize_hists(hists)
+
+    return FitMala2(
         # histogram arguments
         nbins=nbins,
         range_=range_,
@@ -63,7 +64,7 @@ def fit(
 
 
 @dataclass(frozen=True)
-class FitMala:
+class FitMala2:
     # histogram arguments
     nbins: int
     range_: List[float]
@@ -79,11 +80,11 @@ class FitMala:
     errors: List[float]
 
 
-def dump(fit: FitMala, path):
+def dump(fit: FitMala2, path):
     os.makedirs(path, exist_ok=True)
     serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
 
 
-def load(path) -> FitMala:
+def load(path) -> FitMala2:
     obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitMala(**obj_json)
+    return FitMala2(**obj_json)

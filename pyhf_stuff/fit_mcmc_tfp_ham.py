@@ -5,9 +5,9 @@ from typing import List
 import numpy
 from tensorflow_probability.substrates import jax as tfp
 
-from . import mcmc, serial
+from . import mcmc_tfp, serial
 
-FILENAME = "mcmc_ham.json"
+FILENAME = "mcmc_tfp_ham.json"
 
 
 def fit(
@@ -31,7 +31,7 @@ def fit(
             num_leapfrog_steps,
         )
 
-    hists = mcmc.generic_chain_hist(
+    hists = mcmc_tfp.generic_chain_hist(
         kernel_func,
         region,
         nbins,
@@ -42,7 +42,7 @@ def fit(
         nrepeats=nrepeats,
     )
 
-    yields, errors = mcmc._summarize_hists(hists)
+    yields, errors = mcmc_tfp._summarize_hists(hists)
 
     return FitHam(
         # histogram arguments

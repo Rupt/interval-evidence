@@ -62,9 +62,9 @@ def region_hist_chain(
     reducer = histogram(nbins, range_, observable)
 
     chain = reduce_chain(
+        initializer,
         kernel,
         reducer,
-        initializer,
         nburnin=nburnin,
         nsamples=nsamples,
     )

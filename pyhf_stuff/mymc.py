@@ -27,9 +27,9 @@ def partial_once(func):
 
 @partial_once
 def reduce_chain(
+    initializer,
     kernel,
     reducer,
-    initializer,
     *,
     nburnin,
     nsamples,

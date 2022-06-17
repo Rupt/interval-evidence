@@ -44,14 +44,14 @@ def reduce_chain(
         reduction = reduce_(reduction, x)
         return args, reduction
 
-    def chain(key):
-        key, key_init = jax.random.split(key)
+    def chain(rng):
+        rng, key = jax.random.split(rng)
 
-        x = init(key_init)
+        x = init(key)
         kernel_state = kernel_init(x)
         reduction = reducte_init(x)
 
-        args = (key, x, kernel_state)
+        args = (rng, x, kernel_state)
 
         # burnin discards its reduction
         args, _ = jax.lax.fori_loop(
@@ -78,7 +78,7 @@ def reduce_chain(
 
 
 @partial_once
-def langevin(step_size, logdf):
+def mala(step_size, logdf):
 
     value_and_grad = jax.value_and_grad(logdf())
 
@@ -87,12 +87,13 @@ def langevin(step_size, logdf):
         mean = x + 0.5 * step_size * logf_grad
         return logf, mean
 
-    def step(key, x, state):
+    def step(rng, x, state):
         logf, mean = state
+        rng, key_noise, key_accept = jax.random.split(rng, 3)
 
         # propose the next step
         noise_to = step_size**0.5 * jax.random.normal(
-            key, shape=x.shape, dtype=x.dtype
+            key_noise, shape=x.shape, dtype=x.dtype
         )
         x_to = mean + noise_to
         logf_to, mean_to = state_to = init(x_to)
@@ -105,39 +106,19 @@ def langevin(step_size, logdf):
 
         log_accept = logf_to - logf + (0.5 / step_size) * (norm_to - norm_from)
 
-        return x_to, state_to, log_accept
-
-    return init, step
-
-
-@partial_once
-def metropolis(kernel):
-
-    init, step_inner = kernel()
-
-    def step(key, x, state):
-        key, key_inner, key_accept = jax.random.split(key, 3)
-
-        # inner step
-        x_to, state_to, log_accept = step_inner(key_inner, x, state)
-
-        # metropolis rule
-        log_uniform = jax.numpy.log(
-            jax.random.uniform(key_accept, dtype=log_accept.dtype)
+        x, state = metropolis(
+            key_accept, log_accept, (x_to, state_to), (x, state)
         )
-        accept = log_uniform <= log_accept
 
-        # conditional move
-        x, state = _tree_select(accept, (x_to, state_to), (x, state))
-
-        return key, x, state
+        return rng, x, state
 
     return init, step
 
 
-@partial_once
-def mala(step_size, logdf):
-    return metropolis.__wrapped__(langevin(step_size, logdf))
+def metropolis(key, log_accept, state_to, state):
+    """Implement the metropolis rule for transitioning states."""
+    log_uniform = -jax.random.exponential(key, dtype=log_accept.dtype)
+    return _tree_select(log_uniform <= log_accept, state_to, state)
 
 
 # reductions

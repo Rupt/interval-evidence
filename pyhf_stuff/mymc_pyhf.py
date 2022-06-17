@@ -12,7 +12,7 @@ from .mymc import (
     histogram,
     partial_once,
     reduce_chain,
-    sphere,
+    zeros,
 )
 from .region_properties import region_properties
 
@@ -29,7 +29,6 @@ def region_hist_chain(
     nrepeats,
     nprocesses,
 ):
-    # pyhf stuff
     properties = region_properties(region)
 
     optimum = scipy.optimize.minimize(
@@ -43,6 +42,8 @@ def region_hist_chain(
     cov = properties.objective_hess_inv(optimum.x)
     x_of_t, t_of_x = eye_covariance_transform(optimum.x, cov)
 
+    initializer = zeros(properties.init.shape)
+
     logdf = logdf_template(
         x_of_t,
         properties.model_blind.logpdf,
@@ -54,13 +55,6 @@ def region_hist_chain(
         x_of_t,
         properties.model_blind.expected_actualdata,
         properties.slice_,
-    )
-
-    initializer = clip_to_x_bounds(
-        sphere(properties.init.shape),
-        x_of_t,
-        properties.bounds,
-        t_of_x,
     )
 
     # mcmc stuff
@@ -108,16 +102,3 @@ def yields_template(x_of_t, yields_func, slice_):
         return yields_func(x_of_t(t))[slice_]
 
     return observable
-
-
-@partial_once
-def clip_to_x_bounds(init_func, x_of_t, bounds, t_of_x):
-
-    init_t = init_func()
-
-    def init(key):
-        t = init_t(key)
-        x_clipped = jax.numpy.clip(x_of_t(t), *bounds.T)
-        return t_of_x(x_clipped)
-
-    return init

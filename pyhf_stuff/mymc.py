@@ -202,19 +202,6 @@ def zeros(shape, dtype=None):
     return init
 
 
-@partial_once
-def sphere(shape, dtype=None):
-    # uniquely for the normal distribution, a normalized sample lies uniformly
-    # on the unit sphere
-    def init(key):
-        noise = jax.random.normal(key, shape, dtype)
-        norm = jax.numpy.sqrt(noise.dot(noise))
-        # allay paranoia by avoiding /0 for 0 vectors
-        return noise / (norm + (norm == 0))
-
-    return init
-
-
 # for multiprocessing
 
 

@@ -24,18 +24,19 @@ def main():
         "SR0breq",
         "SR0bvetoloose",
         "SR0bvetotight",
-        "SR0ZZbvetoloose",
-        "SR0ZZbvetotight",
-        "SR0ZZloose",
-        "SR0ZZtight",
+        # "SR0ZZbvetoloose", # Failing to find intervals
+        # "SR0ZZbvetotight", # Failing to find intervals
+        # "SR0ZZloose", # Failing to find intervals
+        # "SR0ZZtight", # Failing to find intervals
         "SR1breq",
         "SR1bvetoloose",
-        "SR1bvetotight",
+        # "SR1bvetotight", # Failing to find intervals
         "SR2breq",
         "SR2bvetoloose",
         "SR2bvetotight",
     ]
     for name in region_names:
+        print(name)
         dump_region(name)
 
 

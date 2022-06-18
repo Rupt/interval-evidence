@@ -14,7 +14,7 @@ FILENAME = "interval.json"
 DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 6 + 1)))
 
 
-def fit(region, *, levels=DEFAULT_LEVELS, _post=False):
+def fit(region, *, levels=DEFAULT_LEVELS):
     properties = region_properties(region)
 
     optimum = scipy.optimize.minimize(

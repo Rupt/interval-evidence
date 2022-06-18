@@ -25,7 +25,7 @@ def fit(
 ):
     range_ = numpy.array(range_, dtype=float).tolist()
 
-    kernel_func = partial(mcmc_core.mala, step_size)
+    kernel_func = partial(mcmc_core.mix_mala_eye, step_size)
 
     hists = mcmc.region_hist_chain(
         kernel_func,

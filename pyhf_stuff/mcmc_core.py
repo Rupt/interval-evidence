@@ -101,11 +101,55 @@ def mala(step_size, logdf):
 
         # evaluate its acceptance ratio
         norm_to = noise_to.dot(noise_to)
-
         noise_from = x - mean_to
         norm_from = noise_from.dot(noise_from)
 
         log_accept = logf_to - logf + (0.5 / step_size) * (norm_to - norm_from)
+
+        x, state = metropolis(
+            key_accept, log_accept, (x_to, state_to), (x, state)
+        )
+
+        return rng, x, state
+
+    return init, step
+
+
+@partial_once
+def mix_mala_eye(step_size, logdf, prob_eye=0.1):
+
+    value_and_grad = jax.value_and_grad(logdf())
+
+    def init(x):
+        logf, logf_grad = value_and_grad(x)
+        mean = x + 0.5 * step_size * logf_grad
+        return logf, mean
+
+    def step(rng, x, state):
+        logf, mean = state
+        rng, key_mix, key_noise, key_accept = jax.random.split(rng, 4)
+
+        # identity = eye = standard multivariate normal
+        # is a special case of the langevin proposal with mean=0, step_size=1
+        eye = jax.random.uniform(key_mix) < prob_eye
+
+        def mix(a, b):
+            return _tree_select(eye, a, b)
+
+        noise = jax.random.normal(key_noise, shape=x.shape, dtype=x.dtype)
+
+        # langevin proposal
+        noise_to = mix(noise, step_size**0.5 * noise)
+        x_to = mix(noise, mean + noise_to)
+        logf_to, mean_to = state_to = init(x_to)
+
+        # evaluate its acceptance ratio
+        norm_to = noise_to.dot(noise_to)
+        noise_from = mix(x, x - mean_to)
+        norm_from = noise_from.dot(noise_from)
+
+        scale = mix(0.5, 0.5 / step_size)
+        log_accept = logf_to - logf + scale * (norm_to - norm_from)
 
         x, state = metropolis(
             key_accept, log_accept, (x_to, state_to), (x, state)

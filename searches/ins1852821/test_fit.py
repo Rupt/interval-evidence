@@ -66,8 +66,8 @@ def dump_region(name):
         (lo, hi),
         seed=0,
         nsamples=100_000,
-        nrepeats=16,
-        nprocesses=8,
+        nrepeats=100,
+        nprocesses=10,
     )
     mala.dump(dir_fit)
 

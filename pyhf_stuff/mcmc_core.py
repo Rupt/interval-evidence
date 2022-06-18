@@ -136,14 +136,13 @@ def mix_mala_eye(step_size, logdf, prob_eye=0.1):
         def mix(a, b):
             return _tree_select(eye, a, b)
 
+        # proposal
         noise = jax.random.normal(key_noise, shape=x.shape, dtype=x.dtype)
-
-        # langevin proposal
         noise_to = mix(noise, step_size**0.5 * noise)
         x_to = mix(noise, mean + noise_to)
         logf_to, mean_to = state_to = init(x_to)
 
-        # evaluate its acceptance ratio
+        # acceptance
         norm_to = noise_to.dot(noise_to)
         noise_from = mix(x, x - mean_to)
         norm_from = noise_from.dot(noise_from)

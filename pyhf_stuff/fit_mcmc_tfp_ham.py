@@ -82,12 +82,11 @@ class FitMcmcTfpHam:
     yields: List[int]
     errors: List[float]
 
+    def dump(self, path):
+        os.makedirs(path, exist_ok=True)
+        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
 
-def dump(fit: FitMcmcTfpHam, path):
-    os.makedirs(path, exist_ok=True)
-    serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
-
-
-def load(path) -> FitMcmcTfpHam:
-    obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitMcmcTfpHam(**obj_json)
+    @classmethod
+    def load(cls, path):
+        obj_json = serial.load_json(os.path.join(path, FILENAME))
+        return cls(**obj_json)

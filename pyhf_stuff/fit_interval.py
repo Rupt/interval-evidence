@@ -14,7 +14,7 @@ FILENAME = "interval.json"
 DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 6 + 1)))
 
 
-def fit(region, *, levels=DEFAULT_LEVELS):
+def fit(region, *, levels=DEFAULT_LEVELS, _post=False):
     properties = region_properties(region)
 
     optimum = scipy.optimize.minimize(
@@ -95,12 +95,11 @@ class FitInterval:
     levels: List[float]
     intervals: List[List[float]]
 
+    def dump(self, path):
+        os.makedirs(path, exist_ok=True)
+        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
 
-def dump(fit: FitInterval, path):
-    os.makedirs(path, exist_ok=True)
-    serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
-
-
-def load(path) -> FitInterval:
-    obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitInterval(**obj_json)
+    @classmethod
+    def load(cls, path):
+        obj_json = serial.load_json(os.path.join(path, FILENAME))
+        return cls(**obj_json)

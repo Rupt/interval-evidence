@@ -6,7 +6,7 @@ import pyhf
 class Model(pyhf.Model):
     """Wrapper around pyhf.Model with selected channel bins blinded."""
 
-    def __init__(self, model, blind_bins, modifier_set=None):
+    def __init__(self, model, blind_bins):
         """
         Arguments:
             model: pyhf.pdf.Model-like
@@ -14,20 +14,15 @@ class Model(pyhf.Model):
                 pair (channel_name, bin_index)
                 or
                 str channel_name (if channel has one bin only)
-            modifier_set: as for pyhf.Model
-                this is not stored in the model, so you are responsible for it
         """
-        super().__init__(
-            model.spec,
-            batch_size=model.batch_size,
-            # any validation was already done for model
-            validate=False,
-            # config_kwargs
-            schema=model.schema,
-            version=model.version,
-            poi_name=model.config.poi_name,
-            modifier_settings=model.config.modifier_settings,
-        )
+        self.batch_size = model.batch_size
+        self.spec = model.spec
+        self.schema = model.schema
+        self.version = model.version
+        self.config = model.config
+        self.main_model = model.main_model
+        self.constraint_model = model.constraint_model
+        self.fullpdf_tv = model.fullpdf_tv
 
         self.blind_bins = set(blind_bins)
 

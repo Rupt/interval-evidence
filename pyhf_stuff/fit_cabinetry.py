@@ -16,15 +16,9 @@ def fit(region):
     yield_pre, error_pre = _fit(
         properties.model_blind, properties.data, region.signal_region_name
     )
-    # unblinded -> post-fit
-    yield_post, error_post = _fit(
-        properties.model, properties.data, region.signal_region_name
-    )
     return FitCabinetry(
         yield_pre=yield_pre,
         error_pre=error_pre,
-        yield_post=yield_post,
-        error_post=error_post,
     )
 
 
@@ -45,15 +39,12 @@ def _fit(model, data, signal_region_name):
 class FitCabinetry:
     yield_pre: float
     error_pre: float
-    yield_post: float
-    error_post: float
 
+    def dump(self, path):
+        os.makedirs(path, exist_ok=True)
+        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
 
-def dump(fit: FitCabinetry, path):
-    os.makedirs(path, exist_ok=True)
-    serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
-
-
-def load(path) -> FitCabinetry:
-    obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitCabinetry(**obj_json)
+    @classmethod
+    def load(cls, path):
+        obj_json = serial.load_json(os.path.join(path, FILENAME))
+        return cls(**obj_json)

@@ -58,12 +58,11 @@ class FitNormal:
     def yield_log(self):
         return numpy.log(self.yield_linear)
 
+    def dump(self, path):
+        os.makedirs(path, exist_ok=True)
+        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
 
-def dump(fit: FitNormal, path):
-    os.makedirs(path, exist_ok=True)
-    serial.dump_json_human(asdict(fit), os.path.join(path, FILENAME))
-
-
-def load(path) -> FitNormal:
-    obj_json = serial.load_json(os.path.join(path, FILENAME))
-    return FitNormal(**obj_json)
+    @classmethod
+    def load(cls, path):
+        obj_json = serial.load_json(os.path.join(path, FILENAME))
+        return cls(**obj_json)

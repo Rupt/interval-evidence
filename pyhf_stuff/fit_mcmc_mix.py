@@ -55,6 +55,7 @@ def fit(
         seed=seed,
         # special arguments
         step_size=step_size,
+        prob_eye=prob_eye,
         # results
         yields=yields.tolist(),
         errors=errors.tolist(),

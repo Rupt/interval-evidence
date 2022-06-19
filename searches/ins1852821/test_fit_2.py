@@ -1,5 +1,5 @@
 """
-time python searches/ins1852821/test_fit.py
+time python searches/ins1852821/test_fit_2.py
 
 """
 
@@ -12,6 +12,7 @@ from pyhf_stuff import (
     fit_linspace,
     fit_mcmc_mix,
     fit_normal,
+    fit_signal,
     mcmc_core,
     region,
 )
@@ -45,35 +46,13 @@ def dump_region(name):
     dir_region = os.path.join(BASEPATH, name)
     region_1 = region.load(dir_region)
     nbins = 25
+    lo = 0.0
+    hi = 5.0
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    fit_cabinetry.fit(region_1).dump(dir_fit)
-    fit_cabinetry_post.fit(region_1).dump(dir_fit)
-    fit_normal.fit(region_1).dump(dir_fit)
+    fit_signal.fit(region_1, 0, 10, 10 + 1).dump(dir_fit)
 
-    interval = fit_interval.fit(region_1)
-    interval.dump(dir_fit)
-    # default index 3 -> 4 sigma
-    lo, hi = interval.intervals[3]
-    lo = max(lo, 0.0)
-
-    linspace = fit_linspace.fit(region_1, lo, hi, nbins + 1)
-    linspace.dump(dir_fit)
-
-    mala = fit_mcmc_mix.fit(
-        region_1,
-        nbins,
-        (0, 25),
-        seed=0,
-        nsamples=100_000,
-        nrepeats=8,
-        nprocesses=8,
-    )
-    mala.dump(dir_fit)
-
-    neff = mcmc_core.n_by_fit(mala).sum()
-    print(mala.nsamples, neff, neff / mala.nsamples)
 
 
 if __name__ == "__main__":

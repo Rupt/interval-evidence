@@ -1,4 +1,10 @@
-"""Fit for levels of fixed values."""
+"""Fit for levels of fixed values.
+
+This fit is unreliable.
+Its optimizations often fail to converge and return incorrect results.
+Until that is fixed, I recommend interpolating with fit_linspace.
+
+"""
 import os
 import warnings
 from contextlib import contextmanager

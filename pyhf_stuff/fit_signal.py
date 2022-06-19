@@ -1,45 +1,54 @@
-"""Scan for optima at fixed signal region yields."""
+"""Scan for optima at fixed additive signal contributions."""
 import os
 from dataclasses import asdict, dataclass
 from typing import List
 
+import jax
 import numpy
+import pyhf
 import scipy
 
 from . import serial
 from .region_properties import region_properties
 
-FILENAME = "linspace.json"
+FILENAME = "signal.json"
 
 
 def fit(region, start, stop, num):
     properties = region_properties(region)
 
-    def optimum_given_yield(yield_):
-        constaint = scipy.optimize.NonlinearConstraint(
-            properties.yield_value,
-            yield_,
-            yield_,
-            jac=properties.yield_grad,
-        )
+    # negative signals are nonsense
+    if not start >= 0:
+        raise ValueError(start)
 
+    (ndata,) = properties.data[properties.slice_]
+
+    def objective(x, signal):
+        # signal region likelihood is poisson(n | background + signal)
+        background = properties.yield_value(x)
+        # using pyhf poisson for consistency
+        logl = pyhf.probability.Poisson(background + signal).log_prob(ndata)
+        return properties.objective_value(x) - logl
+
+    objective_and_grad = jax.jit(jax.value_and_grad(objective))
+
+    def optimum_given_signal(signal):
         optimum = scipy.optimize.minimize(
-            properties.objective_value_and_grad,
+            lambda x: objective_and_grad(x, signal),
             properties.init,
             bounds=properties.bounds,
             jac=True,
-            method="SLSQP",
-            constraints=constaint,
+            method="L-BFGS-B",
         )
         assert optimum.success
         return optimum.fun
 
     levels = [
-        optimum_given_yield(yield_)
+        optimum_given_signal(yield_)
         for yield_ in numpy.linspace(start, stop, num)
     ]
 
-    return FitLinspace(
+    return FitSignal(
         start=start,
         stop=stop,
         levels=levels,
@@ -50,7 +59,7 @@ def fit(region, start, stop, num):
 
 
 @dataclass(frozen=True)
-class FitLinspace:
+class FitSignal:
     start: float
     stop: float
     levels: List[float]

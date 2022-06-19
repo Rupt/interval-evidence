@@ -6,6 +6,7 @@ import numpy
 import scipy
 
 from . import serial
+from .fit_interval import _suppress_bounds_warning
 from .region_properties import region_properties
 
 FILENAME = "linspace.json"
@@ -22,14 +23,16 @@ def fit(region, start, stop, num):
             jac=properties.yield_grad,
         )
 
-        optimum = scipy.optimize.minimize(
-            properties.objective_value_and_grad,
-            properties.init,
-            bounds=properties.bounds,
-            jac=True,
-            method="SLSQP",
-            constraints=constaint,
-        )
+        with _suppress_bounds_warning():
+            optimum = scipy.optimize.minimize(
+                properties.objective_value_and_grad,
+                properties.init,
+                bounds=properties.bounds,
+                jac=True,
+                method="SLSQP",
+                constraints=constaint,
+                options=dict(maxiter=1000, ftol=1e-12),
+            )
         assert optimum.success
         return optimum.fun
 

@@ -66,10 +66,17 @@ def dump_region(name, lo, hi, nbins=25):
     mala.dump(dir_fit)
 
     neff = mcmc_core.n_by_fit(mala).sum()
+    nrepeats = mala.nrepeats
     nsamples = mala.nsamples
     total = numpy.sum(mala.yields)
-    print("acceptance: %.3f (%d / %d)" % (total / nsamples, total, nsamples))
-    print("efficiency: %.3f (%d / %d)" % (neff / total, neff, total))
+    print(
+        "acceptance: %.2f (%d / %d)"
+        % (total / (nrepeats * nsamples), total, nrepeats * nsamples)
+    )
+    print(
+        "efficiency: %.2f (%.1f / %.1f)"
+        % (nrepeats * neff / total, neff, total / nrepeats)
+    )
 
 
 if __name__ == "__main__":

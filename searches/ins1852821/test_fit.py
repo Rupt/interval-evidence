@@ -23,18 +23,18 @@ BASEPATH = os.path.dirname(__file__)
 def main():
     region_name_to_scan = {
         "SR0breq": (0, 5),
-        "SR0bvetoloose": (0, 50),
+        "SR0bvetoloose": (0, 40),
         "SR0bvetotight": (0, 25),
-        "SR0ZZbvetoloose": (0, 40),
+        "SR0ZZbvetoloose": (0, 25),
         "SR0ZZbvetotight": (0, 7),
         "SR0ZZloose": (50, 500),
         "SR0ZZtight": (5, 50),
         "SR1breq": (0, 11),
-        "SR1bvetoloose": (0, 30),
-        "SR1bvetotight": (0, 15),
-        "SR2breq": (0, 20),
-        "SR2bvetoloose": (0, 100),
-        "SR2bvetotight": (0, 20),
+        "SR1bvetoloose": (0, 15),
+        "SR1bvetotight": (0, 7),
+        "SR2breq": (0, 10),
+        "SR2bvetoloose": (0, 50),
+        "SR2bvetotight": (0, 10),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():
@@ -59,9 +59,9 @@ def dump_region(name, lo, hi, nbins=25):
         nbins,
         (lo, hi),
         seed=0,
-        nsamples=20_000,
-        nrepeats=16,
-        nprocesses=8,
+        nsamples=100_000,
+        nrepeats=100,
+        nprocesses=10,
     )
     mala.dump(dir_fit)
 

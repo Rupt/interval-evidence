@@ -7,7 +7,7 @@ import numpy
 
 from . import mcmc, mcmc_core, serial
 
-FILENAME = "mcmc_mala.json"
+FILENAME = "mcmc_mix.json"
 DEFAULT_NPROCESSES = os.cpu_count() // 2
 
 
@@ -21,11 +21,12 @@ def fit(
     nsamples=20_000,
     nrepeats=10,
     step_size=0.5,
+    prob_eye=0.1,
     nprocesses=DEFAULT_NPROCESSES,
 ):
     range_ = numpy.array(range_, dtype=float).tolist()
 
-    kernel_func = partial(mcmc_core.mala, step_size)
+    kernel_func = partial(mcmc_core.mix_mala_eye, step_size, prob_eye)
 
     hists = mcmc.region_hist_chain(
         kernel_func,
@@ -43,7 +44,7 @@ def fit(
 
     yields, errors = mcmc_core.summarize_hists(hists)
 
-    return FitMcmcMala(
+    return FitMcmcMix(
         # histogram arguments
         nbins=nbins,
         range_=range_,
@@ -64,7 +65,7 @@ def fit(
 
 
 @dataclass(frozen=True)
-class FitMcmcMala:
+class FitMcmcMix:
     # histogram arguments
     nbins: int
     range_: List[float]
@@ -75,6 +76,7 @@ class FitMcmcMala:
     seed: int
     # special arguments
     step_size: float
+    prob_eye: float
     # results
     yields: List[int]
     errors: List[float]

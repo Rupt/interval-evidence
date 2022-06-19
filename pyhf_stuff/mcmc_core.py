@@ -93,9 +93,8 @@ def mala(step_size, logdf):
         rng, key_noise, key_accept = jax.random.split(rng, 3)
 
         # propose the next step
-        noise_to = step_size**0.5 * jax.random.normal(
-            key_noise, shape=x.shape, dtype=x.dtype
-        )
+        noise = jax.random.normal(key_noise, shape=x.shape, dtype=x.dtype)
+        noise_to = step_size**0.5 * noise
         x_to = mean + noise_to
         logf_to, mean_to = state_to = init(x_to)
 
@@ -106,7 +105,7 @@ def mala(step_size, logdf):
 
         log_accept = logf_to - logf + (0.5 / step_size) * (norm_to - norm_from)
 
-        x, state = metropolis(
+        x, state = _metropolis(
             key_accept, log_accept, (x_to, state_to), (x, state)
         )
 
@@ -116,7 +115,7 @@ def mala(step_size, logdf):
 
 
 @partial_once
-def mix_mala_eye(step_size, logdf, prob_eye=0.1):
+def mix_mala_eye(step_size, prob_eye, logdf):
 
     value_and_grad = jax.value_and_grad(logdf())
 
@@ -131,26 +130,23 @@ def mix_mala_eye(step_size, logdf, prob_eye=0.1):
 
         # identity = eye = standard multivariate normal
         # is a special case of the langevin proposal with mean=0, step_size=1
-        eye = jax.random.uniform(key_mix) < prob_eye
-
-        def mix(a, b):
-            return _tree_select(eye, a, b)
+        do_eye = jax.random.uniform(key_mix) < prob_eye
 
         # proposal
         noise = jax.random.normal(key_noise, shape=x.shape, dtype=x.dtype)
-        noise_to = mix(noise, step_size**0.5 * noise)
-        x_to = mix(noise, mean + noise_to)
+        noise_to = jax.lax.select(do_eye, noise, step_size**0.5 * noise)
+        x_to = jax.lax.select(do_eye, noise, mean + noise_to)
         logf_to, mean_to = state_to = init(x_to)
 
         # acceptance
         norm_to = noise_to.dot(noise_to)
-        noise_from = mix(x, x - mean_to)
+        noise_from = jax.lax.select(do_eye, x, x - mean_to)
         norm_from = noise_from.dot(noise_from)
 
-        scale = mix(0.5, 0.5 / step_size)
+        scale = jax.lax.select(do_eye, 0.5, 0.5 / step_size)
         log_accept = logf_to - logf + scale * (norm_to - norm_from)
 
-        x, state = metropolis(
+        x, state = _metropolis(
             key_accept, log_accept, (x_to, state_to), (x, state)
         )
 
@@ -159,7 +155,7 @@ def mix_mala_eye(step_size, logdf, prob_eye=0.1):
     return init, step
 
 
-def metropolis(key, log_accept, state_to, state):
+def _metropolis(key, log_accept, state_to, state):
     """Implement the metropolis rule for transitioning states."""
     log_uniform = -jax.random.exponential(key, dtype=log_accept.dtype)
     return _tree_select(log_uniform <= log_accept, state_to, state)

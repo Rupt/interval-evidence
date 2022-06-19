@@ -10,7 +10,7 @@ from pyhf_stuff import (
     fit_cabinetry_post,
     fit_interval,
     fit_linspace,
-    fit_mcmc_mala,
+    fit_mcmc_mix,
     fit_normal,
     mcmc_core,
     region,
@@ -39,6 +39,7 @@ def main():
     for name in region_names:
         print(name)
         dump_region(name)
+        return
 
 
 def dump_region(name):
@@ -61,14 +62,14 @@ def dump_region(name):
     linspace = fit_linspace.fit(region_1, lo, hi, nbins + 1)
     linspace.dump(dir_fit)
 
-    mala = fit_mcmc_mala.fit(
+    mala = fit_mcmc_mix.fit(
         region_1,
         nbins,
-        (lo, hi),
+        (0, 25),
         seed=0,
         nsamples=100_000,
-        nrepeats=100,
-        nprocesses=10,
+        nrepeats=8,
+        nprocesses=8,
     )
     mala.dump(dir_fit)
 

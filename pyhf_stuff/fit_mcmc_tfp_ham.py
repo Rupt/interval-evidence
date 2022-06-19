@@ -1,6 +1,5 @@
 import os
 from dataclasses import asdict, dataclass
-from typing import List
 
 import numpy
 from tensorflow_probability.substrates import jax as tfp
@@ -69,7 +68,7 @@ def fit(
 class FitMcmcTfpHam:
     # histogram arguments
     nbins: int
-    range_: List[float]
+    range_: list[float]
     # generic arguments
     nburnin: int
     nsamples: int
@@ -79,8 +78,8 @@ class FitMcmcTfpHam:
     step_size: float
     num_leapfrog_steps: int
     # results
-    yields: List[int]
-    errors: List[float]
+    yields: list[int]
+    errors: list[float]
 
     def dump(self, path):
         os.makedirs(path, exist_ok=True)

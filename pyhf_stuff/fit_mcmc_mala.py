@@ -1,7 +1,6 @@
 import os
 from dataclasses import asdict, dataclass
 from functools import partial
-from typing import List
 
 import numpy
 
@@ -67,7 +66,7 @@ def fit(
 class FitMcmcMala:
     # histogram arguments
     nbins: int
-    range_: List[float]
+    range_: list[float]
     # generic arguments
     nburnin: int
     nsamples: int
@@ -76,8 +75,8 @@ class FitMcmcMala:
     # special arguments
     step_size: float
     # results
-    yields: List[int]
-    errors: List[float]
+    yields: list[int]
+    errors: list[float]
 
     def dump(self, path):
         os.makedirs(path, exist_ok=True)

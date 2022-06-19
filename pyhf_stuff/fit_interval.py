@@ -9,7 +9,6 @@ import os
 import warnings
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
-from typing import List
 
 import scipy
 
@@ -98,8 +97,8 @@ def _suppress_bounds_warning():
 
 @dataclass(frozen=True)
 class FitInterval:
-    levels: List[float]
-    intervals: List[List[float]]
+    levels: list[float]
+    intervals: list[list[float]]
 
     def dump(self, path):
         os.makedirs(path, exist_ok=True)

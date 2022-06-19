@@ -1,7 +1,6 @@
 """Scan for optima at fixed additive signal contributions."""
 import os
 from dataclasses import asdict, dataclass
-from typing import List
 
 import jax
 import numpy
@@ -62,7 +61,7 @@ def fit(region, start, stop, num):
 class FitSignal:
     start: float
     stop: float
-    levels: List[float]
+    levels: list[float]
 
     def dump(self, path):
         os.makedirs(path, exist_ok=True)

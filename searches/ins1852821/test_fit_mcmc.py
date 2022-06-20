@@ -1,17 +1,13 @@
 """
-time python searches/ins1852821/test_fit.py
+time python searches/ins1852821/test_fit_mcmc.py
 
 """
 
 import os
 
-from pyhf_stuff import (
-    fit_cabinetry,
-    fit_cabinetry_post,
-    fit_linspace,
-    fit_normal,
-    region,
-)
+import numpy
+
+from pyhf_stuff import fit_mcmc_mix, mcmc_core, region
 
 BASEPATH = os.path.dirname(__file__)
 
@@ -44,11 +40,29 @@ def dump_region(name, lo, hi, nbins=25):
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    fit_cabinetry.fit(region_1).dump(dir_fit)
-    fit_cabinetry_post.fit(region_1).dump(dir_fit)
-    fit_normal.fit(region_1).dump(dir_fit)
+    mala = fit_mcmc_mix.fit(
+        region_1,
+        nbins,
+        (lo, hi),
+        seed=0,
+        nsamples=100_000,
+        nrepeats=100,
+        nprocesses=10,
+    )
+    mala.dump(dir_fit)
 
-    fit_linspace.fit(region_1, lo, hi, nbins + 1).dump(dir_fit)
+    neff = mcmc_core.n_by_fit(mala).sum()
+    nrepeats = mala.nrepeats
+    nsamples = mala.nsamples
+    total = numpy.sum(mala.yields)
+    print(
+        "acceptance: %.2f (%d / %d)"
+        % (total / (nrepeats * nsamples), total, nrepeats * nsamples)
+    )
+    print(
+        "efficiency: %.2f (%.1f / %.1f)"
+        % (nrepeats * neff / total, neff, total / nrepeats)
+    )
 
 
 if __name__ == "__main__":

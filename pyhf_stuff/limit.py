@@ -8,10 +8,35 @@ import scipy
 
 from . import serial, stats
 
-FILENAME_FORMAT = "limit_%s.json"
-FILENAME_FIT_FORMAT = "limit_fit_%s.json"
-
 DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 3 + 1)))
+
+# for fit processing
+
+
+def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200):
+    partial_model = model_fn(fit)
+    model_temp = partial_model(ndata)
+
+    predicted_trio = low_central_high(model_temp.prior)
+
+    n_and_suffix = zip(
+        (ndata, *predicted_trio), ("observed", "down", "central", "up")
+    )
+
+    for n, suffix in n_and_suffix:
+        scan_i = scan(partial_model, n, lo, hi, nbins + 1)
+        print("%.2f: %r" % (n, scan_i.points))  # TODO
+        scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+
+
+def dump_scan_fit_signal(label, fit, path_limit):
+    scan_fit_signal_i = scan_fit_signal(fit)
+    suffix = "observed"
+    scan_fit_signal_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+    print("fit : %r" % scan_fit_signal_i.points)  # TODO
+
+
+# core
 
 
 def scan(
@@ -22,7 +47,7 @@ def scan(
     num: int,
     *,
     levels: list[float] = DEFAULT_LEVELS,
-    rtol: float = 1e-2,
+    rtol: float = 1e-3,
 ):
     """Return a LimitScan from a standard linear scan.
 
@@ -53,16 +78,16 @@ def scan(
 
     return LimitScan(
         ndata=ndata,
-        # linspace arguments
+        # arguments
         start=start,
         stop=stop,
-        # scan results
         rtol=rtol,
-        integral_zero=list(integral_zero),
-        integrals=integrals.tolist(),
         # crosses results
         levels=levels,
         points=points,
+        # scan results
+        integral_zero=list(integral_zero),
+        integrals=integrals.tolist(),
     )
 
 
@@ -93,6 +118,24 @@ def scan_fit_signal(fit, *, levels: list[float] = DEFAULT_LEVELS):
 # work functions
 
 standard_normal_cdf = scipy.special.ndtr
+
+
+def low_central_high(prior, *, x0: float = 1.0, xtol: float = 1e-6):
+    """Return crude assignments of -1 sigma, central, and +1 sigma data.
+
+    The assignemtn is to take quantiles of the prior, then take their
+    mean data shifted down or up by its square root for the variations.
+
+    This is not, to my knowledge, a meaningful median (or any other standard
+    statistic), but it is simple and converges sensibly for high precision
+    and mean >> 1.
+
+    Arguments:
+        all passed to quantile(...)
+    """
+    q0, q1, q2 = [quantile(prior, q) for q in standard_normal_cdf([-1, 0, 1])]
+
+    return max(0.0, q0 - q0**0.5), q1, q2 + q2**0.5
 
 
 def quantile(prior, q: float, *, x0: float = 1.0, xtol: float = 1e-6):
@@ -164,27 +207,29 @@ def log_ratio(integrals, integral_zero):
 
 @dataclass(frozen=True)
 class LimitScan:
-    ndata: float
-    # linspace arguments
+    ndata: int | float
+    # arguments
     start: float
     stop: float
-    # scan results
     rtol: float
-    integrals: list[list[float]]
-    integral_zero: list[float]
     # crosses results
     levels: list[float]
     points: list[list[float]]
+    # scan results
+    integrals: list[list[float]]
+    integral_zero: list[float]
 
-    def dump(self, path, name):
+    filename = "scan"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(
-            asdict(self), os.path.join(path, FILENAME_FORMAT % name)
-        )
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path, name):
-        obj_json = serial.load_json(os.path.join(path, FILENAME_FORMAT % name))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)
 
 
@@ -197,15 +242,15 @@ class LimitFitSignal:
     levels: list[float]
     points: list[list[float]]
 
-    def dump(self, path, name):
+    filename = "scan_fit_signal"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(
-            asdict(self), os.path.join(path, FILENAME_FIT_FORMAT % name)
-        )
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path, name):
-        obj_json = serial.load_json(
-            os.path.join(path, FILENAME_FIT_FORMAT % name)
-        )
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

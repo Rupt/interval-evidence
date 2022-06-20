@@ -6,24 +6,6 @@ import numpy
 import lebesgue
 
 
-def linspace(fit):
-    return partial(
-        lebesgue.canned.gamma1_regular_linear,
-        start=fit.start,
-        stop=fit.stop,
-        log_rates=numpy.negative(fit.levels),
-    )
-
-
-def mcmc(fit):
-    return partial(
-        lebesgue.canned.gamma1_regular_uniform,
-        start=fit.range_[0],
-        stop=fit.range_[1],
-        log_rates=_safe_log(fit.yields),
-    )
-
-
 def cabinetry(fit):
     return partial(
         lebesgue.canned.gamma1_trunc_normal,
@@ -46,6 +28,27 @@ def normal_log(fit):
         mu=_safe_log(fit.yield_linear),
         sigma=fit.error_log,
     )
+
+
+def linspace(fit):
+    return partial(
+        lebesgue.canned.gamma1_regular_linear,
+        start=fit.start,
+        stop=fit.stop,
+        log_rates=numpy.negative(fit.levels),
+    )
+
+
+def mcmc(fit):
+    return partial(
+        lebesgue.canned.gamma1_regular_uniform,
+        start=fit.range_[0],
+        stop=fit.range_[1],
+        log_rates=_safe_log(fit.yields),
+    )
+
+
+# utility
 
 
 def _safe_log(x):

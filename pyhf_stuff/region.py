@@ -6,6 +6,7 @@ import pyhf
 
 from . import serial
 
+
 @dataclass(frozen=True, eq=False)
 class Region:
     signal_region_name: str

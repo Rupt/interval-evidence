@@ -19,13 +19,10 @@ class Region:
             raise ValueError(self.signal_region_name)
 
     @property
-    def ndata(self):
-        observations = self.workspace.spec["observations"]
-        for region in observations:
-            if region["name"] != self.signal_region_name:
-                continue
-            (data,) = region["data"]
-            return data
+    def ndata(self) -> int:
+        (data,) = self.workspace.observations[self.signal_region_name]
+        assert data == int(data)
+        return int(data)
 
     # avoid hashing the spooky scary dicts inside us
     def __hash__(self):

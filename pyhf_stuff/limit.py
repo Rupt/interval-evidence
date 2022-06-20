@@ -9,6 +9,7 @@ import scipy
 from . import serial, stats
 
 FILENAME_FORMAT = "limit_%s.json"
+FILENAME_FIT_FORMAT = "limit_fit_%s.json"
 
 DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 3 + 1)))
 
@@ -30,6 +31,7 @@ def scan(
         ndata: observed data (real data are integer)
         start, stop, num: linspace arguments
         levels: negative log likelihood levels to cross
+        rtol: relative tolerance argument to Model.integrate
     """
     model = partial(partial_model, ndata)
     signals = numpy.linspace(start, stop, num)
@@ -42,6 +44,7 @@ def scan(
     integral_zero = model(shift=0.0).integrate(rtol=rtol / 10)
 
     # find crosses with log-linear interpolation
+    levels = list(levels)
     log_ratios = log_ratio(integrals, integral_zero)
 
     points = [
@@ -58,15 +61,33 @@ def scan(
         integral_zero=list(integral_zero),
         integrals=integrals.tolist(),
         # crosses results
-        levels=list(levels),
+        levels=levels,
         points=points,
     )
 
 
-def log_ratio(integrals, integral_zero):
-    bulk = numpy.log(numpy.mean(integrals, axis=1))
-    zero = numpy.log(numpy.mean(integral_zero))
-    return bulk - zero
+def scan_fit_signal(fit, *, levels: list[float] = DEFAULT_LEVELS):
+    """Return a LimitFitSignal to assign limits to a FitSignal result.
+
+    Arguments:
+        fit: FitSignal-like
+        levels: negative log likelihood levels to cross
+    """
+    signals = numpy.linspace(fit.start, fit.stop, len(fit.levels))
+
+    levels = list(levels)
+    log_ratio = numpy.array(fit.levels) - min(fit.levels)
+
+    points = [crosses(signals, log_ratio, value) for value in levels]
+
+    return LimitFitSignal(
+        # linspace arguments
+        start=fit.start,
+        stop=fit.stop,
+        # crosses results
+        levels=levels,
+        points=points,
+    )
 
 
 # work functions
@@ -132,6 +153,12 @@ def crosses(x: list[float], y: list[float], value: float) -> list[float]:
     return results
 
 
+def log_ratio(integrals, integral_zero):
+    bulk = numpy.log(numpy.mean(integrals, axis=1))
+    zero = numpy.log(numpy.mean(integral_zero))
+    return bulk - zero
+
+
 # serialization
 
 
@@ -158,4 +185,27 @@ class LimitScan:
     @classmethod
     def load(cls, path, name):
         obj_json = serial.load_json(os.path.join(path, FILENAME_FORMAT % name))
+        return cls(**obj_json)
+
+
+@dataclass(frozen=True)
+class LimitFitSignal:
+    # linspace arguments
+    start: float
+    stop: float
+    # crosses results
+    levels: list[float]
+    points: list[list[float]]
+
+    def dump(self, path, name):
+        os.makedirs(path, exist_ok=True)
+        serial.dump_json_human(
+            asdict(self), os.path.join(path, FILENAME_FIT_FORMAT % name)
+        )
+
+    @classmethod
+    def load(cls, path, name):
+        obj_json = serial.load_json(
+            os.path.join(path, FILENAME_FIT_FORMAT % name)
+        )
         return cls(**obj_json)

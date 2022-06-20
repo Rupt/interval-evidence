@@ -20,7 +20,7 @@ def mcmc(fit):
         lebesgue.canned.gamma1_regular_uniform,
         start=fit.range_[0],
         stop=fit.range_[1],
-        log_rates=numpy.log(fit.yields),
+        log_rates=_safe_log(fit.yields),
     )
 
 
@@ -43,6 +43,12 @@ def normal(fit):
 def normal_log(fit):
     return partial(
         lebesgue.canned.gamma1_log_normal,
-        mu=numpy.log(fit.yield_linear),
+        mu=_safe_log(fit.yield_linear),
         sigma=fit.error_log,
     )
+
+
+def _safe_log(x):
+    x = numpy.asarray(x)
+    iszero = x == 0
+    return numpy.where(iszero, -numpy.inf, numpy.log(x + iszero))

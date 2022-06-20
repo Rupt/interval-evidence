@@ -12,19 +12,19 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "SR0breq": (0, 10),
-        "SR0bvetoloose": (0, 20),
-        "SR0bvetotight": (0, 10),
-        "SR0ZZbvetoloose": (0, 10),
-        "SR0ZZbvetotight": (0, 20),
-        "SR0ZZloose": (0, 100),
-        "SR0ZZtight": (0, 20),
-        "SR1breq": (0, 10),
-        "SR1bvetoloose": (0, 10),
+        "SR0breq": (0, 20),
+        "SR0bvetoloose": (0, 40),
+        "SR0bvetotight": (0, 20),
+        "SR0ZZbvetoloose": (0, 20),
+        "SR0ZZbvetotight": (0, 30),
+        "SR0ZZloose": (0, 200),
+        "SR0ZZtight": (0, 30),
+        "SR1breq": (0, 20),
+        "SR1bvetoloose": (0, 20),
         "SR1bvetotight": (0, 10),
         "SR2breq": (0, 10),
-        "SR2bvetoloose": (0, 20),
-        "SR2bvetotight": (0, 10),
+        "SR2bvetoloose": (0, 30),
+        "SR2bvetotight": (0, 20),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():
@@ -32,7 +32,7 @@ def main():
         dump_region(name, lo, hi)
 
 
-def dump_region(name, lo, hi, nbins=50):
+def dump_region(name, lo, hi, nbins=200):
     dir_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(dir_region)
 

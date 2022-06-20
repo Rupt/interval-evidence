@@ -6,7 +6,6 @@ import numpy
 
 from . import mcmc, mcmc_core, serial
 
-FILENAME = "mcmc_mix.json"
 DEFAULT_NPROCESSES = os.cpu_count() // 2
 
 
@@ -81,11 +80,15 @@ class FitMcmcMix:
     yields: list[int]
     errors: list[float]
 
-    def dump(self, path):
+    filename = "mcmc_mix"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path):
-        obj_json = serial.load_json(os.path.join(path, FILENAME))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

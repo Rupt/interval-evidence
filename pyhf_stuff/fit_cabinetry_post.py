@@ -5,8 +5,6 @@ from . import serial
 from .fit_cabinetry import _fit
 from .region_properties import region_properties
 
-FILENAME = "cabinetry_post.json"
-
 
 def fit(region):
     properties = region_properties(region)
@@ -28,11 +26,15 @@ class FitCabinetryPost:
     yield_post: float
     error_post: float
 
-    def dump(self, path):
+    filename = "cabinetry_post"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path):
-        obj_json = serial.load_json(os.path.join(path, FILENAME))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

@@ -10,8 +10,6 @@ import scipy
 from . import serial
 from .region_properties import region_properties
 
-FILENAME = "signal.json"
-
 
 def fit(region, start, stop, num):
     properties = region_properties(region)
@@ -63,11 +61,15 @@ class FitSignal:
     stop: float
     levels: list[float]
 
-    def dump(self, path):
+    filename = "signal"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path):
-        obj_json = serial.load_json(os.path.join(path, FILENAME))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

@@ -6,8 +6,6 @@ from tensorflow_probability.substrates import jax as tfp
 
 from . import mcmc_core, mcmc_tfp, serial
 
-FILENAME = "mcmc_tfp_mala.json"
-
 
 def fit(
     region,
@@ -77,11 +75,15 @@ class FitMcmcTfpMala:
     yields: list[int]
     errors: list[float]
 
-    def dump(self, path):
+    filename = "mcmc_tfp_mala"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path):
-        obj_json = serial.load_json(os.path.join(path, FILENAME))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

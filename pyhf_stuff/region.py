@@ -6,13 +6,12 @@ import pyhf
 
 from . import serial
 
-FILENAME = "region.json.gz"
-
-
 @dataclass(frozen=True, eq=False)
 class Region:
     signal_region_name: str
     workspace: pyhf.Workspace
+
+    filename = "region"
 
     def __post_init__(self):
         if self.signal_region_name not in self.workspace.channel_slices:
@@ -29,7 +28,7 @@ class Region:
         return object.__hash__(self)
 
     # serialization
-    def dump(self, path):
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
 
         region_json = {
@@ -37,11 +36,13 @@ class Region:
             "workspace": self.workspace,
         }
 
-        serial.dump_json_gz(region_json, os.path.join(path, FILENAME))
+        filename = self.filename + suffix + ".json.gz"
+        serial.dump_json_gz(region_json, os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path):
-        region_json = serial.load_json_gz(os.path.join(path, FILENAME))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json.gz"
+        region_json = serial.load_json_gz(os.path.join(path, filename))
 
         return cls(
             signal_region_name=region_json["signal_region_name"],

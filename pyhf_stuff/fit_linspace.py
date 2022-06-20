@@ -10,8 +10,6 @@ from . import serial
 from .fit_interval import _suppress_bounds_warning
 from .region_properties import region_properties
 
-FILENAME = "linspace.json"
-
 
 def fit(region, start, stop, num):
 
@@ -97,11 +95,15 @@ class FitLinspace:
     stop: float
     levels: list[float]
 
-    def dump(self, path):
+    filename = "linspace"
+
+    def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)
-        serial.dump_json_human(asdict(self), os.path.join(path, FILENAME))
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path):
-        obj_json = serial.load_json(os.path.join(path, FILENAME))
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

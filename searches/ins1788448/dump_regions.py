@@ -5,8 +5,8 @@ python searches/ins1788448/dump_regions.py
 
 """
 
-import os
 import glob
+import os
 
 import pyhf
 
@@ -17,7 +17,7 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     for name, workspace in generate_regions():
-        region.Region(name, workspace).dump(
+        region.Region(name, 0, workspace).dump(
             os.path.join(BASEPATH, region.strip_cuts(name)),
         )
 
@@ -42,7 +42,7 @@ def generate_regions():
             assert name.startswith("SR")
             signal_regions.add(name)
 
-        name, = signal_regions
+        (name,) = signal_regions
 
         # serialize regions for each
         yield name, region.prune(workspace, name, *control_regions)

@@ -51,7 +51,13 @@ class RegionProperties:
             return jax.numpy.linalg.inv(jax.hessian(objective_value)(x))
 
         # signal region yield
-        slice_ = model_blind.config.channel_slices[region.signal_region_name]
+        slice_channel = model_blind.config.channel_slices[
+            region.signal_region_name
+        ]
+        assert slice_channel.step is None
+        slice_start = slice_channel.start + region.signal_region_bin
+        assert slice_start < slice_channel.stop
+        slice_ = slice(slice_start, slice_start + 1)
 
         @jax.value_and_grad
         def yield_value_and_grad(x):

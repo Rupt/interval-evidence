@@ -10,6 +10,7 @@ from . import serial
 @dataclass(frozen=True, eq=False)
 class Region:
     signal_region_name: str
+    signal_region_bin: int
     workspace: pyhf.Workspace
 
     filename = "region"
@@ -20,7 +21,9 @@ class Region:
 
     @property
     def ndata(self) -> int:
-        (data,) = self.workspace.observations[self.signal_region_name]
+        data = self.workspace.observations[self.signal_region_name][
+            self.signal_region_bin
+        ]
         assert data == int(data)
         return int(data)
 
@@ -34,6 +37,7 @@ class Region:
 
         region_json = {
             "signal_region_name": self.signal_region_name,
+            "signal_region_bin": self.signal_region_bin,
             "workspace": self.workspace,
         }
 
@@ -47,6 +51,7 @@ class Region:
 
         return cls(
             signal_region_name=region_json["signal_region_name"],
+            signal_region_bin=region_json["signal_region_bin"],
             workspace=pyhf.Workspace(region_json["workspace"]),
         )
 

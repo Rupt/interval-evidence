@@ -12,7 +12,10 @@ def fit(region):
     properties = region_properties(region)
     # blinded -> pre-fit
     yield_pre, error_pre = _fit(
-        properties.model_blind, properties.data, region.signal_region_name
+        properties.model_blind,
+        properties.data,
+        region.signal_region_name,
+        region.signal_region_bin,
     )
     return FitCabinetry(
         yield_pre=yield_pre,
@@ -20,13 +23,13 @@ def fit(region):
     )
 
 
-def _fit(model, data, signal_region_name):
+def _fit(model, data, region_name, bin_):
     prediction = cabinetry.model_utils.prediction(
         model, fit_results=cabinetry.fit.fit(model, data)
     )
-    index = model.config.channels.index(signal_region_name)
-    yield_ = numpy.sum(prediction.model_yields[index])
-    error = prediction.total_stdev_model_channels[index]
+    index = model.config.channels.index(region_name)
+    yield_ = numpy.array(prediction.model_yields)[index, :, bin_].sum()
+    error = prediction.total_stdev_model_bins[index][bin_]
     return yield_, error
 
 

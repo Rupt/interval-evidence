@@ -10,7 +10,10 @@ def fit(region):
     properties = region_properties(region)
     # unblinded -> post-fit
     yield_post, error_post = _fit(
-        properties.model, properties.data, region.signal_region_name
+        properties.model,
+        properties.data,
+        region.signal_region_name,
+        region.signal_region_bin,
     )
     return FitCabinetryPost(
         yield_post=yield_post,

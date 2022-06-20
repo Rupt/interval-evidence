@@ -33,6 +33,7 @@ def _fit(model, data, region_name, bins):
     nbins = len(prediction.total_stdev_model_bins[index])
     if nbins == len(bins):
         # we have all bins - use total
+        assert set(bins) == set(range(nbins))
         error = prediction.total_stdev_model_channels
     else:
         # naive combination :(

@@ -10,6 +10,7 @@ def run_tests():
         _test_blind.test_model,
         _test_stats.test_sigma_to_fro_llr,
         _test_limit.test_quantile,
+        _test_limit.test_crosses,
     ]
 
     test_funcs(tests)

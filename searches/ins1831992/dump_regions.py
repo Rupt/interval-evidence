@@ -22,9 +22,7 @@ def main():
 
 
 def generate_regions():
-    spec = serial.load_json_gz(
-        os.path.join(BASEPATH, "bkg.json.gz")
-    )
+    spec = serial.load_json_gz(os.path.join(BASEPATH, "bkg.json.gz"))
     workspace = pyhf.workspace.Workspace(region.clear_poi(spec))
 
     channels = workspace.channel_slices.keys()

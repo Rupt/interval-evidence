@@ -55,14 +55,14 @@ class RegionProperties:
             region.signal_region_name
         ]
         assert slice_channel.step is None
-        slice_start = slice_channel.start + region.signal_region_bin
-        assert slice_start < slice_channel.stop
-        slice_ = slice(slice_start, slice_start + 1)
+        bins = tuple(
+            slice_channel.start + i for i in region.signal_region_bins
+        )
+        assert all(i < slice_channel.stop for i in bins)
 
         @jax.value_and_grad
         def yield_value_and_grad(x):
-            (result,) = model_blind.expected_actualdata(x)[slice_]
-            return result
+            return model_blind.expected_actualdata(x)[numpy.array(bins)].sum()
 
         def yield_value(x):
             value, _ = yield_value_and_grad(x)
@@ -78,7 +78,7 @@ class RegionProperties:
         self.data = numpy.array(data)
         self.init = numpy.array(model_blind.config.suggested_init())
         self.bounds = numpy.array(model_blind.config.suggested_bounds())
-        self.slice_ = slice_
+        self.bins = bins
 
         # constraint "logpdf" functions
         self.logdf = logdf

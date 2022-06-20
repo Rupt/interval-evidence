@@ -10,7 +10,7 @@ from . import serial
 @dataclass(frozen=True, eq=False)
 class Region:
     signal_region_name: str
-    signal_region_bin: int
+    signal_region_bins: tuple
     workspace: pyhf.Workspace
 
     filename = "region"
@@ -19,11 +19,14 @@ class Region:
         if self.signal_region_name not in self.workspace.channel_slices:
             raise ValueError(self.signal_region_name)
 
+        # allow integer arguments; convert to tuple (i,)
+        if isinstance(self.signal_region_bins, int):
+            object.__setattr__(self, (self.signal_region_bins,))
+
     @property
     def ndata(self) -> int:
-        data = self.workspace.observations[self.signal_region_name][
-            self.signal_region_bin
-        ]
+        channel = self.workspace.observations[self.signal_region_name]
+        data = sum(channel[i] for i in self.signal_region_bins)
         assert data == int(data)
         return int(data)
 

@@ -48,7 +48,7 @@ def generate_regions():
 
     # serialize regions for each
     for name in sorted(signal_regions):
-        yield name, region.prune(workspace, name, control_regions)
+        yield name, region.prune(workspace, name, *control_regions)
 
 
 if __name__ == "__main__":

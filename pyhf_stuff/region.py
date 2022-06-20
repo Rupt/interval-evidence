@@ -21,7 +21,9 @@ class Region:
 
         # allow integer arguments; convert to tuple (i,)
         if isinstance(self.signal_region_bins, int):
-            object.__setattr__(self, (self.signal_region_bins,))
+            object.__setattr__(
+                self, "signal_region_bins", (self.signal_region_bins,)
+            )
 
     @property
     def ndata(self) -> int:
@@ -40,7 +42,7 @@ class Region:
 
         region_json = {
             "signal_region_name": self.signal_region_name,
-            "signal_region_bin": self.signal_region_bin,
+            "signal_region_bins": self.signal_region_bins,
             "workspace": self.workspace,
         }
 
@@ -54,7 +56,7 @@ class Region:
 
         return cls(
             signal_region_name=region_json["signal_region_name"],
-            signal_region_bin=region_json["signal_region_bin"],
+            signal_region_bins=region_json["signal_region_bins"],
             workspace=pyhf.Workspace(region_json["workspace"]),
         )
 

@@ -3,6 +3,7 @@
 from multiprocessing import get_context
 
 import jax
+import numpy
 import scipy
 
 from .mcmc_core import (
@@ -54,7 +55,7 @@ def region_hist_chain(
     observable = yields_template(
         x_of_t,
         properties.model_blind.expected_actualdata,
-        properties.slice_,
+        properties.bins,
     )
 
     # mcmc stuff
@@ -97,8 +98,10 @@ def logdf_template(x_of_t, logdf_func, data, bounds):
 
 
 @partial_once
-def yields_template(x_of_t, yields_func, slice_):
+def yields_template(x_of_t, yields_func, bins):
+    bins = numpy.array(bins)
+
     def observable(t):
-        return yields_func(x_of_t(t))[slice_]
+        return yields_func(x_of_t(t))[bins].sum()
 
     return observable

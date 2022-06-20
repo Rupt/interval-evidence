@@ -15,8 +15,8 @@ BASEPATH = os.path.dirname(__file__)
 
 
 def main():
-    for name, bin_, workspace in generate_regions():
-        region.Region(name, bin_, workspace).dump(
+    for name, sr_name, bins, workspace in generate_regions():
+        region.Region(sr_name, bins, workspace).dump(
             os.path.join(BASEPATH, name),
         )
 
@@ -47,25 +47,50 @@ def generate_regions():
         signal_regions.add(name)
 
     # 2J (gluino) = (SR2JBVEM_meffInc30, 2)
+    # 2J (squark) = (SR2JBVEM_meffInc30, (1, 2))
     # 4J high-x   = (SR4JhighxBVEM_meffInc30, 2)
     # 4J low-x    = (SR4JlowxBVEM_meffInc30, 2)
     # 6J (gluino) = (SR6JBVEM_meffInc30, 3)
-    # ! no 2J (squark) nor 6J (squark) because they combine bins
-    name = "SR2JBVEM_meffInc30"
-    assert name in signal_regions
-    yield name, 2, region.prune(workspace, name, *control_regions_2j)
+    # 6J (squark) = (SR6JBVEM_meffInc30, (2, 3))
+    sr_name = "SR2JBVEM_meffInc30"
+    name = sr_name + "_gluino"
+    assert sr_name in signal_regions
+    yield name, sr_name, 2, region.prune(
+        workspace, sr_name, *control_regions_2j
+    )
 
-    name = "SR4JhighxBVEM_meffInc30"
-    assert name in signal_regions
-    yield name, 2, region.prune(workspace, name, *control_regions_4j)
+    sr_name = "SR2JBVEM_meffInc30"
+    name = sr_name + "_squark"
+    assert sr_name in signal_regions
+    yield name, sr_name, (1, 2), region.prune(
+        workspace, sr_name, *control_regions_2j
+    )
 
-    name = "SR4JlowxBVEM_meffInc30"
-    assert name in signal_regions
-    yield name, 2, region.prune(workspace, name, *control_regions_4j)
+    sr_name = "SR4JhighxBVEM_meffInc30"
+    assert sr_name in signal_regions
+    yield name, sr_name, 2, region.prune(
+        workspace, sr_name, *control_regions_4j
+    )
 
-    name = "SR6JBVEM_meffInc30"
-    assert name in signal_regions
-    yield name, 3, region.prune(workspace, name, *control_regions_6j)
+    sr_name = "SR4JlowxBVEM_meffInc30"
+    assert sr_name in signal_regions
+    yield name, sr_name, 2, region.prune(
+        workspace, sr_name, *control_regions_4j
+    )
+
+    sr_name = "SR6JBVEM_meffInc30"
+    name = sr_name + "_gluino"
+    assert sr_name in signal_regions
+    yield name, sr_name, 3, region.prune(
+        workspace, sr_name, *control_regions_6j
+    )
+
+    sr_name = "SR6JBVEM_meffInc30"
+    name = sr_name + "_squark"
+    assert sr_name in signal_regions
+    yield name, sr_name, (2, 3), region.prune(
+        workspace, sr_name, *control_regions_6j
+    )
 
 
 if __name__ == "__main__":

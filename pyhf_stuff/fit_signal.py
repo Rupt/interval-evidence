@@ -24,7 +24,7 @@ def fit(region, start, stop, num):
 
     def objective(x, signal):
         # signal region likelihood is poisson(n | background + signal)
-        background = properties.yield_value(x)
+        background = jax.numpy.maximum(properties.yield_value(x), 0.0)
         # using pyhf poisson for consistency
         logl = pyhf.probability.Poisson(background + signal).log_prob(ndata)
         return properties.objective_value(x) - logl

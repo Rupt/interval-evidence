@@ -32,7 +32,7 @@ def generate_regions():
 
         channels = workspace.channel_slices.keys()
 
-        # find control and signals region strings
+        # find control and signal region strings
         control_regions = set()
         signal_regions = set()
         for name in channels:

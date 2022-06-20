@@ -29,9 +29,16 @@ def _fit(model, data, region_name, bins):
     )
     index = model.config.channels.index(region_name)
     yield_ = numpy.array(prediction.model_yields)[index, :, list(bins)].sum()
-    errors = prediction.total_stdev_model_bins[index][list(bins)]
-    # naive combination :(
-    error = errors.dot(errors) ** 0.5
+
+    nbins = len(prediction.total_stdev_model_bins[index])
+    if nbins == len(bins):
+        # we have all bins - use total
+        error = prediction.total_stdev_model_channels
+    else:
+        # naive combination :(
+        errors = prediction.total_stdev_model_bins[index][list(bins)]
+        error = errors.dot(errors) ** 0.5
+
     return yield_, error
 
 

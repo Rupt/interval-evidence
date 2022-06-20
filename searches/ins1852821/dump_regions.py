@@ -12,8 +12,6 @@ import pyhf
 from pyhf_stuff import region, serial
 
 BASEPATH = os.path.dirname(__file__)
-HEPDATA = "ins1852821"
-
 
 def main():
     for name, workspace in generate_regions():
@@ -24,7 +22,7 @@ def main():
 
 def generate_regions():
     spec = serial.load_json_gz(
-        os.path.join(BASEPATH, HEPDATA + "_bkg.json.gz")
+        os.path.join(BASEPATH, "bkg.json.gz")
     )
     workspace = pyhf.workspace.Workspace(region.clear_poi(spec))
 

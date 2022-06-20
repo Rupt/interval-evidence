@@ -1,13 +1,13 @@
 """A regularly piece-wise uniform prior."""
-from collections.abc import Sequence
-
 import numba
 import numpy
 
 from ._bayes import Prior
 
 
-def regular_uniform(start: float, stop: float, log_rates: Sequence) -> Prior:
+def regular_uniform(
+    start: float, stop: float, log_rates: list[float]
+) -> Prior:
     """Return a Prior with piecewise uniform denisty from start to stop.
 
     Arguments:
@@ -23,7 +23,7 @@ def regular_uniform(start: float, stop: float, log_rates: Sequence) -> Prior:
         raise ValueError((start, stop))
 
     log_rates = numpy.array(log_rates, dtype=float)
-    if len(log_rates) < 2:
+    if len(log_rates) < 1:
         raise ValueError(log_rates)
 
     # subtracting max avoids numerical problems for large |values|

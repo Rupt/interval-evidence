@@ -2,8 +2,12 @@ import scipy.integrate
 
 from .canned import (
     gamma1_log_normal,
+    gamma1_regular_linear,
+    gamma1_regular_uniform,
     gamma1_trunc_normal,
     poisson_log_normal,
+    poisson_regular_linear,
+    poisson_regular_uniform,
     poisson_trunc_normal,
 )
 
@@ -58,4 +62,12 @@ def test_same_funcs():
     assert (
         gamma1_trunc_normal(0, 1, 2).integrate_func
         is gamma1_trunc_normal(0, 1, 2).integrate_func
+    )
+    assert (
+        poisson_regular_linear(0, 0, 1, [0, 1]).integrate_func
+        is gamma1_regular_linear(0, 0, 1, [0, 1]).integrate_func
+    )
+    assert (
+        poisson_regular_uniform(0, 0, 1, [1]).integrate_func
+        is gamma1_regular_uniform(0, 0, 1, [1]).integrate_func
     )

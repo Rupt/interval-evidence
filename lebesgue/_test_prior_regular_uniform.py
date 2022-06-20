@@ -33,5 +33,5 @@ def test_values():
 def test_args():
     assert raises(lambda: regular_uniform(0, 0, [1, 2]), ValueError)
     assert raises(lambda: regular_uniform(0, -1, [1, 2]), ValueError)
-    assert raises(lambda: regular_uniform(0, 1, [1]), ValueError)
+    assert raises(lambda: regular_uniform(0, 1, []), ValueError)
     assert raises(lambda: regular_uniform(numpy.nan, 1, [1, 2]), ValueError)

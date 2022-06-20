@@ -1,13 +1,11 @@
 """A regularly piece-wise linear prior."""
-from collections.abc import Sequence
-
 import numba
 import numpy
 
 from ._bayes import Prior
 
 
-def regular_linear(start: float, stop: float, log_rates: Sequence) -> Prior:
+def regular_linear(start: float, stop: float, log_rates: list[float]) -> Prior:
     """Return a Prior with piecewise linear denisty from start to stop.
 
     Arguments:

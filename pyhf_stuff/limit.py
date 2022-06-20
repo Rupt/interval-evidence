@@ -1,6 +1,75 @@
 """Tools to assign likelihood limits on signal contributions."""
+import os
+from dataclasses import asdict, dataclass
+from functools import partial
+
 import numpy
 import scipy
+
+from . import serial, stats
+
+FILENAME_FORMAT = "limit_%s.json"
+
+DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 3 + 1)))
+
+
+def scan(
+    partial_model,
+    ndata: float,
+    start: float,
+    stop: float,
+    num: int,
+    *,
+    levels: list[float] = DEFAULT_LEVELS,
+    rtol: float = 1e-2,
+):
+    """Return a LimitScan from a standard linear scan.
+
+    Arguments:
+        model: partial model as returned from models.py functions
+        ndata: observed data (real data are integer)
+        start, stop, num: linspace arguments
+        levels: negative log likelihood levels to cross
+    """
+    model = partial(partial_model, ndata)
+    signals = numpy.linspace(start, stop, num)
+
+    integrals = numpy.array(
+        [model(shift=signal).integrate(rtol=rtol) for signal in signals]
+    )
+
+    # do no-signal to higher precision to allay error doubts
+    integral_zero = model(shift=0.0).integrate(rtol=rtol / 10)
+
+    # find crosses with log-linear interpolation
+    log_ratios = log_ratio(integrals, integral_zero)
+
+    points = [
+        crosses(signals, log_ratios, value) for value in numpy.negative(levels)
+    ]
+
+    return LimitScan(
+        ndata=ndata,
+        # linspace arguments
+        start=start,
+        stop=stop,
+        # scan results
+        rtol=rtol,
+        integral_zero=list(integral_zero),
+        integrals=integrals.tolist(),
+        # crosses results
+        levels=list(levels),
+        points=points,
+    )
+
+
+def log_ratio(integrals, integral_zero):
+    bulk = numpy.log(numpy.mean(integrals, axis=1))
+    zero = numpy.log(numpy.mean(integral_zero))
+    return bulk - zero
+
+
+# work functions
 
 standard_normal_cdf = scipy.special.ndtr
 
@@ -51,13 +120,42 @@ def crosses(x: list[float], y: list[float], value: float) -> list[float]:
             continue
         # no width special case
         if x1 == x2:
-            return x1
+            return float(x1)
         # no height special case: result is undefined
         if y1 == y2:
             return numpy.nan
 
         # linear interpolation
         x = x1 + (value - y1) * (x2 - x1) / (y2 - y1)
-        results.append(x)
+        results.append(float(x))
 
     return results
+
+
+# serialization
+
+
+@dataclass(frozen=True)
+class LimitScan:
+    ndata: float
+    # linspace arguments
+    start: float
+    stop: float
+    # scan results
+    rtol: float
+    integrals: list[list[float]]
+    integral_zero: list[float]
+    # crosses results
+    levels: list[float]
+    points: list[list[float]]
+
+    def dump(self, path, name):
+        os.makedirs(path, exist_ok=True)
+        serial.dump_json_human(
+            asdict(self), os.path.join(path, FILENAME_FORMAT % name)
+        )
+
+    @classmethod
+    def load(cls, path, name):
+        obj_json = serial.load_json(os.path.join(path, FILENAME_FORMAT % name))
+        return cls(**obj_json)

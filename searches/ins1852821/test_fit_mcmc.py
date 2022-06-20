@@ -36,7 +36,7 @@ def main():
 
 def dump_region(name, lo, hi, nbins=50):
     dir_region = os.path.join(BASEPATH, name)
-    region_1 = region.load(dir_region)
+    region_1 = region.Region.load(dir_region)
 
     dir_fit = os.path.join(dir_region, "fit")
 

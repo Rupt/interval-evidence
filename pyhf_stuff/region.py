@@ -6,6 +6,8 @@ import pyhf
 
 from . import serial
 
+FILENAME = "region.json.gz"
+
 
 @dataclass(frozen=True, eq=False)
 class Region:
@@ -16,34 +18,38 @@ class Region:
         if self.signal_region_name not in self.workspace.channel_slices:
             raise ValueError(self.signal_region_name)
 
+    @property
+    def ndata(self):
+        observations = self.workspace.spec["observations"]
+        for region in observations:
+            if region["name"] != self.signal_region_name:
+                continue
+            (data,) = region["data"]
+            return data
+
     # avoid hashing the spooky scary dicts inside us
     def __hash__(self):
         return object.__hash__(self)
 
+    # serialization
+    def dump(self, path):
+        os.makedirs(path, exist_ok=True)
 
-# serialization
+        region_json = {
+            "signal_region_name": self.signal_region_name,
+            "workspace": self.workspace,
+        }
 
-FILENAME = "region.json.gz"
+        serial.dump_json_gz(region_json, os.path.join(path, FILENAME))
 
+    @classmethod
+    def load(cls, path):
+        region_json = serial.load_json_gz(os.path.join(path, FILENAME))
 
-def dump(region, path):
-    os.makedirs(path, exist_ok=True)
-
-    region_json = {
-        "signal_region_name": region.signal_region_name,
-        "workspace": region.workspace,
-    }
-
-    serial.dump_json_gz(region_json, os.path.join(path, FILENAME))
-
-
-def load(path):
-    region_json = serial.load_json_gz(os.path.join(path, FILENAME))
-
-    return Region(
-        signal_region_name=region_json["signal_region_name"],
-        workspace=pyhf.Workspace(region_json["workspace"]),
-    )
+        return cls(
+            signal_region_name=region_json["signal_region_name"],
+            workspace=pyhf.Workspace(region_json["workspace"]),
+        )
 
 
 # utilities
@@ -66,6 +72,6 @@ def clear_poi(spec):
 
 
 def prune(workspace, *args):
-    """Prune to keep only channel names given in args."""
+    """Prune to keep only channel names given in region_names."""
     remove = workspace.channel_slices.keys() - args
     return workspace.prune(channels=remove)

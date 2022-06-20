@@ -1,3 +1,10 @@
+"""
+Usage:
+
+python searches/ins1852821/dump_regions.py
+
+"""
+
 import os
 
 import pyhf
@@ -10,8 +17,7 @@ HEPDATA = "ins1852821"
 
 def main():
     for name, workspace in generate_regions():
-        region.dump(
-            region.Region(name, workspace),
+        region.Region(name, workspace).dump(
             os.path.join(BASEPATH, region.strip_cuts(name)),
         )
 
@@ -42,7 +48,7 @@ def generate_regions():
 
     # serialize regions for each
     for name in sorted(signal_regions):
-        yield name, region.prune(workspace, name, *control_regions)
+        yield name, region.prune(workspace, name, control_regions)
 
 
 if __name__ == "__main__":

@@ -32,6 +32,8 @@ def run_tests():
         _test_cache.test_put,
         _test_canned.test_poisson_log_normal,
         _test_canned.test_poisson_trunc_normal,
+        _test_canned.test_poisson_regular_linear,
+        _test_canned.test_poisson_regular_uniform,
         _test_canned.test_same_funcs,
         _test_cephes_ndtr.test_ndtr,
         # i

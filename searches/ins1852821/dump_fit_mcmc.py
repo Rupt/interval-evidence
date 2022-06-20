@@ -1,5 +1,5 @@
 """
-time python searches/ins1852821/test_fit_mcmc.py
+time python searches/ins1852821/dump_fit_mcmc.py
 
 """
 

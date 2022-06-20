@@ -1,5 +1,5 @@
 """
-time python searches/ins1852821/test_fit.py
+time python searches/ins1852821/dump_fit.py
 
 """
 
@@ -44,10 +44,14 @@ def dump_region(name, lo, hi, nbins=50):
 
     dir_fit = os.path.join(dir_region, "fit")
 
+    # cabinetry
     fit_cabinetry.fit(region_1).dump(dir_fit)
     fit_cabinetry_post.fit(region_1).dump(dir_fit)
+
+    # normal
     fit_normal.fit(region_1).dump(dir_fit)
 
+    # linspace
     fit_linspace.fit(region_1, lo, hi, nbins + 1).dump(dir_fit)
 
 

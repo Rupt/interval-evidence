@@ -19,12 +19,6 @@ class Region:
         if self.signal_region_name not in self.workspace.channel_slices:
             raise ValueError(self.signal_region_name)
 
-        # allow integer arguments; convert to tuple (i,)
-        if isinstance(self.signal_region_bins, int):
-            object.__setattr__(
-                self, "signal_region_bins", (self.signal_region_bins,)
-            )
-
     @property
     def ndata(self) -> int:
         channel = self.workspace.observations[self.signal_region_name]

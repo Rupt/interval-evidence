@@ -55,7 +55,7 @@ def generate_regions():
     sr_name = "SR2JBVEM_meffInc30"
     name = sr_name + "_gluino"
     assert sr_name in signal_regions
-    yield name, sr_name, 2, region.prune(
+    yield name, sr_name, (2,), region.prune(
         workspace, sr_name, *control_regions_2j
     )
 
@@ -68,20 +68,20 @@ def generate_regions():
 
     sr_name = "SR4JhighxBVEM_meffInc30"
     assert sr_name in signal_regions
-    yield name, sr_name, 2, region.prune(
+    yield name, sr_name, (2,), region.prune(
         workspace, sr_name, *control_regions_4j
     )
 
     sr_name = "SR4JlowxBVEM_meffInc30"
     assert sr_name in signal_regions
-    yield name, sr_name, 2, region.prune(
+    yield name, sr_name, (2,), region.prune(
         workspace, sr_name, *control_regions_4j
     )
 
     sr_name = "SR6JBVEM_meffInc30"
     name = sr_name + "_gluino"
     assert sr_name in signal_regions
-    yield name, sr_name, 3, region.prune(
+    yield name, sr_name, (3,), region.prune(
         workspace, sr_name, *control_regions_6j
     )
 

@@ -19,6 +19,9 @@ class Region:
         if self.signal_region_name not in self.workspace.channel_slices:
             raise ValueError(self.signal_region_name)
 
+        if len(set(self.signal_region_bins)) != len(self.signal_region_bins):
+            raise ValueError(self.signal_region_bins)
+
     @property
     def ndata(self) -> int:
         channel = self.workspace.observations[self.signal_region_name]

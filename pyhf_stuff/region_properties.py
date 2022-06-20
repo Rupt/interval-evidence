@@ -25,7 +25,8 @@ class RegionProperties:
 
     def __init__(self, region):
         model = region.workspace.model()
-        model_blind = blind.Model(model, {region.signal_region_name})
+        # in context we always want to blind all bins of any signal region
+        model_blind = blind.Model(model, [region.signal_region_name])
         data = region.workspace.data(model)
 
         # parameters

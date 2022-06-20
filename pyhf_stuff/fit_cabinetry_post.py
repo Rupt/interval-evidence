@@ -13,7 +13,7 @@ def fit(region):
         properties.model,
         properties.data,
         region.signal_region_name,
-        region.signal_region_bin,
+        region.signal_region_bins,
     )
     return FitCabinetryPost(
         yield_post=yield_post,

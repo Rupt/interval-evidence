@@ -6,14 +6,12 @@ import pyhf
 class Model(pyhf.Model):
     """Wrapper around pyhf.Model with selected channel bins blinded."""
 
-    def __init__(self, model, blind_bins):
+    def __init__(self, model, blind_channels):
         """
         Arguments:
             model: pyhf.pdf.Model-like
-            blind_bins: sequence of either
-                pair (channel_name, bin_index)
-                or
-                str channel_name (if channel has one bin only)
+            blind_channels: sequence str channel_name
+                (all bins are blinded)
         """
         self.batch_size = model.batch_size
         self.spec = model.spec
@@ -24,7 +22,7 @@ class Model(pyhf.Model):
         self.constraint_model = model.constraint_model
         self.fullpdf_tv = model.fullpdf_tv
 
-        self.blind_bins = set(blind_bins)
+        self.blind_channels = set(blind_channels)
 
     def make_pdf(self, pars):
         # pdf ~ Simultaneous([Independent(Poisson), constraint])
@@ -33,7 +31,7 @@ class Model(pyhf.Model):
 
         # Poisson rates are _private, it that they are the expected_data
         poisson_masked = PoissonMasked(
-            main.expected_data(), _make_mask(self, self.blind_bins)
+            main.expected_data(), _make_mask(self, self.blind_channels)
         )
 
         return pyhf.probability.Simultaneous(
@@ -46,28 +44,17 @@ class Model(pyhf.Model):
         )
 
 
-def _make_mask(model, blind_bins):
-    """Return a mask to blind data in specified blind_bins."""
+def _make_mask(model, blind_channels):
+    """Return a mask to blind data in specified blind_channels."""
     channel_to_slice = model.config.channel_slices
 
     # the last slice ends at the number of channelbins
     ntot = next(reversed(channel_to_slice.values())).stop
     mask = numpy.ones(ntot, dtype=bool)
 
-    for channelbin in blind_bins:
-        str_form = isinstance(channelbin, str)
-        if str_form:
-            channelbin = (channelbin, 0)
-
-        channel, bin_ = channelbin
-
-        mask_slice = mask[channel_to_slice[channel]]
-
-        nbins = len(mask_slice)
-        if str_form and nbins != 1:
-            raise ValueError(f"missing bin index: {channel=} with {nbins=}")
-
-        mask_slice[bin_] = False
+    for channel in blind_channels:
+        slice_ = channel_to_slice[channel]
+        mask[slice_] = False
 
     return mask
 

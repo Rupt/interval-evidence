@@ -85,6 +85,8 @@ def prune(workspace, *args):
 
 def merge_to_bins(workspace, channel_name, bins):
     """Return a workspace with channel bins combined into a signle bin."""
+    bins = list(bins)
+
     # see https://pyhf.readthedocs.io/en/v0.6.3/likelihood.html#modifiers
     def combine(a):
         return sum(a[i] for i in bins)
@@ -108,10 +110,10 @@ def merge_to_bins(workspace, channel_name, bins):
                     lo_data=[combine(data["lo_data"])],
                 ),
             )
-        if type_ in ("normsys", "lumi", "normfactor", "shapefactor"):
+        if type_ in ("normsys", "lumi", "normfactor"):
             # normsys, lumi apply equally to all bins
-            # not sure about shapefactor; I've seen no examples
             return modifier
+        # not sure about "shapefactor"; I've seen no examples
         raise NotImplementedError(type_)
 
     def merge_channel(channel):

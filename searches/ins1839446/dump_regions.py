@@ -57,7 +57,7 @@ def generate_regions():
     yield sr_name + "_gluino", sr_name, workspace_i
 
     workspace_i = region.merge_to_bins(workspace_2j, sr_name, (1, 2))
-    yield sr_name + "_squark2", sr_name, workspace_i
+    yield sr_name + "_squark", sr_name, workspace_i
 
     # 4J high-x   = (SR4JhighxBVEM_meffInc30, 2)
     # 4J low-x    = (SR4JlowxBVEM_meffInc30, 2)

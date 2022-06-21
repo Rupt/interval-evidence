@@ -22,11 +22,10 @@ def main():
 
 
 def generate_regions():
-
     def standard(filename):
         spec = serial.load_json_gz(os.path.join(BASEPATH, filename))
         workspace = pyhf.workspace.Workspace(region.clear_poi(spec))
-        name, = workspace.channel_slices.keys()
+        (name,) = workspace.channel_slices.keys()
         return name, workspace
 
     # rpc2l0b

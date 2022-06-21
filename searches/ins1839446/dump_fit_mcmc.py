@@ -1,5 +1,5 @@
 """
-time python searches/ins1852821/dump_fit_mcmc.py
+time python searches/ins1839446/dump_fit_mcmc.py
 
 """
 
@@ -14,19 +14,12 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "SR0breq": (0, 5),
-        "SR0bvetoloose": (5, 40),
-        "SR0bvetotight": (0, 35),
-        "SR0ZZbvetoloose": (0, 30),
-        "SR0ZZbvetotight": (0, 5),
-        "SR0ZZloose": (50, 550),
-        "SR0ZZtight": (5, 45),
-        "SR1breq": (0, 8),
-        "SR1bvetoloose": (0, 20),
-        "SR1bvetotight": (0, 8),
-        "SR2breq": (0, 10),
-        "SR2bvetoloose": (0, 50),
-        "SR2bvetotight": (0, 10),
+        "SR2JBVEM_meffInc30_gluino": (5, 40),
+        "SR2JBVEM_meffInc30_squark": (40, 160),
+        "SR4JhighxBVEM_meffInc30": (0, 30),
+        "SR4JlowxBVEM_meffInc30": (0, 30),
+        "SR6JBVEM_meffInc30_gluino": (0, 12),
+        "SR6JBVEM_meffInc30_squark": (0, 12),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

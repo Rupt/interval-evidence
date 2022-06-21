@@ -10,8 +10,10 @@ class Model(pyhf.Model):
         """
         Arguments:
             model: pyhf.pdf.Model-like
-            blind_channels: sequence str channel_name
-                (all bins are blinded)
+            blind_bins: sequence of either
+                pair (channel_name, bin_index)
+                or
+                str channel_name (blind all bins)
         """
         self.batch_size = model.batch_size
         self.spec = model.spec
@@ -52,9 +54,15 @@ def _make_mask(model, blind_channels):
     ntot = next(reversed(channel_to_slice.values())).stop
     mask = numpy.ones(ntot, dtype=bool)
 
-    for channel in blind_channels:
-        slice_ = channel_to_slice[channel]
-        mask[slice_] = False
+    for channelbin in blind_channels:
+        if isinstance(channelbin, str):
+            # arr[:] is equivalent to arr[slice(None)]
+            channelbin = (channelbin, slice(None))
+
+        channel, bin_ = channelbin
+
+        mask_slice = mask[channel_to_slice[channel]]
+        mask_slice[bin_] = False
 
     return mask
 

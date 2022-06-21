@@ -1,5 +1,5 @@
 """
-time python searches/ins1852821/dump_fit.py
+time python searches/ins1852821/dump_fits.py
 
 """
 

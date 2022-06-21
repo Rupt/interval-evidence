@@ -3,7 +3,6 @@
 from multiprocessing import get_context
 
 import jax
-import numpy
 import scipy
 
 from .mcmc_core import (

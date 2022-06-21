@@ -18,7 +18,7 @@ def fit(region, start, stop, num):
     if not start >= 0:
         raise ValueError(start)
 
-    (ndata,) = properties.data[properties.slice_]
+    ndata = properties.data[properties.index]
 
     def objective(x, signal):
         # signal region likelihood is poisson(n | background + signal)

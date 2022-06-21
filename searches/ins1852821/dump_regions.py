@@ -16,7 +16,7 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     for name, workspace in generate_regions():
-        region.Region(name, (0,), workspace).dump(
+        region.Region(name, workspace).dump(
             os.path.join(BASEPATH, region.strip_cuts(name)),
         )
 

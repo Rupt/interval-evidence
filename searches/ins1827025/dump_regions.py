@@ -18,7 +18,7 @@ SR_NAME = "SR_cuts"
 
 def main():
     for name, workspace in generate_regions():
-        region.Region(SR_NAME, (0,), workspace).dump(
+        region.Region(SR_NAME, workspace).dump(
             os.path.join(BASEPATH, name),
         )
 

@@ -10,7 +10,6 @@ from . import serial
 @dataclass(frozen=True, eq=False)
 class Region:
     signal_region_name: str
-    signal_region_bins: tuple
     workspace: pyhf.Workspace
 
     filename = "region"
@@ -19,13 +18,9 @@ class Region:
         if self.signal_region_name not in self.workspace.channel_slices:
             raise ValueError(self.signal_region_name)
 
-        if len(set(self.signal_region_bins)) != len(self.signal_region_bins):
-            raise ValueError(self.signal_region_bins)
-
     @property
     def ndata(self) -> int:
-        channel = self.workspace.observations[self.signal_region_name]
-        data = sum(channel[i] for i in self.signal_region_bins)
+        data, = self.workspace.observations[self.signal_region_name]
         assert data == int(data)
         return int(data)
 
@@ -39,7 +34,6 @@ class Region:
 
         region_json = {
             "signal_region_name": self.signal_region_name,
-            "signal_region_bins": self.signal_region_bins,
             "workspace": self.workspace,
         }
 
@@ -53,7 +47,6 @@ class Region:
 
         return cls(
             signal_region_name=region_json["signal_region_name"],
-            signal_region_bins=region_json["signal_region_bins"],
             workspace=pyhf.Workspace(region_json["workspace"]),
         )
 

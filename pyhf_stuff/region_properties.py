@@ -52,18 +52,14 @@ class RegionProperties:
             return jax.numpy.linalg.inv(jax.hessian(objective_value)(x))
 
         # signal region yield
-        slice_channel = model_blind.config.channel_slices[
-            region.signal_region_name
-        ]
-        assert slice_channel.step is None
-        bins = tuple(
-            slice_channel.start + i for i in region.signal_region_bins
-        )
-        assert all(i < slice_channel.stop for i in bins)
+        slice_ = model_blind.config.channel_slices[region.signal_region_name]
+        assert slice_.stop == slice_.start + 1
+        assert slice_.step is None
+        index = slice_.start
 
         @jax.value_and_grad
         def yield_value_and_grad(x):
-            return model_blind.expected_actualdata(x)[numpy.array(bins)].sum()
+            return model_blind.expected_actualdata(x)[index]
 
         def yield_value(x):
             value, _ = yield_value_and_grad(x)
@@ -79,7 +75,7 @@ class RegionProperties:
         self.data = numpy.array(data)
         self.init = numpy.array(model_blind.config.suggested_init())
         self.bounds = numpy.array(model_blind.config.suggested_bounds())
-        self.bins = bins
+        self.index = index
 
         # constraint "logpdf" functions
         self.logdf = logdf

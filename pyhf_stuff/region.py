@@ -20,7 +20,7 @@ class Region:
 
     @property
     def ndata(self) -> int:
-        data, = self.workspace.observations[self.signal_region_name]
+        (data,) = self.workspace.observations[self.signal_region_name]
         assert data == int(data)
         return int(data)
 

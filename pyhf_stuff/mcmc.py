@@ -1,4 +1,4 @@
-"""pyhf front to _mymc."""
+"""pyhf front to mcmc_core."""
 
 from multiprocessing import get_context
 
@@ -55,7 +55,7 @@ def region_hist_chain(
     observable = yields_template(
         x_of_t,
         properties.model_blind.expected_actualdata,
-        properties.bins,
+        properties.index,
     )
 
     # mcmc stuff
@@ -98,10 +98,8 @@ def logdf_template(x_of_t, logdf_func, data, bounds):
 
 
 @partial_once
-def yields_template(x_of_t, yields_func, bins):
-    bins = numpy.array(bins)
-
+def yields_template(x_of_t, yields_func, index):
     def observable(t):
-        return yields_func(x_of_t(t))[bins].sum()
+        return yields_func(x_of_t(t))[index]
 
     return observable

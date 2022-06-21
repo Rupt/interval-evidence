@@ -8,7 +8,7 @@ import scipy
 
 from . import serial, stats
 
-DEFAULT_LEVELS = tuple(stats.sigma_to_llr(range(1, 3 + 1)))
+DEFAULT_LEVELS = (3.0,) + tuple(stats.sigma_to_llr([1, 2, 3]))
 
 # for fit processing
 
@@ -25,7 +25,6 @@ def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200):
 
     for n, suffix in n_and_suffix:
         scan_i = scan(partial_model, n, lo, hi, nbins + 1)
-        print("%.2f: %r" % (n, scan_i.points))  # TODO
         scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
 
 
@@ -33,7 +32,6 @@ def dump_scan_fit_signal(label, fit, path_limit):
     scan_fit_signal_i = scan_fit_signal(fit)
     suffix = "observed"
     scan_fit_signal_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
-    print("fit : %r" % scan_fit_signal_i.points)  # TODO
 
 
 # core

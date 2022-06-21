@@ -78,6 +78,75 @@ def clear_poi(spec):
 
 
 def prune(workspace, *args):
-    """Prune to keep only channel names given in region_names."""
+    """Return a workspace keeping only channel names given in args."""
     remove = workspace.channel_slices.keys() - args
     return workspace.prune(channels=remove)
+
+
+def merge_to_bins(workspace, channel_name, bins):
+    """Return a workspace with channel bins combined into a signle bin."""
+    # see https://pyhf.readthedocs.io/en/v0.6.3/likelihood.html#modifiers
+    def combine(a):
+        return sum(a[i] for i in bins)
+
+    def dot(a, b):
+        return sum(a[i] * b[i] for i in bins)
+
+    def merge_modifier(modifier):
+        type_ = modifier["type"]
+        data = modifier["data"]
+        if type_ == "staterror":
+            # sum stat errors in quadrature
+            new_data = [dot(data, data) ** 0.5]
+            return dict(modifier, data=new_data)
+        if type_ == "histosys":
+            # sum high and low parts
+            return dict(
+                modifier,
+                data=dict(
+                    hi_data=[combine(data["hi_data"])],
+                    lo_data=[combine(data["lo_data"])],
+                ),
+            )
+        if type_ in ("normsys", "lumi", "normfactor", "shapefactor"):
+            # normsys, lumi apply equally to all bins
+            # not sure about shapefactor; I've seen no examples
+            return modifier
+        raise NotImplementedError(type_)
+
+    def merge_channel(channel):
+        if channel["name"] != channel_name:
+            return channel
+        return {
+            "name": channel["name"],
+            "samples": [
+                {
+                    "name": sample["name"],
+                    "data": [combine(sample["data"])],
+                    "modifiers": [
+                        merge_modifier(modifier)
+                        for modifier in sample["modifiers"]
+                    ],
+                }
+                for sample in channel["samples"]
+            ],
+        }
+
+    def merge_observation(observation):
+        if observation["name"] != channel_name:
+            return observation
+        return dict(observation, data=[combine(observation["data"])])
+
+    newspec = {
+        "channels": [
+            merge_channel(channel) for channel in workspace["channels"]
+        ],
+        # measurements are unchanged
+        "measurements": workspace["measurements"],
+        "observations": [
+            merge_observation(observation)
+            for observation in workspace["observations"]
+        ],
+        "version": workspace["version"],
+    }
+    return pyhf.Workspace(newspec)

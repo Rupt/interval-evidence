@@ -26,7 +26,8 @@ def fit(region, start, stop, num):
         optimum_2 = _fit_slsqp(region, yield_, init=first.x)
 
         optimum = min(optimum_1, optimum_2, key=lambda x: x.fun)
-        assert optimum.success
+        if not optimum.success:
+            raise RuntimeError(yield_)
 
         levels.append(optimum.fun)
 
@@ -58,7 +59,7 @@ def _fit_slsqp(region, yield_, *, init=None):
             jac=True,
             method="SLSQP",
             constraints=constaint,
-            options=dict(maxiter=1000, ftol=1e-9),
+            options=dict(maxiter=1000, ftol=1e-6),
         )
     return optimum
 

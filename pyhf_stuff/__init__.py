@@ -15,3 +15,13 @@ pyhf.set_backend("jax")
 os.environ["XLA_FLAGS"] = " ".join(
     ["--xla_cpu_multi_thread_eigen=false", "intra_op_parallelism_threads=1"]
 )
+
+
+# pyhf validation download sschema files every time some of its objects are
+# instantiated. Not all of those have options to disable that validation.
+# I want to run without an internet connection.
+def no_validate_no_netowrk_bullsh_t(*args, **kwargs):
+    ...
+
+
+pyhf.schema.validate = no_validate_no_netowrk_bullsh_t

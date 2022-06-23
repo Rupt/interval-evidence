@@ -1,5 +1,5 @@
 """
-time python searches/ins1852821/dump_limits.py
+time python searches/ins1839446/dump_limits.py
 
 """
 
@@ -21,19 +21,12 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "SR0breq": (0, 20),
-        "SR0bvetoloose": (0, 40),
-        "SR0bvetotight": (0, 30),
-        "SR0ZZbvetoloose": (0, 30),
-        "SR0ZZbvetotight": (0, 30),
-        "SR0ZZloose": (0, 250),
-        "SR0ZZtight": (0, 40),
-        "SR1breq": (0, 20),
-        "SR1bvetoloose": (0, 30),
-        "SR1bvetotight": (0, 20),
-        "SR2breq": (0, 20),
-        "SR2bvetoloose": (0, 35),
-        "SR2bvetotight": (0, 20),
+        "SR2JBVEM_meffInc30_gluino": (0, 35),
+        "SR2JBVEM_meffInc30_squark": (0, 80),
+        "SR4JhighxBVEM_meffInc30": (0, 40),
+        "SR4JlowxBVEM_meffInc30": (0, 40),
+        "SR6JBVEM_meffInc30_gluino": (0, 20),
+        "SR6JBVEM_meffInc30_squark": (0, 20),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

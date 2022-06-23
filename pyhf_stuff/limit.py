@@ -85,6 +85,9 @@ def scan(
     # do no-signal to higher precision to allay error doubts
     integral_zero = model(shift=0.0).integrate(rtol=rtol / 10)
 
+    if start == 0.0:
+        integrals[0] = integral_zero
+
     # find crosses with log-linear interpolation
     levels = list(levels)
     log_ratios = log_ratio(integrals, integral_zero)

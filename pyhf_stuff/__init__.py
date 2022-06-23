@@ -17,11 +17,13 @@ os.environ["XLA_FLAGS"] = " ".join(
 )
 
 
-# pyhf validation download sschema files every time some of its objects are
-# instantiated. Not all of those have options to disable that validation.
-# I want to run without an internet connection.
-def no_validate_no_netowrk_bullsh_t(*args, **kwargs):
+# pyhf validation downloads schema files from the interweb every time objects
+# of certain classes are __init__ialized.
+# Not all of those classes offer options to disable that validation.
+# This has been a source of sporadic crashes, and I want to work without an
+# internet connection.
+def no_validate_no_network_bullsh_t(*args, **kwargs):
     ...
 
 
-pyhf.schema.validate = no_validate_no_netowrk_bullsh_t
+pyhf.schema.validate = no_validate_no_network_bullsh_t

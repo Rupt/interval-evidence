@@ -47,7 +47,6 @@ def dump_region(name, lo, hi, nbins=50):
         seed=0,
         nsamples=100_000,
         nrepeats=100,
-        nprocesses=10,
     )
     mix.dump(dir_fit)
 

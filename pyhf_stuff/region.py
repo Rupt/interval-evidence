@@ -1,7 +1,7 @@
 """Regions are single-signal-region workspaces."""
 import copy
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pyhf
 
@@ -12,6 +12,10 @@ from . import serial
 class Region:
     signal_region_name: str
     workspace: pyhf.Workspace
+
+    _cache: dict = field(
+        default_factory=dict, init=False, hash=False, compare=False
+    )
 
     filename = "region"
 

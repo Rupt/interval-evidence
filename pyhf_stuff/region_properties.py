@@ -1,22 +1,19 @@
 """Efficiently derive properties of Region objects with caching."""
-import weakref
-
 import jax
 import numpy
 
 from . import blind, region
 
 # cache to avoid repeating expensive constructions (.model(), compilation)
-# weakref to clean up if the region object no longer exists elsewhere
-_region_properties_cache = weakref.WeakKeyDictionary()
+PROPERTIES = "_properties"
 
 
 def region_properties(region: region.Region):
-    if region in _region_properties_cache:
-        return _region_properties_cache[region]
+    if PROPERTIES in region._cache:
+        return region._cache[PROPERTIES]
 
     result = RegionProperties(region)
-    _region_properties_cache[region] = result
+    region._cache[PROPERTIES] = result
     return result
 
 
@@ -51,7 +48,7 @@ class RegionProperties:
         def objective_hess_inv(x):
             return jax.numpy.linalg.inv(jax.hessian(objective_value)(x))
 
-        # signal region yield
+        # signal region yield; only 1 bin is supported
         slice_ = model_blind.config.channel_slices[region.signal_region_name]
         assert slice_.stop == slice_.start + 1
         assert slice_.step is None

@@ -45,7 +45,7 @@ def generate_regions():
         (name,) = signal_regions
 
         # serialize regions for each
-        yield name, region.prune(workspace, name, *control_regions)
+        yield name, region.prune(workspace, [name, *control_regions])
 
 
 if __name__ == "__main__":

@@ -47,7 +47,7 @@ def generate_regions():
         assert sr_name == SR_NAME
 
         name = os.path.basename(path).split("_bkgonly.json.gz")[0]
-        yield name, region.prune(workspace, sr_name, *control_regions)
+        yield name, region.prune(workspace, [sr_name, *control_regions])
 
 
 if __name__ == "__main__":

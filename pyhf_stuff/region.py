@@ -1,4 +1,5 @@
 """Regions are single-signal-region workspaces."""
+import copy
 import os
 from dataclasses import dataclass
 
@@ -70,9 +71,9 @@ def clear_poi(spec):
     return spec
 
 
-def prune(workspace, *args):
+def prune(workspace, channel_names_to_keep):
     """Return a workspace keeping only channel names given in args."""
-    remove = workspace.channel_slices.keys() - args
+    remove = workspace.channel_slices.keys() - channel_names_to_keep
     return workspace.prune(channels=remove)
 
 
@@ -144,4 +145,24 @@ def merge_to_bins(workspace, channel_name, bins):
         ],
         "version": workspace["version"],
     }
+    return pyhf.Workspace(newspec)
+
+
+def filter_modifiers(workspace, filters):
+    newspec = copy.deepcopy(dict(workspace))
+
+    filters = list(filters)
+
+    def filter_(modifier, sample, channel):
+        return any(filt(modifier, sample, channel) for filt in filters)
+
+    for channel in newspec["channels"]:
+        for sample in channel["samples"]:
+            good = []
+            for modifier in sample["modifiers"]:
+                if filter_(modifier, sample, channel):
+                    continue
+                good.append(modifier)
+            sample["modifiers"] = good
+
     return pyhf.Workspace(newspec)

@@ -4,7 +4,6 @@ Usage:
 python searches/ins1831992/dump_regions.py
 
 """
-
 import os
 
 import pyhf
@@ -40,7 +39,32 @@ def generate_regions():
 
     # serialize regions for each
     for name in sorted(signal_regions):
-        yield name, region.prune(workspace, name, *control_regions)
+        workspace_i = region.prune(workspace, [name, *control_regions])
+        # these workspaces have bugs; remove them
+        workspace_i = region.filter_modifiers(
+            workspace_i,
+            [
+                empty_shapesys,
+                empty_histosys,
+            ],
+        )
+        yield name, workspace_i
+
+
+def empty_shapesys(modifier, sample, channel):
+    # error: poisson([0.0]) shapesys
+    return modifier["type"] == "shapesys" and modifier["data"] == [0.0]
+
+
+def empty_histosys(modifier, sample, channel):
+    # error: histosys with no variation
+    if modifier["type"] != "histosys":
+        return False
+    data = modifier["data"]
+    foo = data["hi_data"] == data["lo_data"] == sample["data"]
+    if foo:
+        print(modifier)
+    return foo
 
 
 if __name__ == "__main__":

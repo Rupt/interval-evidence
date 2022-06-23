@@ -39,7 +39,7 @@ def generate_regions():
 
     (sr_name,) = signal_regions
     name = "SRlowMass"
-    yield name, sr_name, region.prune(workspace, sr_name, *control_regions)
+    yield name, sr_name, region.prune(workspace, [sr_name, *control_regions])
 
     # high
     spec = serial.load_json_gz(os.path.join(BASEPATH, "high_mass_bkg.json.gz"))
@@ -58,7 +58,7 @@ def generate_regions():
 
     (sr_name,) = signal_regions
     name = "SRhighMass"
-    yield name, sr_name, region.prune(workspace, sr_name, *control_regions)
+    yield name, sr_name, region.prune(workspace, [sr_name, *control_regions])
 
 
 if __name__ == "__main__":

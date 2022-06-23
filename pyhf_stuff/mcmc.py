@@ -3,6 +3,7 @@
 from multiprocessing import get_context
 
 import jax
+import numpy
 import scipy
 
 from .mcmc_core import (
@@ -78,10 +79,16 @@ def region_hist_chain(
     # jax code; maximize reuse on by reusing each on maximal chunks
     chunksize = nrepeats // nprocesses + bool(nrepeats % nprocesses)
 
+    # caution with sending jax arrays over multiprocessing
+    keys = numpy.array(keys)
+
     # https://github.com/google/jax/issues/6790
     # "spawn" avoids creashes with Mutex warnings
     with get_context("spawn").Pool(nprocesses) as pool:
         hists = pool.map(CallJitCache(chain), keys, chunksize=chunksize)
+
+    # attempt to fix sporadic errors by referencing this object after
+    assert chain
 
     return jax.numpy.stack(hists)
 

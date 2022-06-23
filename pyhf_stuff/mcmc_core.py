@@ -305,13 +305,16 @@ def n_by_variance(hists):
     """
     mean = numpy.mean(hists, axis=0)
     var = numpy.var(hists, axis=0)
-    return _n_by_stats(mean, var)
+    # hedge the variance estimate by expanding it a little
+    n = numpy.shape(hists)[0]
+    return _n_by_stats(mean, var * n / (n - 1))
 
 
 def n_by_fit(data_class):
-    mean = numpy.array(data_class.yields) / data_class.nrepeats
-    std = numpy.array(data_class.errors) * data_class.nrepeats**-0.5
-    return _n_by_stats(mean, std**2)
+    n = data_class.nrepeats
+    mean = numpy.array(data_class.yields) / n
+    std = numpy.array(data_class.errors) * n**-0.5
+    return _n_by_stats(mean, std**2 * n / (n - 1))
 
 
 def _n_by_stats(mean, var):

@@ -8,12 +8,15 @@ import scipy
 
 from . import serial, stats
 
-DEFAULT_LEVELS = (3.0,) + tuple(stats.sigma_to_llr([1, 2, 3]))
+# not only limits, we can also see positive evidence!
+# (this will be sign flipped, so limits are set with positive level)
+# 0 data => limit is 3 if we select level at 3
+DEFAULT_LEVELS = tuple(numpy.arange(-3.0, 3.0 + 0.1, 0.5))
 
 # for fit processing
 
 
-def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200):
+def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200, print_=False):
     partial_model = model_fn(fit)
     model_temp = partial_model(ndata)
 
@@ -26,12 +29,16 @@ def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200):
     for n, suffix in n_and_suffix:
         scan_i = scan(partial_model, n, lo, hi, nbins + 1)
         scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+        if print_:
+             print("%.2f: %r" % (n, scan_i.points[-1]))
 
 
-def dump_scan_fit_signal(label, fit, path_limit):
+def dump_scan_fit_signal(label, fit, path_limit, *, print_=False):
     scan_fit_signal_i = scan_fit_signal(fit)
     suffix = "observed"
     scan_fit_signal_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+    if print_:
+        print("fit : %r" % scan_fit_signal_i.points[-1])
 
 
 # core

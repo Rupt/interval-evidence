@@ -1,11 +1,6 @@
 from test import test_funcs
 
-from . import (
-    _test_blind,
-    _test_limit,
-    _test_normal_poisson1_transform,
-    _test_stats,
-)
+from . import _test_blind, _test_limit, _test_stats
 
 
 def run_tests():
@@ -16,7 +11,6 @@ def run_tests():
         _test_stats.test_sigma_to_fro_llr,
         _test_limit.test_quantile,
         _test_limit.test_crosses,
-        _test_normal_poisson1_transform.test_density,
     ]
 
     test_funcs(tests)

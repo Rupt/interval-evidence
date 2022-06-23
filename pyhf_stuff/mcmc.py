@@ -40,7 +40,7 @@ def region_hist_chain(
     )
 
     cov = properties.objective_hess_inv(optimum.x)
-    x_of_t, t_of_x = eye_covariance_transform(optimum.x, cov)
+    x_of_t, _ = eye_covariance_transform(optimum.x, cov)
 
     initializer = zeros(properties.init.shape)
 

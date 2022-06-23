@@ -185,6 +185,8 @@ def histogram(nbins, range_, observable):
 def eye_covariance_transform(mean, cov):
     """Return functions x <=> t; t has identity covariance and zero mean.
 
+    Jacobian factors are constant and can be ignored.
+
     Arguments:
         mean: shape (n,)
         cov: shape (n, n), positive definite
@@ -196,8 +198,8 @@ def eye_covariance_transform(mean, cov):
     # if x - m = A @ t, then
     # (1) = t.T @ A.T @ A.T^-1 @ A^-1 @ A @ t = t @ t :)
     # x = A @ t + m <=> t = A^-1 @ (x - m)
-    chol = jax.numpy.linalg.cholesky(cov)
-    inv_chol = jax.numpy.linalg.inv(chol)
+    chol = numpy.linalg.cholesky(cov)
+    inv_chol = numpy.linalg.inv(chol)
 
     x_of_t = _linear_out(chol, mean)
     t_of_x = _linear_in(inv_chol, mean)

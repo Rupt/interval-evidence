@@ -16,7 +16,9 @@ DEFAULT_LEVELS = tuple(numpy.arange(-3.0, 3.0 + 0.1, 0.5))
 # for fit processing
 
 
-def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200, print_=False):
+def dump_scans(
+    label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200, print_=False
+):
     partial_model = model_fn(fit)
     model_temp = partial_model(ndata)
 
@@ -30,7 +32,7 @@ def dump_scans(label, fit, model_fn, path_limit, ndata, lo, hi, *, nbins=200, pr
         scan_i = scan(partial_model, n, lo, hi, nbins + 1)
         scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
         if print_:
-             print("%.2f: %r" % (n, scan_i.points[-1]))
+            print("%.2f: %r" % (n, scan_i.points[-1]))
 
 
 def dump_scan_fit_signal(label, fit, path_limit, *, print_=False):

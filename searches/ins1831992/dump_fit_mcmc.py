@@ -83,6 +83,8 @@ def dump_region(name, lo, hi, nbins=50):
         nsamples=100_000,
         nrepeats=100,
         nprocesses=10,
+        # we find poor efficiency at default step_size=0.5
+        step_size=0.1,
     )
     mix.dump(dir_fit)
 

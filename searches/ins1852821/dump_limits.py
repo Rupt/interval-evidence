@@ -52,8 +52,7 @@ def dump_region(name, lo, hi):
 
     def dump(label, fit, model_fn):
         return limit.dump_scans(
-            label, fit, model_fn, path_limit, ndata, lo, hi,
-            print_=True
+            label, fit, model_fn, path_limit, ndata, lo, hi, print_=True
         )
 
     # cabinetry

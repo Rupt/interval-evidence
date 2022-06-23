@@ -6,12 +6,22 @@ from functools import partial
 import numpy
 import scipy
 
-from . import serial, stats
+from . import serial
 
 # not only limits, we can also see positive evidence!
 # (this will be sign flipped, so limits are set with positive level)
 # 0 data => limit is 3 if we select level at 3
-DEFAULT_LEVELS = tuple(numpy.arange(-3.0, 3.0 + 0.1, 0.5))
+DEFAULT_LEVELS = (
+    -4.5,
+    -3.0,
+    -2.5,
+    0.5,
+    0.0,
+    0.5,
+    2.5,
+    3.0,
+    4.5,
+)
 
 # for fit processing
 

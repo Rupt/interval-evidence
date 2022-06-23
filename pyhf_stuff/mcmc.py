@@ -79,7 +79,7 @@ def region_hist_chain(
     # jax code; maximize reuse on by reusing each on maximal chunks
     chunksize = nrepeats // nprocesses + bool(nrepeats % nprocesses)
 
-    # caution with sending jax arrays over multiprocessing
+    # caution to avoid sending jax arrays through multiprocessing
     keys = numpy.array(keys)
 
     # https://github.com/google/jax/issues/6790
@@ -87,8 +87,9 @@ def region_hist_chain(
     with get_context("spawn").Pool(nprocesses) as pool:
         hists = pool.map(CallJitCache(chain), keys, chunksize=chunksize)
 
-    # attempt to fix sporadic errors by referencing this object after
-    assert chain
+    # reference our state after the pool.map to ensure no garbage collection,
+    # which may have been causing sporadic errors
+    del chain
 
     return jax.numpy.stack(hists)
 

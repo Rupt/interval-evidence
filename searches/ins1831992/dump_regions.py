@@ -61,10 +61,7 @@ def empty_histosys(modifier, sample, channel):
     if modifier["type"] != "histosys":
         return False
     data = modifier["data"]
-    foo = data["hi_data"] == data["lo_data"] == sample["data"]
-    if foo:
-        print(modifier)
-    return foo
+    return data["hi_data"] == data["lo_data"] == sample["data"]
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-"""Efficiently derive properties of Region objects with caching."""
+"""Derive properties of Region objects with caching."""
 import jax
 import numpy
 
@@ -82,11 +82,14 @@ class RegionProperties:
         self.model = model
         self.model_blind = model_blind
         self.data = numpy.array(data)
+
         self.init_raw = init_raw
         self.bounds_raw = bounds_raw
+
         self.free = free
         self.init = init
         self.bounds = bounds
+
         self.index = index
 
         # constraint "logpdf" functions

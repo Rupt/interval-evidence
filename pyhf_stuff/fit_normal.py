@@ -2,29 +2,22 @@ import os
 from dataclasses import asdict, dataclass
 
 import numpy
-import scipy
 
 from . import serial
+from .region_fit import region_fit
 from .region_properties import region_properties
 
 
 def fit(region):
     properties = region_properties(region)
 
-    optimum = scipy.optimize.minimize(
-        properties.objective_value_and_grad,
-        properties.init,
-        bounds=properties.bounds,
-        jac=True,
-        method="L-BFGS-B",
-    )
-    assert optimum.success
+    optimum_x = region_fit(region).x
 
     # if gaussian, then covariance is inverse hessian
-    cov = properties.objective_hess_inv(optimum.x)
+    cov = properties.objective_hess_inv(optimum_x)
 
     # approximate signal region yield (log) linearly from gradients
-    yield_value, yield_grad = properties.yield_value_and_grad(optimum.x)
+    yield_value, yield_grad = properties.yield_value_and_grad(optimum_x)
 
     yield_std = _quadratic_form(cov, yield_grad) ** 0.5
 

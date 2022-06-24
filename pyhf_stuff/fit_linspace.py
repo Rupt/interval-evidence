@@ -8,6 +8,7 @@ import scipy
 
 from . import serial
 from .fit_interval import _suppress_bounds_warning
+from .region_fit import region_fit
 from .region_properties import region_properties
 
 
@@ -18,14 +19,24 @@ def fit(region, start, stop, num):
     levels = []
     for yield_ in numpy.linspace(start, stop, num):
         # slsqp results depend on initialization (stuck in local minima?)
-        # use suggested init and an approximate solution from a softly
-        # constrained objective, and take the better minimum
-        optimum_1 = _fit_slsqp(region, yield_)
+        # use suggested init and alternatives and take the best
+        optimum_from_suggested = _fit_slsqp(region, yield_)
 
-        first = _fit_first(region, first_value_and_grad, yield_)
-        optimum_2 = _fit_slsqp(region, yield_, init=first.x)
+        first = _fit_soft_constraint(region, first_value_and_grad, yield_)
+        optimum_from_soft = _fit_slsqp(region, yield_, init=first.x)
 
-        optimum = min(optimum_1, optimum_2, key=lambda x: x.fun)
+        optimum_from_fit = _fit_slsqp(
+            region, yield_, init=region_fit(region).x
+        )
+
+        optimum = min(
+            [
+                optimum_from_suggested,
+                optimum_from_soft,
+                optimum_from_fit,
+            ],
+            key=lambda x: x.fun,
+        )
         if not optimum.success:
             raise RuntimeError(yield_)
 
@@ -64,7 +75,7 @@ def _fit_slsqp(region, yield_, *, init=None):
     return optimum
 
 
-def _fit_first(region, first_value_and_grad, yield_):
+def _fit_soft_constraint(region, first_value_and_grad, yield_):
     properties = region_properties(region)
     # initial estimate from constrained minimization
     return scipy.optimize.minimize(

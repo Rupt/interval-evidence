@@ -17,13 +17,13 @@ def main():
         "SR0bvetotight": (0, 30),
         "SR0ZZbvetoloose": (0, 30),
         "SR0ZZbvetotight": (0, 30),
-        "SR0ZZloose": (0, 200),
+        "SR0ZZloose": (0, 250),
         "SR0ZZtight": (0, 40),
         "SR1breq": (0, 20),
         "SR1bvetoloose": (0, 30),
         "SR1bvetotight": (0, 20),
         "SR2breq": (0, 20),
-        "SR2bvetoloose": (0, 30),
+        "SR2bvetoloose": (0, 35),
         "SR2bvetotight": (0, 20),
     }
 

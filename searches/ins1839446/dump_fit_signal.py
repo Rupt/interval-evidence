@@ -14,10 +14,10 @@ def main():
     region_name_to_scan = {
         "SR2JBVEM_meffInc30_gluino": (0, 35),
         "SR2JBVEM_meffInc30_squark": (0, 80),
-        "SR4JhighxBVEM_meffInc30": (0, 25),
-        "SR4JlowxBVEM_meffInc30": (0, 20),
-        "SR6JBVEM_meffInc30_gluino": (0, 12),
-        "SR6JBVEM_meffInc30_squark": (0, 15),
+        "SR4JhighxBVEM_meffInc30": (0, 40),
+        "SR4JlowxBVEM_meffInc30": (0, 40),
+        "SR6JBVEM_meffInc30_gluino": (0, 20),
+        "SR6JBVEM_meffInc30_squark": (0, 20),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

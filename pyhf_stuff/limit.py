@@ -112,7 +112,7 @@ def scan(
 
 
 def scan_fit_signal(fit, *, levels: list[float] = DEFAULT_LEVELS):
-    """Return a LimitFitSignal to assign limits to a FitSignal result.
+    """Return a LimitScanFit to assign limits to a FitSignal result.
 
     Arguments:
         fit: FitSignal-like
@@ -125,7 +125,7 @@ def scan_fit_signal(fit, *, levels: list[float] = DEFAULT_LEVELS):
 
     points = [crosses(signals, log_ratio, value) for value in levels]
 
-    return LimitFitSignal(
+    return LimitScanFit(
         # linspace arguments
         start=fit.start,
         stop=fit.stop,
@@ -254,7 +254,7 @@ class LimitScan:
 
 
 @dataclass(frozen=True)
-class LimitFitSignal:
+class LimitScanFit:
     # linspace arguments
     start: float
     stop: float
@@ -262,7 +262,7 @@ class LimitFitSignal:
     levels: list[float]
     points: list[list[float]]
 
-    filename = "scan_fit_signal"
+    filename = "scan_fit"
 
     def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)

@@ -59,7 +59,7 @@ def _fit_slsqp(region, yield_, *, init=None):
             jac=True,
             method="SLSQP",
             constraints=constaint,
-            options=dict(maxiter=1000, ftol=1e-6),
+            options=dict(maxiter=10_000, ftol=1e-6),
         )
     return optimum
 

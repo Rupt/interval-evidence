@@ -121,9 +121,10 @@ def scan_fit_signal(fit, *, levels: list[float] = DEFAULT_LEVELS):
     signals = numpy.linspace(fit.start, fit.stop, len(fit.levels))
 
     levels = list(levels)
-    log_ratio = numpy.array(fit.levels) - min(fit.levels)
+    log_ratios = numpy.array(fit.levels) - min(fit.levels)
 
-    points = [crosses(signals, log_ratio, value) for value in levels]
+    # already negated in these log ratios (unlike the integral scan above)
+    points = [crosses(signals, log_ratios, value) for value in levels]
 
     return LimitScanFit(
         # linspace arguments

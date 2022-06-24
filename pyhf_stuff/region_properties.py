@@ -94,6 +94,7 @@ class RegionProperties:
 
         # constraint "logpdf" functions
         self.logdf = logdf
+
         self.objective_value_and_grad = jax.jit(objective_value_and_grad)
         self.objective_value = jax.jit(objective_value)
         self.objective_grad = jax.jit(objective_grad)

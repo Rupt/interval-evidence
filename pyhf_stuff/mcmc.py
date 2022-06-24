@@ -36,20 +36,11 @@ def region_hist_chain(
     cov = properties.objective_hess_inv(optimum_x)
     x_of_t, _ = eye_covariance_transform(optimum_x, cov)
 
-    initializer = zeros(properties.init.shape)
+    initializer = zeros(optimum_x.shape)
 
-    logdf = logdf_template(
-        x_of_t,
-        properties.model_blind.logpdf,
-        properties.data,
-        properties.bounds,
-    )
+    logdf = logdf_template(region, x_of_t)
 
-    observable = yields_template(
-        x_of_t,
-        properties.model_blind.expected_actualdata,
-        properties.index,
-    )
+    observable = yields_template(region, x_of_t)
 
     # mcmc stuff
     kernel = kernel_func(logdf)
@@ -87,19 +78,49 @@ def region_hist_chain(
     return jax.numpy.stack(hists)
 
 
+def logdf_template(region, x_of_t):
+    properties = region_properties(region)
+    return _logdf_template_inner(
+        properties.init_raw,
+        properties.free,
+        properties.model_blind.logpdf,
+        properties.data,
+        properties.bounds_raw,
+        x_of_t,
+    )
+
+
 @partial_once
-def logdf_template(x_of_t, logdf_func, data, bounds):
+def _logdf_template_inner(init_raw, free, logdf_func, data, bounds, x_of_t):
+    def unpack(x):
+        return jax.numpy.array(init_raw).at[free].set(x)
+
     def logdf(t):
-        x = x_of_t(t)
+        x = unpack(x_of_t(t))
         (logdf,) = logdf_func(x, data)
         return logdf + _boundary(x, bounds)
 
     return logdf
 
 
+def yields_template(region, x_of_t):
+    properties = region_properties(region)
+    return _yields_template_inner(
+        properties.init_raw,
+        properties.free,
+        properties.model_blind.expected_actualdata,
+        properties.index,
+        x_of_t,
+    )
+
+
 @partial_once
-def yields_template(x_of_t, yields_func, index):
+def _yields_template_inner(init_raw, free, yields_func, index, x_of_t):
+    def unpack(x):
+        return jax.numpy.array(init_raw).at[free].set(x)
+
     def observable(t):
-        return yields_func(x_of_t(t))[index]
+        x = unpack(x_of_t(t))
+        return yields_func(x)[index]
 
     return observable

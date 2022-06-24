@@ -28,23 +28,30 @@ class RegionFit:
         else:
             model = properties.model_blind
 
+        free = properties.free
+
         # other code (cabinetry...) modify the backend state;
         # save it to restore later
         backend, optimizer_old = pyhf.get_backend()
 
         pyhf.set_backend(backend, custom_optimizer="minuit")
-        x_raw_minuit = pyhf.infer.mle.fit(data, model)
+        try:
+            x_minuit = pyhf.infer.mle.fit(data, model)[free]
+            fun_minuit = properties.objective_value(x_minuit)
+        except pyhf.exceptions.FailedMinimization:
+            x_minuit = None
+            fun_minuit = -numpy.inf
 
         pyhf.set_backend(backend, custom_optimizer="scipy")
-        x_raw_scipy = pyhf.infer.mle.fit(data, model)
+        try:
+            x_scipy = pyhf.infer.mle.fit(data, model)[free]
+            fun_minuit = properties.objective_value(x_minuit)
+        except pyhf.exceptions.FailedMinimization:
+            x_minuit = None
+            fun_minuit = -numpy.inf
 
         # we are now later; restore
         pyhf.set_backend(backend, optimizer_old)
-
-        # trim to non-fixed values
-        free = properties.free
-        x_minuit = x_raw_minuit[free]
-        x_scipy = x_raw_scipy[free]
 
         # pick the best
         fun_minuit = properties.objective_value(x_minuit)

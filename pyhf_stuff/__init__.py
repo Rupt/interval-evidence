@@ -1,3 +1,4 @@
+import logging
 import os
 
 import jax
@@ -22,8 +23,12 @@ os.environ["XLA_FLAGS"] = " ".join(
 # Not all of those classes offer options to disable that validation.
 # This has been a source of sporadic crashes, and I want to work without an
 # internet connection.
-def no_validate_no_network_bullsh_t(*args, **kwargs):
+def no_validate_no_network(*args, **kwargs):
     ...
 
 
-pyhf.schema.validate = no_validate_no_network_bullsh_t
+pyhf.schema.validate = no_validate_no_network
+
+
+# pyhf screams into this logger when its fits fail
+logging.getLogger("mixins").setLevel(logging.CRITICAL)

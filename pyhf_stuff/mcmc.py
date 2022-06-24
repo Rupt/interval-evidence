@@ -4,7 +4,6 @@ from multiprocessing import get_context
 
 import jax
 import numpy
-import scipy
 
 from .mcmc_core import (
     CallJitCache,
@@ -15,6 +14,7 @@ from .mcmc_core import (
     zeros,
 )
 from .mcmc_tfp import _boundary
+from .region_fit import region_fit
 from .region_properties import region_properties
 
 
@@ -31,17 +31,10 @@ def region_hist_chain(
     nprocesses,
 ):
     properties = region_properties(region)
+    optimum_x = region_fit(region).x
 
-    optimum = scipy.optimize.minimize(
-        properties.objective_value_and_grad,
-        properties.init,
-        bounds=properties.bounds,
-        jac=True,
-        method="L-BFGS-B",
-    )
-
-    cov = properties.objective_hess_inv(optimum.x)
-    x_of_t, _ = eye_covariance_transform(optimum.x, cov)
+    cov = properties.objective_hess_inv(optimum_x)
+    x_of_t, _ = eye_covariance_transform(optimum_x, cov)
 
     initializer = zeros(properties.init.shape)
 

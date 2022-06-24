@@ -1,9 +1,9 @@
 """Extract statistics with Markov Chain Monte Carlo (MCMC)."""
 import jax
-import scipy.optimize
 from tensorflow_probability.substrates import jax as tfp
 
 from .mcmc_core import _boundary, _histogram
+from .region_fit import region_fit
 from .region_properties import region_properties
 
 
@@ -19,18 +19,11 @@ def generic_chain_hist(
     nrepeats,
 ):
     properties = region_properties(region)
+    optimum_x = region_fit(region).x
 
-    optimum = scipy.optimize.minimize(
-        properties.objective_value_and_grad,
-        properties.init,
-        bounds=properties.bounds,
-        jac=True,
-        method="L-BFGS-B",
-    )
+    cov = properties.objective_hess_inv(optimum_x)
 
-    cov = properties.objective_hess_inv(optimum.x)
-
-    x_of_t, t_of_x = eye_covariance_transform(optimum.x, cov)
+    x_of_t, t_of_x = eye_covariance_transform(optimum_x, cov)
 
     init = jax.numpy.zeros_like(properties.init)
 

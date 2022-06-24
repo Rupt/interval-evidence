@@ -26,10 +26,21 @@ class RegionProperties:
         model_blind = blind.Model(model, [region.signal_region_name])
         data = region.workspace.data(model)
 
-        # parameters
+        # parameters before and after fixing
+        init_raw = numpy.array(model.config.suggested_init(), dtype=float)
+        bounds_raw = numpy.array(model.config.suggested_bounds(), dtype=float)
 
+        free = ~numpy.array(model.config.suggested_fixed(), dtype=bool)
+        init = init_raw[free]
+        bounds = bounds_raw[free]
+
+        def unpack(x):
+            return jax.numpy.array(init_raw).at[free].set(x)
+
+        # functions
         def logdf(x):
-            (logdf,) = model_blind.logpdf(x, data)
+            u = unpack(x)
+            (logdf,) = model_blind.logpdf(u, data)
             return logdf
 
         # "logpdf" minimization objective
@@ -56,7 +67,8 @@ class RegionProperties:
 
         @jax.value_and_grad
         def yield_value_and_grad(x):
-            return model_blind.expected_actualdata(x)[index]
+            u = unpack(x)
+            return model_blind.expected_actualdata(u)[index]
 
         def yield_value(x):
             value, _ = yield_value_and_grad(x)
@@ -70,8 +82,11 @@ class RegionProperties:
         self.model = model
         self.model_blind = model_blind
         self.data = numpy.array(data)
-        self.init = numpy.array(model_blind.config.suggested_init())
-        self.bounds = numpy.array(model_blind.config.suggested_bounds())
+        self.init_raw = init_raw
+        self.bounds_raw = bounds_raw
+        self.free = free
+        self.init = init
+        self.bounds = bounds
         self.index = index
 
         # constraint "logpdf" functions

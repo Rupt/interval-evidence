@@ -8,7 +8,6 @@ import scipy
 
 from . import serial
 from .fit_interval import _suppress_bounds_warning
-from .region_fit import region_fit
 from .region_properties import region_properties
 
 
@@ -25,15 +24,10 @@ def fit(region, start, stop, num):
         first = _fit_soft_constraint(region, first_value_and_grad, yield_)
         optimum_from_soft = _fit_slsqp(region, yield_, init=first.x)
 
-        optimum_from_fit = _fit_slsqp(
-            region, yield_, init=region_fit(region).x
-        )
-
         optimum = min(
             [
                 optimum_from_suggested,
                 optimum_from_soft,
-                optimum_from_fit,
             ],
             key=lambda x: x.fun,
         )

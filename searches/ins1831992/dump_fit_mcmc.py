@@ -1,5 +1,5 @@
 """
-time python searches/ins1831992/dump_fit_mcmc.py
+time python searches/ins1827025/dump_fit_mcmc.py
 
 """
 
@@ -14,54 +14,24 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        # SRFR
-        # "SRFR_90_110_all": (0, 5),
-        # "SRFR_110_130_all": (0, 15),
-        # "SRFR_150_170_all": (0, 15),
-        # "SRFR_170_190_all": (0, 10),
-        # "SRFR_190_210_all": (0, 10),
-        # "SRFR_210_230_all": (0, 50),
-        # "SRFR_230_250_all": (0, 5),
-        # "SRFR_250_270_all": (0, 5),
-        # "SRFR_270_300_all": (0, 8),
-        # "SRFR_300_330_all": (0, 3),
-        # "SRFR_330_360_all": (0, 4),
-        # "SRFR_360_400_all": (0, 8),
-        # "SRFR_400_440_all": (0, 2),
-        # "SRFR_440_580_all": (0, 8),
-        # "SRFR_580_inf_all": (0, 10),
-        # SR4L
-        # "SR4l_90_110_all": (0, 13),
-        # "SR4l_110_130_all": (10, 25),
-        # "SR4l_150_170_all": (5, 15),
-        # "SR4l_170_190_all": (0, 12),
-        # "SR4l_190_210_all": (0, 12),
-        # "SR4l_210_230_all": (0, 6),
-        # "SR4l_230_250_all": (0, 6),
-        # "SR4l_250_270_all": (0, 8),
-        # "SR4l_270_300_all": (0, 4),
-        # "SR4l_300_330_all": (0, 3),
-        # "SR4l_330_360_all": (0, 8),
-        # "SR4l_360_400_all": (0, 8),
-        "SR4l_400_440_all": (0, 8),
-        "SR4l_440_580_all": (0, 8),
-        "SR4l_580_inf_all": (0, 10),
-        # SR3L
-        # "SR3l_90_110_all": (0, 3),
-        # "SR3l_110_130_all": (0, 6),
-        # "SR3l_150_170_all": (0, 10),
-        # "SR3l_170_190_all": (0, 7),
-        # "SR3l_190_210_all": (0, 7),
-        # "SR3l_210_230_all": (0, 10),
-        # "SR3l_230_250_all": (0, 10),
-        # "SR3l_250_270_all": (0, 5),
-        # "SR3l_270_300_all": (0, 7),
-        # "SR3l_300_330_all": (0, 7),
-        # "SR3l_330_360_all": (0, 8),
-        # "SR3l_360_400_all": (0, 8),
-        # "SR3l_400_440_all": (0, 4),
-        # "SR3l_440_580_all": (0, 8),
-        # "SR3l_580_inf_all": (0, 8),
+        "BDT-GGd1": (10, 60),
+        "BDT-GGd2": (30, 80),
+        "BDT-GGd3": (150, 350),
+        "BDT-GGd4": (200, 450),
+        "BDT-GGo1": (0, 20),
+        "BDT-GGo2": (5, 35),
+        "BDT-GGo3": (50, 130),
+        "BDT-GGo4": (100, 300),
+        "SR2j-1600": (1500, 3000),
+        "SR2j-2200": (750, 1250),
+        "SR2j-2800": (50, 125),
+        "SR4j-1000": (400, 700),
+        "SR4j-2200": (40, 85),
+        "SR4j-3400": (2, 12),
+        "SR5j-1600": (250, 450),
+        "SR6j-1000": (5, 40),
+        "SR6j-2200": (0, 30),
+        "SR6j-3400": (0, 10),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():
@@ -82,8 +52,6 @@ def dump_region(name, lo, hi, nbins=50):
         seed=0,
         nsamples=100_000,
         nrepeats=100,
-        # we find poor efficiency at default step_size=0.5
-        step_size=0.2,
     )
     mix.dump(dir_fit)
 

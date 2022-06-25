@@ -42,12 +42,6 @@ def fit(
 
     yields, errors = mcmc_core.summarize_hists(hists)
 
-    # TODO
-    neff = mcmc_core.n_by_variance(hists).sum()
-    total = numpy.sum(yields)
-    if nrepeats * neff / total < 0.05:
-        print(hists.tolist())
-
     return FitMcmcMix(
         # histogram arguments
         nbins=nbins,

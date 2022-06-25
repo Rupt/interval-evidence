@@ -198,8 +198,8 @@ def eye_covariance_transform(mean, cov):
     # if x - m = A @ t, then
     # (1) = t.T @ A.T @ A.T^-1 @ A^-1 @ A @ t = t @ t :)
     # x = A @ t + m <=> t = A^-1 @ (x - m)
-    chol = numpy.linalg.cholesky(cov)
-    inv_chol = numpy.linalg.inv(chol)
+    chol = jax.numpy.linalg.cholesky(cov)
+    inv_chol = jax.numpy.linalg.inv(chol)
 
     x_of_t = _linear_out(chol, mean)
     t_of_x = _linear_in(inv_chol, mean)
@@ -225,20 +225,6 @@ def zeros(shape, dtype=None):
         return jax.numpy.zeros(shape)
 
     return init
-
-
-# for multiprocessing
-
-
-class CallJitCache:
-    def __init__(self, func):
-        self._func = func
-        self._cache = None
-
-    def __call__(self, arg):
-        if self._cache is None:
-            self._cache = jax.jit(self._func())
-        return self._cache(arg)
 
 
 # distribution function unilities
@@ -272,20 +258,20 @@ def _histogram(x, nbins, range_, *, dtype=jax.numpy.int32):
 
 
 def _histogram_reduce(hist, x, range_):
-    # linearly find bin index
     nbins = len(hist)
     lo, hi = range_
+
+    # linearly find bin index
     bin_per_x = nbins / (hi - lo)
     i_float = jax.numpy.floor((x - lo) * bin_per_x)
-    i_clip = jax.numpy.clip(i_float, 0, nbins - 1)
 
     # cast to integer for indexing
-    index_type = jax.numpy.uint32
+    index_type = jax.numpy.int32
     assert nbins <= jax.numpy.iinfo(index_type).max
-    i = i_clip.astype(index_type)
+    i = i_float.astype(index_type)
 
-    # histogramming; only add where in bounds (no under/overflow)
-    return hist.at[i].add(i_float == i_clip)
+    # histogramming; only add where in bounds (no under/overflow/nan/inf)
+    return hist.at[i].add(i == i_float, mode="drop")
 
 
 def summarize_hists(hists, *, axis=0):

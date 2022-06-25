@@ -6,8 +6,6 @@ import numpy
 
 from . import mcmc, mcmc_core, serial
 
-DEFAULT_NPROCESSES = os.cpu_count() // 2
-
 
 def fit(
     region,
@@ -20,7 +18,6 @@ def fit(
     nrepeats=10,
     step_size=0.5,
     prob_eye=0.1,
-    nprocesses=DEFAULT_NPROCESSES,
 ):
     range_ = numpy.array(range_, dtype=float).tolist()
 
@@ -35,7 +32,6 @@ def fit(
         nburnin=nburnin,
         nsamples=nsamples,
         nrepeats=nrepeats,
-        nprocesses=nprocesses,
     )
 
     hists = numpy.array(hists)

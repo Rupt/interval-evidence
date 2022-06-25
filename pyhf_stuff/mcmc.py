@@ -1,12 +1,7 @@
 """pyhf front to mcmc_core."""
-
-from multiprocessing import get_context
-
 import jax
-import numpy
 
 from .mcmc_core import (
-    CallJitCache,
     eye_covariance_transform,
     histogram,
     partial_once,
@@ -28,7 +23,6 @@ def region_hist_chain(
     nburnin,
     nsamples,
     nrepeats,
-    nprocesses,
 ):
     properties = region_properties(region)
     optimum_x = region_fit(region).x
@@ -36,13 +30,11 @@ def region_hist_chain(
     cov = properties.objective_hess_inv(optimum_x)
     x_of_t, _ = eye_covariance_transform(optimum_x, cov)
 
-    initializer = zeros(optimum_x.shape)
-
     logdf = logdf_template(region, x_of_t)
-
     observable = yields_template(region, x_of_t)
 
     # mcmc stuff
+    initializer = zeros(optimum_x.shape)
     kernel = kernel_func(logdf)
     reducer = histogram(nbins, range_, observable)
 
@@ -55,27 +47,7 @@ def region_hist_chain(
     )
 
     keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
-
-    if nprocesses <= 1:
-        return jax.jit(jax.vmap(chain()))(keys)
-
-    # process spawning is expensive, but reused processe can reused compiled
-    # jax code; maximize reuse on by reusing each on maximal chunks
-    chunksize = nrepeats // nprocesses + bool(nrepeats % nprocesses)
-
-    # caution to avoid sending jax arrays through multiprocessing
-    keys = numpy.array(keys)
-
-    # https://github.com/google/jax/issues/6790
-    # "spawn" avoids creashes with Mutex warnings
-    with get_context("spawn").Pool(nprocesses) as pool:
-        hists = pool.map(CallJitCache(chain), keys, chunksize=chunksize)
-
-    # reference our state after the pool.map to ensure no garbage collection,
-    # which may have been causing sporadic errors
-    del chain
-
-    return jax.numpy.stack(hists)
+    return jax.jit(jax.vmap(chain()))(keys)
 
 
 def logdf_template(region, x_of_t):
@@ -85,7 +57,7 @@ def logdf_template(region, x_of_t):
         properties.free,
         properties.model_blind.logpdf,
         properties.data,
-        properties.bounds_raw,
+        properties.bounds,
         x_of_t,
     )
 
@@ -96,8 +68,9 @@ def _logdf_template_inner(init_raw, free, logdf_func, data, bounds, x_of_t):
         return jax.numpy.array(init_raw).at[free].set(x)
 
     def logdf(t):
-        x = unpack(x_of_t(t))
-        (logdf,) = logdf_func(x, data)
+        x = x_of_t(t)
+        x_raw = unpack(x)
+        (logdf,) = logdf_func(x_raw, data)
         return logdf + _boundary(x, bounds)
 
     return logdf
@@ -120,7 +93,7 @@ def _yields_template_inner(init_raw, free, yields_func, index, x_of_t):
         return jax.numpy.array(init_raw).at[free].set(x)
 
     def observable(t):
-        x = unpack(x_of_t(t))
-        return yields_func(x)[index]
+        x_raw = unpack(x_of_t(t))
+        return yields_func(x_raw)[index]
 
     return observable

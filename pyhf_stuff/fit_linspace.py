@@ -2,7 +2,6 @@
 import os
 from dataclasses import asdict, dataclass
 
-import jax
 import numpy
 import scipy
 
@@ -11,28 +10,30 @@ from .fit_interval import _suppress_bounds_warning
 from .region_properties import region_properties
 
 
-def fit(region, start, stop, num):
+def fit(region, start, stop, num, *, anchors=None):
+    if anchors is None:
+        anchors = []
 
-    first_value_and_grad = _fit_first_value_and_grad(region)
+    anchor_inits = [_fit_slsqp(region, anchor_i).x for anchor_i in anchors]
 
     levels = []
     for yield_ in numpy.linspace(start, stop, num):
         # slsqp results depend on initialization (stuck in local minima?)
         # use suggested init and alternatives and take the best
         optimum_from_suggested = _fit_slsqp(region, yield_)
-
-        first = _fit_soft_constraint(region, first_value_and_grad, yield_)
-        optimum_from_soft = _fit_slsqp(region, yield_, init=first.x)
+        optima_from_anchors = (
+            _fit_slsqp(region, yield_, init=x) for x in anchor_inits
+        )
 
         optimum = min(
-            [
-                optimum_from_suggested,
-                optimum_from_soft,
-            ],
+            [optimum_from_suggested, *optima_from_anchors],
             key=lambda x: x.fun,
         )
         if not optimum.success:
-            raise RuntimeError(yield_)
+            print(optimum)
+            levels.append(numpy.nan)
+            continue
+            # raise RuntimeError(yield_)
 
         levels.append(optimum.fun)
 
@@ -64,32 +65,9 @@ def _fit_slsqp(region, yield_, *, init=None):
             jac=True,
             method="SLSQP",
             constraints=constaint,
-            options=dict(maxiter=10_000, ftol=1e-6),
+            options=dict(maxiter=15_000),
         )
     return optimum
-
-
-def _fit_soft_constraint(region, first_value_and_grad, yield_):
-    properties = region_properties(region)
-    # initial estimate from constrained minimization
-    return scipy.optimize.minimize(
-        lambda x: first_value_and_grad(x, yield_),
-        properties.init,
-        bounds=properties.bounds,
-        jac=True,
-        method="L-BFGS-B",
-    )
-
-
-def _fit_first_value_and_grad(region, tol=1e-2):
-    properties = region_properties(region)
-
-    def objective(x, yield_):
-        inv_var = jax.numpy.maximum(tol, tol * yield_) ** -2
-        constraint = inv_var * 0.5 * (properties.yield_value(x) - yield_) ** 2
-        return properties.objective_value(x) + constraint
-
-    return jax.jit(jax.value_and_grad(objective))
 
 
 # serialization

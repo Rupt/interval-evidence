@@ -21,8 +21,8 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "SRlow": (0, 100),
-        "SRISR": (0, 40),
+        "SRlowMass": (0, 70),
+        "SRhighMass": (0, 70),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

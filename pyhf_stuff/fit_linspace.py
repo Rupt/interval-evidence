@@ -13,6 +13,7 @@ from .region_properties import region_properties
 def fit(region, start, stop, num, *, anchors=None):
     if anchors is None:
         anchors = []
+    anchors = list(anchors)
 
     anchor_inits = [_fit_slsqp(region, anchor_i).x for anchor_i in anchors]
 
@@ -40,6 +41,7 @@ def fit(region, start, stop, num, *, anchors=None):
     return FitLinspace(
         start=start,
         stop=stop,
+        anchors=anchors,
         levels=levels,
     )
 
@@ -77,6 +79,7 @@ def _fit_slsqp(region, yield_, *, init=None):
 class FitLinspace:
     start: float
     stop: float
+    anchors: list[float]
     levels: list[float]
 
     filename = "linspace"

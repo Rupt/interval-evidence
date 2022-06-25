@@ -268,10 +268,10 @@ def _histogram_reduce(hist, x, range_):
     # cast to integer for indexing
     index_type = jax.numpy.int32
     assert nbins <= jax.numpy.iinfo(index_type).max
-    i = i_float.astype(index_type)
+    i = jax.numpy.clip(i_float, 0, nbins - 1).astype(index_type)
 
     # histogramming; only add where in bounds (no under/overflow/nan/inf)
-    return hist.at[i].add(i == i_float, mode="drop")
+    return hist.at[i].add(i == i_float)
 
 
 def summarize_hists(hists, *, axis=0):

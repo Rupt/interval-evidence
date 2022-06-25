@@ -49,23 +49,9 @@ def dump_region(name, lo, hi, nbins=50):
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    # cabinetry fits fail here by default
-    # Diboson3L in CRWZ and CRttZ shares a number of 3L theory normfactors
-    # removing this of these appears to resolve the problem
-    # (muRmuF or mu_Diboson3l could also be removed with similar results)
-    def cr_theory(modifier, sample, channel):
-        return (
-            channel["name"] == "CRWZ_all_cuts"
-            and modifier["name"] == "theory_scale_muR_Diboson3l"
-        )
-
-    region_cabinetry = region.Region(
-        region_1.signal_region_name,
-        region.filter_modifiers(region_1.workspace, [cr_theory]),
-    )
-
-    fit_cabinetry.fit(region_cabinetry).dump(dir_fit)
-    fit_cabinetry_post.fit(region_cabinetry).dump(dir_fit)
+    # cabinetry
+    fit_cabinetry.fit(region_1).dump(dir_fit)
+    fit_cabinetry_post.fit(region_1).dump(dir_fit)
 
     # normal
     fit_normal.fit(region_1).dump(dir_fit)

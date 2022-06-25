@@ -68,12 +68,19 @@ def main():
         "SR3l_580_inf_all": (0, 8),
     }
 
+    region_name_to_anchors = {
+        "SR4l_170_190_all": [2.0],
+    }
+
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump_region(name, lo, hi)
+        dump(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
 
 
-def dump_region(name, lo, hi, nbins=50):
+def dump(name, lo, hi, *, nbins=50, region_name_to_anchors=None):
+    if region_name_to_anchors is None:
+        region_name_to_anchors = {}
+
     dir_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(dir_region)
 

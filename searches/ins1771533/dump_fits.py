@@ -28,10 +28,10 @@ def main():
 
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        test(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
+        dump(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
 
 
-def test(name, lo, hi, *, nbins=50, region_name_to_anchors=None):
+def dump(name, lo, hi, *, nbins=50, region_name_to_anchors=None):
     if region_name_to_anchors is None:
         region_name_to_anchors = {}
 

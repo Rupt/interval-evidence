@@ -35,9 +35,11 @@ def fit(region, start, stop, num):
             properties.init,
             bounds=properties.bounds,
             jac=True,
-            method="L-BFGS-B",
+            method="SLSQP",
+            options=dict(maxiter=15_000),
         )
-        assert optimum.success
+        if not optimum.success:
+            raise RuntimeError(signal)
         return optimum.fun
 
     levels = [

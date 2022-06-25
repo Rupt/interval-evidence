@@ -28,9 +28,9 @@ def main():
         "SR1breq": (0, 8),
         "SR1bvetoloose": (0, 20),
         "SR1bvetotight": (0, 8),
-        "SR2breq": (0, 10),
+        "SR2breq": (0, 4),
         "SR2bvetoloose": (0, 50),
-        "SR2bvetotight": (0, 10),
+        "SR2bvetotight": (0, 4),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

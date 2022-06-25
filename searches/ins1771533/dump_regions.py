@@ -46,7 +46,7 @@ def generate_regions():
     assert signal_regions == {sr_low, sr_isr}
 
     yield sr_low, region.prune(workspace, [sr_low, cr_low])
-    yield sr_isr, region.prune(workspace, [sr_isr, sr_isr])
+    yield sr_isr, region.prune(workspace, [sr_isr, cr_isr])
 
 
 if __name__ == "__main__":

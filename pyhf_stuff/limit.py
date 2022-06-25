@@ -144,19 +144,26 @@ standard_normal_cdf = scipy.special.ndtr
 def low_central_high(prior, *, x0: float = 1.0, xtol: float = 1e-6):
     """Return crude assignments of -1 sigma, central, and +1 sigma data.
 
-    The assignemtn is to take quantiles of the prior, then take their
-    mean data shifted down or up by its square root for the variations.
-
-    This is not, to my knowledge, a meaningful median (or any other standard
-    statistic), but it is simple and converges sensibly for high precision
-    and mean >> 1.
+    We integrate to estimate the mean and variance of the data distribution,
+    and take the three points as mean +- 1sigma.
 
     Arguments:
         all passed to quantile(...)
     """
-    q0, q1, q2 = [quantile(prior, q) for q in standard_normal_cdf([-1, 0, 1])]
+    # spread qs evenly to give equal weights to each
+    npoints = 100
+    qs = (numpy.arange(npoints) + 0.5) / npoints
+    xs = numpy.array([quantile(prior, q, x0=x0, xtol=xtol) for q in qs])
 
-    return max(0.0, q0 - q0**0.5), q1, q2 + q2**0.5
+    # data distribution is a weighted mean of poisson distributions
+    # variance of each is mean of squares minus square of means
+    # poisson is y +- sqrt(y), <n**2> - y**2 = y, so <n**2> = y**2 + y
+    # moments add, so get mean over our points
+    # some rearrangement later:
+    mean = xs.mean()
+    std = (xs.var() + mean) ** 0.5
+
+    return max(0.0, mean - std), mean, mean + std
 
 
 def quantile(prior, q: float, *, x0: float = 1.0, xtol: float = 1e-6):

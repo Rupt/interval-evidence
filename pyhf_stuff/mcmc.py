@@ -113,7 +113,9 @@ def _stable_pvmap(func, x):
     assert n_items >= 1
     n_processes = min(jax.device_count(), n_items)
 
-    # jax.vmap changes semantics (possibly rounding?); lax.map does not
+    # jax.vmap changes semantics (possibly rounding?), so its results are not
+    # stable with different different mapping shapes
+    # lax.map avoids this
     chain_func = jax.pmap(partial(jax.lax.map, func))
 
     # pmap needs a rectangular shape, so split to cover any remainder

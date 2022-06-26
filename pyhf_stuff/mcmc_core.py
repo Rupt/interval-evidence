@@ -222,7 +222,7 @@ def _linear_in(weight, bias, x):
 @partial_once
 def zeros(shape, dtype=None):
     def init(_):
-        return jax.numpy.zeros(shape)
+        return jax.numpy.zeros(shape, dtype=dtype)
 
     return init
 

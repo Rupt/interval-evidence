@@ -1,4 +1,6 @@
 """pyhf front to mcmc_core."""
+from functools import partial
+
 import jax
 
 from .mcmc_core import (
@@ -47,7 +49,23 @@ def region_hist_chain(
     )
 
     keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
-    return jax.jit(jax.vmap(chain()))(keys)
+    key_shape = keys.shape[1:]
+    n_processes = min(jax.device_count(), nrepeats)
+
+    # pmap needs a rectangular shape, so split to cover any remainder
+    chain_func = jax.pmap(_stable_vmap(chain()))
+
+    n_bulk = nrepeats // n_processes * n_processes
+    keys_bulk = keys[:n_bulk].reshape(n_processes, -1, *key_shape)
+    out = chain_func(keys_bulk).reshape(n_bulk, -1)
+
+    n_tail = len(keys) - n_bulk
+    if n_tail > 0:
+        keys_tail = keys[n_bulk:].reshape(n_tail, 1, *key_shape)
+        out_tail = chain_func(keys_tail).reshape(n_tail, -1)
+        out = jax.numpy.concatenate([out, out_tail])
+
+    return out
 
 
 def logdf_template(region, x_of_t):
@@ -97,3 +115,14 @@ def _yields_template_inner(init_raw, free, yields_func, index, x_of_t):
         return yields_func(x_raw)[index]
 
     return observable
+
+
+# utilities
+
+
+def _stable_vmap(func):
+    """Return func mapped with jax.lax.map.
+
+    jax.vmap appears to change semantics (possibly rounding?)
+    """
+    return partial(jax.lax.map, func)

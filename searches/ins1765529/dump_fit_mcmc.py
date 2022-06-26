@@ -37,7 +37,8 @@ def dump_region(name, lo, hi, nbins=50):
         nsamples=100_000,
         nrepeats=100,
         # these get particularly poor efficiency
-        step_size=0.2,
+        step_size=0.1,
+        prob_eye=0.01,
     )
     mix.dump(dir_fit)
 

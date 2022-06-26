@@ -49,23 +49,7 @@ def region_hist_chain(
     )
 
     keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
-    key_shape = keys.shape[1:]
-    n_processes = min(jax.device_count(), nrepeats)
-
-    # pmap needs a rectangular shape, so split to cover any remainder
-    chain_func = jax.pmap(_stable_vmap(chain()))
-
-    n_bulk = nrepeats // n_processes * n_processes
-    keys_bulk = keys[:n_bulk].reshape(n_processes, -1, *key_shape)
-    out = chain_func(keys_bulk).reshape(n_bulk, -1)
-
-    n_tail = len(keys) - n_bulk
-    if n_tail > 0:
-        keys_tail = keys[n_bulk:].reshape(n_tail, 1, *key_shape)
-        out_tail = chain_func(keys_tail).reshape(n_tail, -1)
-        out = jax.numpy.concatenate([out, out_tail])
-
-    return out
+    return _stable_pvmap(chain(), keys)
 
 
 def logdf_template(region, x_of_t):
@@ -120,9 +104,31 @@ def _yields_template_inner(init_raw, free, yields_func, index, x_of_t):
 # utilities
 
 
-def _stable_vmap(func):
-    """Return func mapped with jax.lax.map.
+def _stable_pvmap(func, x):
+    """Return a parallelized and mapped wrapper of func.
 
-    jax.vmap appears to change semantics (possibly rounding?)
+    Map along the first axis of its argument in as many devices as jax offers.
     """
-    return partial(jax.lax.map, func)
+    n_items, *item_shape = x.shape
+    assert n_items >= 1
+    n_processes = min(jax.device_count(), n_items)
+
+    # jax.vmap changes semantics (possibly rounding?); lax.map does not
+    chain_func = jax.pmap(partial(jax.lax.map, func))
+
+    # pmap needs a rectangular shape, so split to cover any remainder
+    n_bulk = n_items // n_processes * n_processes
+    x_bulk = x[:n_bulk].reshape(n_processes, -1, *item_shape)
+    out = jax.tree_map(lambda a: a.reshape(n_bulk, -1), chain_func(x_bulk))
+
+    n_tail = n_items - n_bulk
+    if n_tail > 0:
+        x_tail = x[n_bulk:].reshape(n_tail, 1, *item_shape)
+        out_tail = jax.tree_map(
+            lambda a: a.reshape(n_tail, -1), chain_func(x_tail)
+        )
+        out = jax.tree_map(
+            lambda a, b: jax.numpy.concatenate([a, b]), out, out_tail
+        )
+
+    return out

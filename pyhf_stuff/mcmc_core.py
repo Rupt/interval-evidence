@@ -80,6 +80,10 @@ def reduce_chain(
 
 @partial_once
 def mix_mala_eye(step_size, prob_eye, logdf):
+    if not step_size > 0:
+        raise ValueError(step_size)
+    if not 0 <= prob_eye <= 1:
+        raise ValueError(prob_eye)
 
     value_and_grad = jax.value_and_grad(logdf())
 
@@ -94,7 +98,10 @@ def mix_mala_eye(step_size, prob_eye, logdf):
 
         # identity = eye = standard multivariate normal
         # is a special case of the langevin proposal with mean=0, step_size=1
-        do_eye = jax.random.uniform(key_mix) < prob_eye
+        if 0 < prob_eye < 1:
+            do_eye = jax.random.uniform(key_mix) < prob_eye
+        else:
+            do_eye = bool(prob_eye)
 
         # proposal
         noise = jax.random.normal(key_noise, shape=x.shape, dtype=x.dtype)

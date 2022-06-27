@@ -1,16 +1,15 @@
 """pyhf front to mcmc_core."""
-from functools import partial
-
 import jax
 
 from .mcmc_core import (
+    _boundary,
+    _stable_pmap,
     eye_covariance_transform,
     histogram,
     partial_once,
     reduce_chain,
     zeros,
 )
-from .mcmc_tfp import _boundary
 from .region_fit import region_fit
 from .region_properties import region_properties
 
@@ -36,7 +35,7 @@ def region_hist_chain(
     observable = yields_template(region, x_of_t)
 
     # mcmc stuff
-    initializer = zeros(optimum_x.shape)
+    initializer = zeros(optimum_x.shape, optimum_x.dtype)
     kernel = kernel_func(logdf)
     reducer = histogram(nbins, range_, observable)
 
@@ -49,7 +48,7 @@ def region_hist_chain(
     )
 
     keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
-    return _stable_pvmap(chain(), keys)
+    return _stable_pmap(chain(), keys)
 
 
 def logdf_template(region, x_of_t):
@@ -99,38 +98,3 @@ def _yields_template_inner(init_raw, free, yields_func, index, x_of_t):
         return yields_func(x_raw)[index]
 
     return observable
-
-
-# utilities
-
-
-def _stable_pvmap(func, x):
-    """Return a parallelized and mapped wrapper of func.
-
-    Map along the first axis of its argument in as many devices as jax offers.
-    """
-    n_items, *item_shape = x.shape
-    assert n_items >= 1
-    n_processes = min(jax.device_count(), n_items)
-
-    # jax.vmap changes semantics (possibly rounding?), so its results are not
-    # stable with different different mapping shapes
-    # lax.map avoids this
-    chain_func = jax.pmap(partial(jax.lax.map, func))
-
-    # pmap needs a rectangular shape, so split to cover any remainder
-    n_bulk = n_items // n_processes * n_processes
-    x_bulk = x[:n_bulk].reshape(n_processes, -1, *item_shape)
-    out = jax.tree_map(lambda a: a.reshape(n_bulk, -1), chain_func(x_bulk))
-
-    n_tail = n_items - n_bulk
-    if n_tail > 0:
-        x_tail = x[n_bulk:].reshape(n_tail, 1, *item_shape)
-        out_tail = jax.tree_map(
-            lambda a: a.reshape(n_tail, -1), chain_func(x_tail)
-        )
-        out = jax.tree_map(
-            lambda a, b: jax.numpy.concatenate([a, b]), out, out_tail
-        )
-
-    return out

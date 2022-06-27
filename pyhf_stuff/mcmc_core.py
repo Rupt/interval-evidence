@@ -279,3 +279,35 @@ def n_by_fit(data_class):
 def _n_by_stats(mean, var):
     # max with 1 avoids div0 when mean is zero
     return mean**2 / numpy.maximum(var, numpy.maximum(mean, 1))
+
+
+def _stable_pmap(func, x):
+    """Return a parallelized and mapped wrapper of func.
+
+    Map along the first axis of its argument in as many devices as jax offers.
+    """
+    n_items, *item_shape = x.shape
+    assert n_items >= 1
+    n_processes = min(jax.device_count(), n_items)
+
+    # jax.vmap changes semantics (possibly rounding?), so its results are not
+    # stable with different different mapping shapes
+    # lax.map avoids this
+    chain_func = jax.pmap(partial(jax.lax.map, func))
+
+    # pmap needs a rectangular shape, so split to cover any remainder
+    n_bulk = n_items // n_processes * n_processes
+    x_bulk = x[:n_bulk].reshape(n_processes, -1, *item_shape)
+    out = jax.tree_map(lambda a: a.reshape(n_bulk, -1), chain_func(x_bulk))
+
+    n_tail = n_items - n_bulk
+    if n_tail > 0:
+        x_tail = x[n_bulk:].reshape(n_tail, 1, *item_shape)
+        out_tail = jax.tree_map(
+            lambda a: a.reshape(n_tail, -1), chain_func(x_tail)
+        )
+        out = jax.tree_map(
+            lambda a, b: jax.numpy.concatenate([a, b]), out, out_tail
+        )
+
+    return out

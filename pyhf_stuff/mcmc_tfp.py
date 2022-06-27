@@ -1,8 +1,9 @@
-"""Extract statistics with Markov Chain Monte Carlo (MCMC)."""
+"""Extract statistics with mcmc from tensorflow_probability."""
 import jax
 from tensorflow_probability.substrates import jax as tfp
 
-from .mcmc_core import _boundary, _histogram
+from .mcmc import logdf_template, yields_template
+from .mcmc_core import _histogram, _stable_pmap, eye_covariance_transform
 from .region_fit import region_fit
 from .region_properties import region_properties
 
@@ -25,14 +26,10 @@ def generic_chain_hist(
 
     x_of_t, t_of_x = eye_covariance_transform(optimum_x, cov)
 
-    init = jax.numpy.zeros_like(properties.init)
+    logdf = logdf_template(region, x_of_t)()
+    observable = yields_template(region, x_of_t)()
 
-    def logdf(t):
-        x = x_of_t(t)
-        return properties.logdf(x) + _boundary(x, properties.bounds)
-
-    def observable(t):
-        return properties.yield_value(x_of_t(t))
+    init = jax.numpy.zeros_like(optimum_x)
 
     # mcmc chain sapling
     def chain(key):
@@ -47,30 +44,4 @@ def generic_chain_hist(
         return _histogram(yields, nbins, range_)
 
     keys = jax.random.split(jax.random.PRNGKey(seed), nrepeats)
-    return jax.jit(jax.vmap(chain))(keys)
-
-
-def eye_covariance_transform(mean, cov):
-    """Return functions x <=> t; t has identity covariance and zero mean.
-
-    Arguments:
-        mean: shape (n,)
-        cov: shape (n, n), positive definite
-    """
-    # want x(t) such that:
-    #     (x - m).T @ C^-1 @ (x - m) = t @ t    (1)
-    # cholesky decompose:
-    #     C = A @ A.T, C^-1 = A.T^-1 @ A^-1
-    # if x - m = A @ t, then
-    # (1) = t.T @ A.T @ A.T^-1 @ A^-1 @ A @ t = t @ t :)
-    # x = A @ t + m <=> t = A^-1 @ (x - m)
-    chol = jax.numpy.linalg.cholesky(cov)
-    inv_chol = jax.numpy.linalg.inv(chol)
-
-    def x_of_t(t):
-        return chol @ t + mean
-
-    def t_of_x(x):
-        return inv_chol @ (x - mean)
-
-    return x_of_t, t_of_x
+    return _stable_pmap(chain, keys)

@@ -79,42 +79,6 @@ def reduce_chain(
 
 
 @partial_once
-def mala(step_size, logdf):
-
-    value_and_grad = jax.value_and_grad(logdf())
-
-    def init(x):
-        logf, logf_grad = value_and_grad(x)
-        mean = x + 0.5 * step_size * logf_grad
-        return logf, mean
-
-    def step(rng, x, state):
-        logf, mean = state
-        rng, key_noise, key_accept = jax.random.split(rng, 3)
-
-        # propose the next step
-        noise = jax.random.normal(key_noise, shape=x.shape, dtype=x.dtype)
-        noise_to = step_size**0.5 * noise
-        x_to = mean + noise_to
-        logf_to, mean_to = state_to = init(x_to)
-
-        # evaluate its acceptance ratio
-        norm_to = noise_to.dot(noise_to)
-        noise_from = x - mean_to
-        norm_from = noise_from.dot(noise_from)
-
-        log_accept = logf_to - logf + (0.5 / step_size) * (norm_to - norm_from)
-
-        x, state = _metropolis(
-            key_accept, log_accept, (x_to, state_to), (x, state)
-        )
-
-        return rng, x, state
-
-    return init, step
-
-
-@partial_once
 def mix_mala_eye(step_size, prob_eye, logdf):
 
     value_and_grad = jax.value_and_grad(logdf())

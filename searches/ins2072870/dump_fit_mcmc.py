@@ -7,7 +7,7 @@ import os
 
 import numpy
 
-from pyhf_stuff import fit_mcmc_mix, mcmc_core, region
+from pyhf_stuff import fit_mcmc_mix, fit_mcmc_tfp_ham, mcmc_core, region
 
 BASEPATH = os.path.dirname(__file__)
 
@@ -49,32 +49,34 @@ def dump_region(name, lo, hi, nbins=50):
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    # we explore the rjr models very poorly
     if name.startswith("rjr"):
-        nsamples = 10 * 100_000
-        step_size = 0.1
-        prob_eye = 0.01
+        # mix explores the rjr models very poorly
+        result = fit_mcmc_tfp_ham.fit(
+            region_1,
+            nbins,
+            (lo, hi),
+            seed=0,
+            nsamples=100_000,
+            nrepeats=100,
+            step_size=0.1,
+            num_leapfrog_steps=10,
+        )
     else:
-        nsamples = 100_000
-        step_size = 0.5
-        prob_eye = 0.1
+        result = fit_mcmc_mix.fit(
+            region_1,
+            nbins,
+            (lo, hi),
+            seed=0,
+            nsamples=100_000,
+            nrepeats=100,
+            step_size=0.5,
+        )
+    result.dump(dir_fit)
 
-    mix = fit_mcmc_mix.fit(
-        region_1,
-        nbins,
-        (lo, hi),
-        seed=0,
-        nsamples=nsamples,
-        nrepeats=100,
-        step_size=step_size,
-        prob_eye=prob_eye,
-    )
-    mix.dump(dir_fit)
-
-    neff = mcmc_core.n_by_fit(mix).sum()
-    nrepeats = mix.nrepeats
-    nsamples = mix.nsamples
-    total = numpy.sum(mix.yields)
+    neff = mcmc_core.n_by_fit(result).sum()
+    nrepeats = result.nrepeats
+    nsamples = result.nsamples
+    total = numpy.sum(result.yields)
     print(
         "acceptance: %.2f (%d / %d)"
         % (total / (nrepeats * nsamples), total, nrepeats * nsamples)

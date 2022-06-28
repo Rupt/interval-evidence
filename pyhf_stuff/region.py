@@ -218,7 +218,6 @@ def merge_channels(workspace, name, channels_to_merge):
                     mod_data = mod["data"]
                 mod_datas.append(mod_data)
 
-            # sum the modifiers
             mod_data = _mod_sum_data(mod_type, mod_datas, sample_datas)
 
             sample_modifiers.append(

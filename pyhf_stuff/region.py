@@ -1,8 +1,10 @@
 """Regions are single-signal-region workspaces."""
 import copy
 import os
+from collections import defaultdict
 from dataclasses import dataclass, field
 
+import numpy
 import pyhf
 
 from . import serial
@@ -170,3 +172,183 @@ def filter_modifiers(workspace, filters):
             sample["modifiers"] = good
 
     return pyhf.Workspace(newspec)
+
+
+def merge_channels(workspace, name, channels_to_merge):
+    """Return a workspace with given channels merged into one."""
+    channels_to_merge = set(channels_to_merge)
+
+    # channels: extract samples; since a channel is samples and a name
+    # we no longer need channels once we have the contained samples
+    chan_merge = []
+    channels_new = []
+    for chan in workspace["channels"]:
+        if chan["name"] in channels_to_merge:
+            chan_merge.append(chan)
+        else:
+            channels_new.append(chan)
+
+    sample_name_to_samps = defaultdict(list)
+    for chan in chan_merge:
+        for samp in chan["samples"]:
+            sample_name_to_samps[samp["name"]].append(samp)
+
+    # per samples of the same name, sum data and combine their modifiers
+    channel_samples = []
+    for sample_name, samples in sample_name_to_samps.items():
+        sample_datas = [samp["data"] for samp in samples]
+        sample_data = numpy.sum(sample_datas, axis=0)
+
+        # find the union of all modifiers across channels for this sample
+        modifier_name_to_type = {}
+        for samp in samples:
+            for mod in samp["modifiers"]:
+                modifier_name_to_type[mod["name"]] = mod["type"]
+
+        # combine, inserting null defaults where the modifier is missing
+        sample_modifiers = []
+        for mod_name, mod_type in modifier_name_to_type.items():
+            mod_datas = []
+            for samp in samples:
+                mod = _get_named(samp["modifiers"], mod_name)
+                if mod is None:
+                    mod_data = _mod_default_data(mod_type, samp)
+                else:
+                    assert mod["type"] == mod_type
+                    mod_data = mod["data"]
+                mod_datas.append(mod_data)
+
+            # sum the modifiers
+            mod_data = _mod_sum_data(mod_type, mod_datas, sample_datas)
+
+            sample_modifiers.append(
+                {
+                    "data": mod_data,
+                    "name": mod_name,
+                    "type": mod_type,
+                }
+            )
+
+        # we can collect multiple stat errors from the combined channels
+        # add them in quadrature
+        stat_data = []
+        sample_modifiers_other = []
+        for mod in sample_modifiers:
+            if mod["type"] == "staterror":
+                stat_data.append(mod["data"])
+            else:
+                sample_modifiers_other.append(mod)
+
+        sample_modifiers_other.append(
+            {
+                "data": _mod_sum_data("staterror", stat_data),
+                "name": "staterror_" + name,
+                "type": "staterror",
+            }
+        )
+        sample_modifiers = sample_modifiers_other
+
+        channel_samples.append(
+            {
+                "data": sample_data.tolist(),
+                "modifiers": sample_modifiers,
+                "name": sample_name,
+            }
+        )
+
+    channels_new.append(
+        {
+            "name": name,
+            "samples": channel_samples,
+        }
+    )
+    print(channels_new[-1]["name"])
+
+    # observations
+    obs_merge = []
+    observations_new = []
+    for obs in workspace["observations"]:
+        if obs["name"] in channels_to_merge:
+            obs_merge.append(obs)
+        else:
+            observations_new.append(obs)
+
+    data = numpy.sum([obs["data"] for obs in obs_merge], axis=0)
+
+    observations_new.append(
+        {
+            "data": data.tolist(),
+            "name": name,
+        }
+    )
+
+    newspec = {
+        "channels": channels_new,
+        "measurements": workspace["measurements"],
+        "observations": observations_new,
+        "version": workspace["version"],
+    }
+    return pyhf.Workspace(newspec)
+
+
+def _mod_default_data(type_, sample):
+    if type_ == "histosys":
+        data = sample["data"]
+        return (
+            {
+                "hi_data": data,
+                "lo_data": data,
+            },
+        )
+    if type_ == "normsys":
+        return [1.0 for _ in sample["data"]]
+    if type_ in ("staterror", "shapesys"):
+        return [0.0 for _ in sample["data"]]
+    if type_ in ("normfactor", "lumi", "shapefactor"):
+        return None
+    raise NotImplementedError(type_)
+
+
+def _mod_sum_data(type_, data, sample_data=None):
+    if type_ == "histosys":
+        hi_data = numpy.sum([data_i["hi_data"] for data_i in data], axis=0)
+        lo_data = numpy.sum([data_i["lo_data"] for data_i in data], axis=0)
+        return {
+            "hi_data": hi_data.tolist(),
+            "lo_data": lo_data.tolist(),
+        }
+    if type_ == "normsys":
+        # TODO untested
+        # scale up to data, then normalize back
+        norm = numpy.sum(sample_data)
+        hi = numpy.sum(
+            [
+                data_i["hi"] * numpy.array(sample_data_i)
+                for data_i, sample_data_i in zip(data, sample_data)
+            ]
+        )
+        lo = numpy.array(
+            [
+                data_i["lo"] * numpy.array(sample_data_i)
+                for data_i, sample_data_i in zip(data, sample_data)
+            ]
+        )
+        return {
+            "hi": float(hi / norm),
+            "lo": float(lo / norm),
+        }
+    if type_ in ("staterror", "shapesys"):
+        # sum in quadrature
+        return (numpy.sum(numpy.square(data), axis=0) ** 0.5).tolist()
+    if type_ in ("normfactor", "lumi", "shapefactor"):
+        return None
+    raise NotImplementedError(type_)
+
+
+def _get_named(items, name):
+    # awful linear search :(
+    # would love to rearrange to a {name: obj} map...
+    for item in items:
+        if item["name"] == name:
+            return item
+    return None

@@ -262,7 +262,6 @@ def merge_channels(workspace, name, channels_to_merge):
             "samples": channel_samples,
         }
     )
-    print(channels_new[-1]["name"])
 
     # observations
     obs_merge = []
@@ -318,7 +317,6 @@ def _mod_sum_data(type_, data, sample_data=None):
             "lo_data": lo_data.tolist(),
         }
     if type_ == "normsys":
-        # TODO untested
         # scale up to data, then normalize back
         norm = numpy.sum(sample_data)
         hi = numpy.sum(

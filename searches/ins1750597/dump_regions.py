@@ -37,27 +37,39 @@ def generate_regions():
         assert name.startswith("SR")
         signal_regions.add(name)
 
-    print(sorted(control_regions))
-    print(sorted(signal_regions))
+    sr_df_0j = ["SRDF_0%s_cuts" % c for c in "abcdefghi"]
+    sr_df_1j = ["SRDF_1%s_cuts" % c for c in "abcdefghi"]
+    sr_sf_0j = ["SRSF_0%s_cuts" % c for c in "abcdefghi"]
+    sr_sf_1j = ["SRSF_1%s_cuts" % c for c in "abcdefghi"]
+    assert set(sr_df_0j + sr_df_1j + sr_sf_0j + sr_sf_1j) == signal_regions
 
-    sr_name = "SRtest"
-    workspace_i = region.merge_channels(
-        workspace,
-        sr_name,
-        [
-            "SRDF_0a_cuts",
-            "SRDF_0b_cuts",
-        ],
-    )
-    workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    yield sr_name, workspace_i
+    sr_name_to_srs = {
+        # DF 0J
+        "SR_DF_0J_100_inf": sr_df_0j,
+        "SR_DF_0J_160_inf": sr_df_0j[4:],
+        "SR_DF_0J_100_120": sr_df_0j[:3],
+        "SR_DF_0J_120_160": sr_df_0j[3:5],
+        # DF 1J
+        "SR_DF_1J_100_inf": sr_df_1j,
+        "SR_DF_1J_160_inf": sr_df_1j[4:],
+        "SR_DF_1J_100_120": sr_df_1j[:3],
+        "SR_DF_1J_120_160": sr_df_1j[3:5],
+        # SF 0J
+        "SR_SF_0J_100_inf": sr_sf_0j,
+        "SR_SF_0J_160_inf": sr_sf_0j[4:],
+        "SR_SF_0J_100_120": sr_sf_0j[:3],
+        "SR_SF_0J_120_160": sr_sf_0j[3:5],
+        # SF 1J
+        "SR_SF_1J_100_inf": sr_sf_1j,
+        "SR_SF_1J_160_inf": sr_sf_1j[4:],
+        "SR_SF_1J_100_120": sr_sf_1j[:3],
+        "SR_SF_1J_120_160": sr_sf_1j[3:5],
+    }
 
-    return
-    # (sr_name,) = signal_regions
-    # bins = range(workspace.channel_nbins[sr_name])
-    # workspace = region.prune(workspace, [sr_name, *control_regions])
-    # workspace = region.merge_to_bins(workspace, sr_name, bins)
-    # yield "SRA", sr_name, workspace
+    for sr_name, srs in sr_name_to_srs.items():
+        workspace_i = region.merge_channels(workspace, sr_name, srs)
+        workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+        yield sr_name, workspace_i
 
 
 if __name__ == "__main__":

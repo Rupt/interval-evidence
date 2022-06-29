@@ -8,7 +8,7 @@ import os
 from pyhf_stuff import (
     fit_cabinetry,
     fit_linspace,
-    fit_mcmc_mix,
+    fit_mcmc_tfp_ham,
     fit_normal,
     fit_signal,
     limit,
@@ -20,10 +20,10 @@ BASEPATH = os.path.dirname(__file__)
 
 
 def main():
-    region_name_to_scan = {
-        "SRA": (0, 40),
-        "SRB": (0, 20),
-        "SRC": (0, 100),
+    region_name_to_scan =  {
+        "SR_LM_disc": (0, 50),
+        "SR_MM_disc": (0, 50),
+        "SR_HM_disc": (0, 50),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():
@@ -64,7 +64,7 @@ def dump_region(name, lo, hi):
     dump(fit.filename, fit, models.linspace)
 
     # mcmc
-    fit = fit_mcmc_mix.FitMcmcMix.load(path_fit)
+    fit = fit_mcmc_tfp_ham.FitMcmcTfpHam.load(path_fit)
     dump(fit.filename, fit, models.mcmc)
 
     # fit signal scan

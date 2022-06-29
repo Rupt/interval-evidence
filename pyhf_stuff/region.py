@@ -238,13 +238,14 @@ def merge_channels(workspace, name, channels_to_merge):
             else:
                 sample_modifiers_other.append(mod)
 
-        sample_modifiers_other.append(
-            {
-                "data": _mod_sum_data("staterror", stat_data),
-                "name": "staterror_" + name,
-                "type": "staterror",
-            }
-        )
+        if stat_data:
+            sample_modifiers_other.append(
+                {
+                    "data": _mod_sum_data("staterror", stat_data),
+                    "name": "staterror_" + name,
+                    "type": "staterror",
+                }
+            )
         sample_modifiers = sample_modifiers_other
 
         channel_samples.append(

@@ -214,7 +214,7 @@ def merge_channels(workspace, name, channels_to_merge):
                 if mod is None:
                     mod_data = _mod_default_data(mod_type, samp)
                 else:
-                    assert mod["type"] == mod_type
+                    assert mod["type"] == mod_type, (mod_type, mod)
                     mod_data = mod["data"]
                 mod_datas.append(mod_data)
 
@@ -292,14 +292,12 @@ def merge_channels(workspace, name, channels_to_merge):
 def _mod_default_data(type_, sample):
     if type_ == "histosys":
         data = sample["data"]
-        return (
-            {
-                "hi_data": data,
-                "lo_data": data,
-            },
-        )
+        return {
+            "hi_data": data,
+            "lo_data": data,
+        }
     if type_ == "normsys":
-        return [1.0 for _ in sample["data"]]
+        return {"hi": 1.0, "lo": 1.0}
     if type_ in ("staterror", "shapesys"):
         return [0.0 for _ in sample["data"]]
     if type_ in ("normfactor", "lumi", "shapefactor"):
@@ -324,7 +322,7 @@ def _mod_sum_data(type_, data, sample_data=None):
                 for data_i, sample_data_i in zip(data, sample_data)
             ]
         )
-        lo = numpy.array(
+        lo = numpy.sum(
             [
                 data_i["lo"] * numpy.array(sample_data_i)
                 for data_i, sample_data_i in zip(data, sample_data)

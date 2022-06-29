@@ -20,7 +20,7 @@ BASEPATH = os.path.dirname(__file__)
 
 
 def main():
-    region_name_to_scan =  {
+    region_name_to_scan = {
         "SR_LM_disc": (0, 50),
         "SR_MM_disc": (0, 50),
         "SR_HM_disc": (0, 50),

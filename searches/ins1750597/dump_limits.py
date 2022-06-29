@@ -22,9 +22,9 @@ BASEPATH = os.path.dirname(__file__)
 def main():
     region_name_to_scan = {
         # DF 0J
-        "SR_DF_0J_100_inf": (0, 80),
+        "SR_DF_0J_100_inf": (0, 100),
         "SR_DF_0J_160_inf": (0, 50),
-        "SR_DF_0J_100_120": (0, 50),
+        "SR_DF_0J_100_120": (0, 80),
         "SR_DF_0J_120_160": (0, 50),
         # DF 1J
         "SR_DF_1J_100_inf": (0, 80),
@@ -38,7 +38,7 @@ def main():
         "SR_SF_0J_120_160": (0, 50),
         # SF 1J
         "SR_SF_1J_100_inf": (0, 100),
-        "SR_SF_1J_160_inf": (0, 50),
+        "SR_SF_1J_160_inf": (0, 80),
         "SR_SF_1J_100_120": (0, 100),
         "SR_SF_1J_120_160": (0, 50),
     }

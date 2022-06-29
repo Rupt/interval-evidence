@@ -9,6 +9,7 @@ from pyhf_stuff import (
     fit_cabinetry,
     fit_linspace,
     fit_mcmc_mix,
+    fit_mcmc_tfp_ham,
     fit_normal,
     fit_signal,
     limit,
@@ -21,26 +22,26 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "ewk_high": (0, 10),
+        "ewk_high": (0, 20),
         "ewk_int": (0, 40),
         "ewk_llbb": (0, 10),
-        "ewk_low": (0, 30),
+        "ewk_low": (0, 80),
         "ewk_offshell": (0, 30),
-        "rjr_sr2l_isr": (0, 40),
-        "rjr_sr2l_low": (0, 40),
-        "str_src_12_31": (0, 15),
-        "str_src_12_61": (0, 20),
-        "str_src_31_81": (0, 25),
-        "str_src_81": (0, 40),
-        "str_srhigh_12_301": (0, 25),
-        "str_srhigh_301": (0, 12),
-        "str_srlow_101_201": (0, 25),
-        "str_srlow_101_301": (0, 35),
+        "rjr_sr2l_isr": (0, 60),
+        "rjr_sr2l_low": (0, 60),
+        "str_src_12_31": (0, 25),
+        "str_src_12_61": (0, 25),
+        "str_src_31_81": (0, 40),
+        "str_src_81": (0, 80),
+        "str_srhigh_12_301": (0, 40),
+        "str_srhigh_301": (0, 20),
+        "str_srlow_101_201": (0, 50),
+        "str_srlow_101_301": (0, 80),
         "str_srlow_12_81": (0, 30),
-        "str_srlow_301": (0, 20),
-        "str_srmed_101": (0, 40),
-        "str_srmed_12_101": (0, 40),
-        "str_srzhigh": (0, 15),
+        "str_srlow_301": (0, 30),
+        "str_srmed_101": (0, 50),
+        "str_srmed_12_101": (0, 50),
+        "str_srzhigh": (0, 20),
         "str_srzlow": (0, 40),
         "str_srzmed": (0, 30),
     }
@@ -83,8 +84,12 @@ def dump_region(name, lo, hi):
     dump(fit.filename, fit, models.linspace)
 
     # mcmc
-    fit = fit_mcmc_mix.FitMcmcMix.load(path_fit)
-    dump(fit.filename, fit, models.mcmc)
+    if name.startswith("rjr"):
+        fit = fit_mcmc_tfp_ham.FitMcmcTfpHam.load(path_fit)
+        dump(fit.filename, fit, models.mcmc)
+    else:
+        fit = fit_mcmc_mix.FitMcmcMix.load(path_fit)
+        dump(fit.filename, fit, models.mcmc)
 
     # fit signal scan
     signal = fit_signal.FitSignal.load(path_fit)

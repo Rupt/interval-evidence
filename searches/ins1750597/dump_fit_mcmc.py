@@ -36,7 +36,6 @@ def main():
         "SR_SF_1J_120_160": (25, 65),
     }
 
-
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
         dump_region(name, lo, hi)

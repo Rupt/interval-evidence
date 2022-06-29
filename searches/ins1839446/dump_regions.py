@@ -53,10 +53,10 @@ def generate_regions():
 
     workspace_2j = region.prune(workspace, [sr_name, *control_regions_2j])
 
-    workspace_i = region.merge_to_bins(workspace_2j, sr_name, (2,))
+    workspace_i = region.merge_bins(workspace_2j, sr_name, (2,))
     yield sr_name + "_gluino", sr_name, workspace_i
 
-    workspace_i = region.merge_to_bins(workspace_2j, sr_name, (1, 2))
+    workspace_i = region.merge_bins(workspace_2j, sr_name, (1, 2))
     yield sr_name + "_squark", sr_name, workspace_i
 
     # 4J high-x   = (SR4JhighxBVEM_meffInc30, 2)
@@ -64,13 +64,13 @@ def generate_regions():
     sr_name = "SR4JhighxBVEM_meffInc30"
     assert sr_name in signal_regions
     workspace_i = region.prune(workspace, [sr_name, *control_regions_4j])
-    workspace_i = region.merge_to_bins(workspace_i, sr_name, (2,))
+    workspace_i = region.merge_bins(workspace_i, sr_name, (2,))
     yield sr_name, sr_name, workspace_i
 
     sr_name = "SR4JlowxBVEM_meffInc30"
     assert sr_name in signal_regions
     workspace_i = region.prune(workspace, [sr_name, *control_regions_4j])
-    workspace_i = region.merge_to_bins(workspace_i, sr_name, (2,))
+    workspace_i = region.merge_bins(workspace_i, sr_name, (2,))
     yield sr_name, sr_name, workspace_i
 
     # 6J (gluino) = (SR6JBVEM_meffInc30, 3)
@@ -80,10 +80,10 @@ def generate_regions():
 
     workspace_6j = region.prune(workspace, [sr_name, *control_regions_6j])
 
-    workspace_i = region.merge_to_bins(workspace_6j, sr_name, (3,))
+    workspace_i = region.merge_bins(workspace_6j, sr_name, (3,))
     yield sr_name + "_gluino", sr_name, workspace_i
 
-    workspace_i = region.merge_to_bins(workspace_6j, sr_name, (2, 3))
+    workspace_i = region.merge_bins(workspace_6j, sr_name, (2, 3))
     yield sr_name + "_squark", sr_name, workspace_i
 
 

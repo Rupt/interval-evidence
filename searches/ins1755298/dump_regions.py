@@ -47,19 +47,19 @@ def generate_regions():
     name = "SR_LM_disc"
     sr_name = "SRLMEM_mct2"
     workspace_i = region.prune(workspace, [sr_name, *control_regions])
-    workspace_i = region.merge_to_bins(workspace_i, sr_name, bins)
+    workspace_i = region.merge_bins(workspace_i, sr_name, bins)
     yield name, sr_name, workspace_i
 
     name = "SR_MM_disc"
     sr_name = "SRMMEM_mct2"
     workspace_i = region.prune(workspace, [sr_name, *control_regions])
-    workspace_i = region.merge_to_bins(workspace_i, sr_name, bins)
+    workspace_i = region.merge_bins(workspace_i, sr_name, bins)
     yield name, sr_name, workspace_i
 
     name = "SR_HM_disc"
     sr_name = "SRHMEM_mct2"
     workspace_i = region.prune(workspace, [sr_name, *control_regions])
-    workspace_i = region.merge_to_bins(workspace_i, sr_name, bins)
+    workspace_i = region.merge_bins(workspace_i, sr_name, bins)
     yield name, sr_name, workspace_i
 
 

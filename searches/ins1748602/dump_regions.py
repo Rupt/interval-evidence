@@ -44,7 +44,7 @@ def generate_regions():
     (sr_name,) = signal_regions
     bins = range(workspace.channel_nbins[sr_name])
     workspace = region.prune(workspace, [sr_name, *control_regions])
-    workspace = region.merge_to_bins(workspace, sr_name, bins)
+    workspace = region.merge_bins(workspace, sr_name, bins)
     yield "SRA", sr_name, workspace
 
     # b
@@ -93,7 +93,7 @@ def generate_regions():
     (sr_name,) = signal_regions
     bins = range(workspace.channel_nbins[sr_name])
     workspace = region.prune(workspace, [sr_name, *control_regions])
-    workspace = region.merge_to_bins(workspace, sr_name, bins)
+    workspace = region.merge_bins(workspace, sr_name, bins)
     yield "SRC", sr_name, workspace
 
 

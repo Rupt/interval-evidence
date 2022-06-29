@@ -6,6 +6,7 @@ python searches/ins1767649/dump_regions.py
 """
 import os
 
+import numpy
 import pyhf
 
 from pyhf_stuff import region, serial
@@ -38,13 +39,14 @@ def generate_regions():
         signal_regions.add(name)
 
     # some normsys / histosys clashes
-    bad_mods = get_bad_repeated_mods(workspace)
+    bad_mods = _get_bad_repeated_mods(workspace)
 
     def bad(modifier, sample, channel):
         key = (channel["name"], sample["name"], modifier["name"])
         return key in bad_mods
 
     workspace = region.filter_modifiers(workspace, [bad])
+    workspace = _merge_normfactors(workspace)
 
     # SR-E-high
     sr_e_high_ee = "SRee_eMLL%s_hghmet_cuts"  # c..h
@@ -85,6 +87,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 3
@@ -97,6 +100,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 5
@@ -112,6 +116,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 10
@@ -127,6 +132,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 20
@@ -142,6 +148,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 30
@@ -157,6 +164,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 40
@@ -172,6 +180,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 60
@@ -187,6 +196,7 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # sleptons: SR-S
@@ -206,13 +216,14 @@ def generate_regions():
         signal_regions.add(name)
 
     # some normsys / histosys clashes
-    bad_mods = get_bad_repeated_mods(workspace)
+    bad_mods = _get_bad_repeated_mods(workspace)
 
     def bad(modifier, sample, channel):
         key = (channel["name"], sample["name"], modifier["name"])
         return key in bad_mods
 
     workspace = region.filter_modifiers(workspace, [bad])
+    workspace = _merge_normfactors(workspace)
 
     # SR-S-high
     sr_s_high_ee = "SRee_eMT2%s_hghmet_cuts"  # a..h
@@ -246,12 +257,13 @@ def generate_regions():
         ]
         workspace_i = region.merge_channels(workspace, sr_name, srs)
         workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
+        workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
         yield sr_name, workspace_i
 
     # unfortunately, SR-VBF is not included in HEPData
 
 
-def get_bad_repeated_mods(workspace):
+def _get_bad_repeated_mods(workspace):
     """Return bad (channel, sample, modifier) trios
 
     These modifiers appear as both histosys and normsys, and the histosys has
@@ -287,6 +299,83 @@ def get_bad_repeated_mods(workspace):
                 bad_mods.add(key)
 
     return bad_mods
+
+
+def _merge_normfactors(workspace):
+    # there are separate normfactors for low and high met
+    # we don't want their product in the signal region, so combine them
+    workspace = region.merge_normfactor(
+        workspace, "mu_Ztt", ["mu_Ztt_hghmet", "mu_Ztt_lowmet"]
+    )
+    workspace = region.merge_normfactor(
+        workspace, "mu_VV", ["mu_VV_hghmet", "mu_VV_lowmet"]
+    )
+    workspace = region.merge_normfactor(
+        workspace, "mu_top", ["mu_top_hghmet", "mu_top_lowmet"]
+    )
+    return workspace
+
+
+def _merge_fake_shapesys(workspace, sr_name):
+    # on merging signal regions we picked up fakes for each. merge them
+    # extract the signal channel
+    channels_new = []
+    channel_sr = []
+    for channel in workspace["channels"]:
+        if channel["name"] == sr_name:
+            channel_sr.append(channel)
+            continue
+        channels_new.append(channel)
+
+    (sr,) = channel_sr
+
+    # extract its fakes sample
+    samples_new = []
+    sample_fakes = []
+    for sample in sr["samples"]:
+        if sample["name"] == "fakes":
+            sample_fakes.append(sample)
+            continue
+        samples_new.append(sample)
+
+    (fakes,) = sample_fakes
+
+    # extract modifiers
+    modifiers_new = []
+    modifiers_fakes = []
+    for mod in fakes["modifiers"]:
+        if mod["name"].startswith("shape_fakes"):
+            modifiers_fakes.append(mod)
+            continue
+        modifiers_new.append(mod)
+
+    assert modifiers_fakes
+    data = (
+        numpy.sum(
+            numpy.square([mod["data"] for mod in modifiers_fakes]), axis=0
+        )
+        ** 0.5
+    ).tolist()
+
+    # reconstitute the channel
+    modifiers_new.append(
+        {
+            "data": data,
+            "name": "shape_fakes_stat_fakes_" + sr_name,
+            "type": "shapesys",
+        }
+    )
+
+    samples_new.append(dict(fakes, modifiers=modifiers_new))
+    channels_new.append(dict(sr, samples=samples_new))
+
+    newspec = {
+        "channels": channels_new,
+        "measurements": workspace["measurements"],
+        "observations": workspace["observations"],
+        "version": workspace["version"],
+    }
+    return pyhf.Workspace(newspec)
 
 
 if __name__ == "__main__":

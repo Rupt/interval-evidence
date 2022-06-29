@@ -83,7 +83,27 @@ def prune(workspace, channel_names_to_keep):
     return workspace.prune(channels=remove)
 
 
-def merge_to_bins(workspace, channel_name, bins):
+def filter_modifiers(workspace, filters):
+    newspec = copy.deepcopy(dict(workspace))
+
+    filters = list(filters)
+
+    def filter_(modifier, sample, channel):
+        return any(filt(modifier, sample, channel) for filt in filters)
+
+    for channel in newspec["channels"]:
+        for sample in channel["samples"]:
+            good = []
+            for modifier in sample["modifiers"]:
+                if filter_(modifier, sample, channel):
+                    continue
+                good.append(modifier)
+            sample["modifiers"] = good
+
+    return pyhf.Workspace(newspec)
+
+
+def merge_bins(workspace, channel_name, bins):
     """Return a workspace with channel bins combined into a signle bin."""
     bins = list(bins)
 
@@ -154,26 +174,6 @@ def merge_to_bins(workspace, channel_name, bins):
     return pyhf.Workspace(newspec)
 
 
-def filter_modifiers(workspace, filters):
-    newspec = copy.deepcopy(dict(workspace))
-
-    filters = list(filters)
-
-    def filter_(modifier, sample, channel):
-        return any(filt(modifier, sample, channel) for filt in filters)
-
-    for channel in newspec["channels"]:
-        for sample in channel["samples"]:
-            good = []
-            for modifier in sample["modifiers"]:
-                if filter_(modifier, sample, channel):
-                    continue
-                good.append(modifier)
-            sample["modifiers"] = good
-
-    return pyhf.Workspace(newspec)
-
-
 def merge_channels(workspace, name, channels_to_merge):
     """Return a workspace with given channels merged into one."""
     channels_to_merge = set(channels_to_merge)
@@ -212,7 +212,7 @@ def merge_channels(workspace, name, channels_to_merge):
             for samp in samples:
                 mod = _get_named(samp["modifiers"], mod_name)
                 if mod is None:
-                    mod_data = _mod_default_data(mod_type, samp)
+                    mod_data = _mod_default_data(mod_type, samp["data"])
                 else:
                     assert mod["type"] == mod_type, (mod_type, mod)
                     mod_data = mod["data"]
@@ -290,17 +290,16 @@ def merge_channels(workspace, name, channels_to_merge):
     return pyhf.Workspace(newspec)
 
 
-def _mod_default_data(type_, sample):
+def _mod_default_data(type_, sample_data):
     if type_ == "histosys":
-        data = sample["data"]
         return {
-            "hi_data": data,
-            "lo_data": data,
+            "hi_data": sample_data,
+            "lo_data": sample_data,
         }
     if type_ == "normsys":
         return {"hi": 1.0, "lo": 1.0}
     if type_ in ("staterror", "shapesys"):
-        return [0.0 for _ in sample["data"]]
+        return [0.0 for _ in sample_data]
     if type_ in ("normfactor", "lumi", "shapefactor"):
         return None
     raise NotImplementedError(type_)
@@ -335,10 +334,57 @@ def _mod_sum_data(type_, data, sample_data=None):
         }
     if type_ in ("staterror", "shapesys"):
         # sum in quadrature
+        # this may not always be appropriate for shapesys, but shapesys is
+        # often used for stat variations
         return (numpy.sum(numpy.square(data), axis=0) ** 0.5).tolist()
     if type_ in ("normfactor", "lumi", "shapefactor"):
         return None
     raise NotImplementedError(type_)
+
+
+def merge_normfactor(workspace, mod_name, mod_names_to_merge):
+    """Return a Workspace with given normfactor modifiers merged into one."""
+    mod_names_to_merge = set(mod_names_to_merge)
+
+    def merge(modifiers):
+        out = []
+        for mod in modifiers:
+            if mod["name"] in mod_names_to_merge:
+                assert mod["type"] == "normfactor"
+                continue
+            out.append(mod)
+        if len(out) < len(modifiers):
+            out.append(
+                {
+                    "data": None,
+                    "name": mod_name,
+                    "type": "normfactor",
+                }
+            )
+        return out
+
+    channels_new = []
+    for channel in workspace["channels"]:
+        channel_samples = []
+        for sample in channel["samples"]:
+            channel_samples.append(
+                dict(sample, modifiers=merge(sample["modifiers"]))
+            )
+
+        channels_new.append(
+            dict(
+                channel,
+                samples=channel_samples,
+            )
+        )
+
+    newspec = {
+        "channels": channels_new,
+        "measurements": workspace["measurements"],
+        "observations": workspace["observations"],
+        "version": workspace["version"],
+    }
+    return pyhf.Workspace(newspec)
 
 
 def _get_named(items, name):

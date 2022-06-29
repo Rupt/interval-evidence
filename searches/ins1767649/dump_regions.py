@@ -6,12 +6,14 @@ python searches/ins1767649/dump_regions.py
 """
 import os
 
-import numpy
 import pyhf
 
 from pyhf_stuff import region, serial
 
 BASEPATH = os.path.dirname(__file__)
+
+# an experiment which didn't reproduce paper results
+MERGE_CRS = False
 
 
 def main():
@@ -38,6 +40,9 @@ def generate_regions():
         assert name.startswith("SR")
         signal_regions.add(name)
 
+    # after badly approximating results in the paper, I've had a go at fixing
+    # quirks of the merged likelihoods. These changes make very little
+    # difference to the result, but I think they make senses
     # some normsys / histosys clashes
     bad_mods = _get_bad_repeated_mods(workspace)
 
@@ -46,7 +51,14 @@ def generate_regions():
         return key in bad_mods
 
     workspace = region.filter_modifiers(workspace, [bad])
+    # repeated normfactors both multiplying the SR
     workspace = _merge_normfactors(workspace)
+    # separate parameters for all the fakes
+    workspace = _merge_fake_stuff(workspace, "disco")
+    # maybe they merged the CRs? also doesn't explain it
+    if MERGE_CRS:
+        workspace = _merge_ewkino_crs(workspace)
+        control_regions = {"CRVV_MLL", "CRtau_MLL", "CRtop_MLL"}
 
     # SR-E-high
     sr_e_high_ee = "SRee_eMLL%s_hghmet_cuts"  # c..h
@@ -87,7 +99,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 3
@@ -100,7 +111,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 5
@@ -116,7 +126,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 10
@@ -132,7 +141,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 20
@@ -148,7 +156,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 30
@@ -164,7 +171,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 40
@@ -180,7 +186,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # 60
@@ -196,7 +201,6 @@ def generate_regions():
     ]
     workspace_i = region.merge_channels(workspace, sr_name, srs)
     workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-    workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
     yield sr_name, workspace_i
 
     # sleptons: SR-S
@@ -224,6 +228,10 @@ def generate_regions():
 
     workspace = region.filter_modifiers(workspace, [bad])
     workspace = _merge_normfactors(workspace)
+    workspace = _merge_fake_stuff(workspace, "disco")
+    if MERGE_CRS:
+        workspace = _merge_slepton_crs(workspace)
+        control_regions = {"CRVV_MT2", "CRtau_MT2", "CRtop_MT2"}
 
     # SR-S-high
     sr_s_high_ee = "SRee_eMT2%s_hghmet_cuts"  # a..h
@@ -257,7 +265,6 @@ def generate_regions():
         ]
         workspace_i = region.merge_channels(workspace, sr_name, srs)
         workspace_i = region.prune(workspace_i, [sr_name, *control_regions])
-        workspace_i = _merge_fake_shapesys(workspace_i, sr_name)
         yield sr_name, workspace_i
 
     # unfortunately, SR-VBF is not included in HEPData
@@ -316,66 +323,69 @@ def _merge_normfactors(workspace):
     return workspace
 
 
-def _merge_fake_shapesys(workspace, sr_name):
-    # on merging signal regions we picked up fakes for each. merge them
-    # extract the signal channel
-    channels_new = []
-    channel_sr = []
+def _merge_fake_stuff(workspace, name):
+    # find all modifiers
+    modifiers_in_srs = set()
+
     for channel in workspace["channels"]:
-        if channel["name"] == sr_name:
-            channel_sr.append(channel)
+        if not channel["name"].startswith("SR"):
             continue
-        channels_new.append(channel)
+        for sample in channel["samples"]:
+            for modifier in sample["modifiers"]:
+                modifiers_in_srs.add(modifier["name"])
 
-    (sr,) = channel_sr
+    # construct the rename map
+    rename_modifiers = {}
+    name_ff = "FF_syst_stat_rename_" + name
+    name_shape = "shape_fakes_stat_fakes_rename_" + name
+    name_zero = "fake_zeroEstimate_UL_rename_" + name
 
-    # extract its fakes sample
-    samples_new = []
-    sample_fakes = []
-    for sample in sr["samples"]:
-        if sample["name"] == "fakes":
-            sample_fakes.append(sample)
+    for modifier_name in modifiers_in_srs:
+        if modifier_name.startswith("FF_syst_stat_"):
+            rename_modifiers[modifier_name] = name_ff
             continue
-        samples_new.append(sample)
-
-    (fakes,) = sample_fakes
-
-    # extract modifiers
-    modifiers_new = []
-    modifiers_fakes = []
-    for mod in fakes["modifiers"]:
-        if mod["name"].startswith("shape_fakes"):
-            modifiers_fakes.append(mod)
+        if modifier_name.startswith("shape_fakes_stat_fakes_"):
+            rename_modifiers[modifier_name] = name_shape
             continue
-        modifiers_new.append(mod)
+        if modifier_name.startswith("fake_zeroEstimate_UL_"):
+            rename_modifiers[modifier_name] = name_zero
+            continue
 
-    assert modifiers_fakes
-    data = (
-        numpy.sum(
-            numpy.square([mod["data"] for mod in modifiers_fakes]), axis=0
-        )
-        ** 0.5
-    ).tolist()
+    return workspace.rename(modifiers=rename_modifiers)
 
-    # reconstitute the channel
-    modifiers_new.append(
-        {
-            "data": data,
-            "name": "shape_fakes_stat_fakes_" + sr_name,
-            "type": "shapesys",
-        }
+
+def _merge_ewkino_crs(workspace):
+    workspace = region.merge_channels(
+        workspace, "CRVV_MLL", ["CRVV_MLL_hghmet_cuts", "CRVV_MLL_lowmet_cuts"]
     )
+    workspace = region.merge_channels(
+        workspace,
+        "CRtau_MLL",
+        ["CRtau_MLL_hghmet_cuts", "CRtau_MLL_lowmet_cuts"],
+    )
+    workspace = region.merge_channels(
+        workspace,
+        "CRtop_MLL",
+        ["CRtop_MLL_hghmet_cuts", "CRtop_MLL_lowmet_cuts"],
+    )
+    return workspace
 
-    samples_new.append(dict(fakes, modifiers=modifiers_new))
-    channels_new.append(dict(sr, samples=samples_new))
 
-    newspec = {
-        "channels": channels_new,
-        "measurements": workspace["measurements"],
-        "observations": workspace["observations"],
-        "version": workspace["version"],
-    }
-    return pyhf.Workspace(newspec)
+def _merge_slepton_crs(workspace):
+    workspace = region.merge_channels(
+        workspace, "CRVV_MT2", ["CRVV_MT2_hghmet_cuts", "CRVV_MT2_lowmet_cuts"]
+    )
+    workspace = region.merge_channels(
+        workspace,
+        "CRtau_MT2",
+        ["CRtau_MT2_hghmet_cuts", "CRtau_MT2_lowmet_cuts"],
+    )
+    workspace = region.merge_channels(
+        workspace,
+        "CRtop_MT2",
+        ["CRtop_MT2_hghmet_cuts", "CRtop_MT2_lowmet_cuts"],
+    )
+    return workspace
 
 
 if __name__ == "__main__":

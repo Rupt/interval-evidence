@@ -35,8 +35,8 @@ def generate_regions():
             control_regions.add(name)
             continue
 
-        # atlas_susy_4L_2021 modifies its control regions to exclude 5-lepton events
-        # but we don't have specs for those control regions
+        # atlas_susy_4L_2021 modifies its control regions to exclude 5-lepton
+        # events but we don't have specs for those control regions
         if name.startswith("SR5L"):
             continue
 

@@ -42,4 +42,5 @@ env/bin/activate:
 	pip install scipy numpy numba black isort flake8; \
 	pip install pyhf==0.7.0rc1 cabinetry==0.4.1 --no-dependencies; \
 	pip install jax jaxlib; \
+	pip install tensorflow-probability; \
 	)

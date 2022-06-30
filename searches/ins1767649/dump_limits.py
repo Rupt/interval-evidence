@@ -8,8 +8,8 @@ import os
 from pyhf_stuff import (
     fit_cabinetry,
     fit_linspace,
-    fit_mcmc_tfp_ham,
     fit_mcmc_mix,
+    fit_mcmc_tfp_ham,
     fit_normal,
     fit_signal,
     limit,
@@ -32,7 +32,7 @@ def main():
         "SR_E_mll_40": (0, 300),
         "SR_E_mll_60": (0, 300),
         "SR_S_100p5": (0, 60),
-        "SR_S_101": (0, 50),
+        "SR_S_101": (0, 110),
         "SR_S_102": (0, 100),
         "SR_S_105": (0, 150),
         "SR_S_110": (0, 150),

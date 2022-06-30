@@ -40,6 +40,6 @@ env/bin/activate:
 	source env/bin/activate; \
 	pip install --upgrade pip; \
 	pip install scipy numpy numba black isort flake8; \
-	pip install git+https://github.com/scikit-hep/pyhf.git cabinetry; \
+	pip install pyhf==0.7.0rc1 cabinetry==0.4.1 --no-dependencies; \
 	pip install jax jaxlib; \
 	)

@@ -7,7 +7,7 @@ import os
 
 import numpy
 
-from pyhf_stuff import fit_mcmc_mix, mcmc_core, region
+from pyhf_stuff import fit_mcmc_tfp_ham, mcmc_core, region
 
 BASEPATH = os.path.dirname(__file__)
 
@@ -29,23 +29,23 @@ def dump_region(name, lo, hi, nbins=50):
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    mix = fit_mcmc_mix.fit(
+    # these get particularly poor efficiency with mix
+    result = fit_mcmc_tfp_ham.fit(
         region_1,
         nbins,
         (lo, hi),
         seed=0,
         nsamples=100_000,
         nrepeats=100,
-        # these get particularly poor efficiency
         step_size=0.1,
-        prob_eye=0.01,
+        num_leapfrog_steps=5,
     )
-    mix.dump(dir_fit)
+    result.dump(dir_fit)
 
-    neff = mcmc_core.n_by_fit(mix).sum()
-    nrepeats = mix.nrepeats
-    nsamples = mix.nsamples
-    total = numpy.sum(mix.yields)
+    neff = mcmc_core.n_by_fit(result).sum()
+    nrepeats = result.nrepeats
+    nsamples = result.nsamples
+    total = numpy.sum(result.yields)
     print(
         "acceptance: %.2f (%d / %d)"
         % (total / (nrepeats * nsamples), total, nrepeats * nsamples)

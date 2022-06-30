@@ -10,7 +10,7 @@ import os
 
 import pyhf
 
-from pyhf_stuff import region, serial
+from discohist import region, serial
 
 BASEPATH = os.path.dirname(__file__)
 SR_NAME = "SR_cuts"

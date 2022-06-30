@@ -1,6 +1,6 @@
 import lebesgue.test
-import pyhf_stuff.test
+import discohist.test
 
 if __name__ == "__main__":
-    pyhf_stuff.test.run_tests()
+    discohist.test.run_tests()
     lebesgue.test.run_tests()

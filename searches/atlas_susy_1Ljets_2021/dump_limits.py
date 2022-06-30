@@ -5,7 +5,7 @@ time python searches/atlas_susy_1Ljets_2021/dump_limits.py
 
 import os
 
-from pyhf_stuff import (
+from discohist import (
     fit_cabinetry,
     fit_linspace,
     fit_mcmc_mix,

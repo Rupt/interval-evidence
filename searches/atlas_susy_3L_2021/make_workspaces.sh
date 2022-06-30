@@ -1,9 +1,8 @@
 #!/bin/bash
 # usage:
-# ./searches/ins1866951/make_workspaces.sh
+# ./searches/atlas_susy_3L_2021/make_workspaces.sh
 cd $(dirname $0)
 
-# download hepdata to prepare workspaces for this search
 curl -OJLH "Accept: application/x-tar" https://doi.org/10.17182/hepdata.95751.v1/r3
 
 tar -f statistical_models.tar.gz -x statistical_models/bkg_offshell.json statistical_models/bkg_onshell.json

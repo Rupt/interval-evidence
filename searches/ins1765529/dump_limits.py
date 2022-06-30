@@ -8,7 +8,7 @@ import os
 from pyhf_stuff import (
     fit_cabinetry,
     fit_linspace,
-    fit_mcmc_mix,
+    fit_mcmc_tfp_ham,
     fit_normal,
     fit_signal,
     limit,
@@ -63,7 +63,7 @@ def dump_region(name, lo, hi):
     dump(fit.filename, fit, models.linspace)
 
     # mcmc
-    fit = fit_mcmc_mix.FitMcmcMix.load(path_fit)
+    fit = fit_mcmc_tfp_ham.FitMcmcTfpHam.load(path_fit)
     dump(fit.filename, fit, models.mcmc)
 
     # fit signal scan

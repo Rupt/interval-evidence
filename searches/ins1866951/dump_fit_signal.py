@@ -14,7 +14,7 @@ def main():
     region_name_to_scan = {
         "incSR_WZ_1": (0, 50),
         "incSR_WZ_2": (0, 20),
-        "incSR_WZ_3": (0, 30),
+        "incSR_WZ_5": (0, 30),
         "incSR_offWZ_highEt_nj_a": (0, 20),
         "incSR_offWZ_highEt_nj_b": (0, 20),
         "incSR_offWZ_highEt_nj_c1": (0, 30),

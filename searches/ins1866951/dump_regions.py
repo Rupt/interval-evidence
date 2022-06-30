@@ -65,6 +65,8 @@ def generate_regions():
     # but SR_WZ_10 observes 11 data, but incSR_WZ_3 observes 4 :-(
     # yield workspace_onshell("incSR_WZ_3", [...])
 
+    # 4, 5, 6 seem to use non-reproduceable cuts on HT and HTlep
+
     # 4: Table 16 says mT in [100, 160], met > 250, njets > 0
     # this leaves SR_WZ_11 (which observes 0) and SR_WZ_12 (which observes 0)
     # but incSR_WZ_4 observes 34 data
@@ -80,9 +82,11 @@ def generate_regions():
     # can't be 14, 15, 16 (no boundary at 200)
 
     # Redux! Distrust the tables, try to reverse engineer from results.
-    # 3: data and backgrounds match 7 + 8
+    # 5/3?: data and backgrounds match 7 + 8
     # which would be mT > 160, met > 200 (labelled incSR_WZ_5 in Table 16)
-    yield workspace_onshell("incSR_WZ_3", [7, 8])
+    # choosing 5 to believe the definition over the numerical results
+    # (I have emailed ATLAS publications about this)
+    yield workspace_onshell("incSR_WZ_5", [7, 8])
 
     # offshell: offWZ x low/high x 0j/nj
     spec = serial.load_json_gz(os.path.join(BASEPATH, "offshell_bkg.json.gz"))
@@ -196,6 +200,7 @@ def generate_regions():
     # c-f1 yields 445 data
     # Table 19 shows 479 data
     # b-f1 yields 479 data
+    # (I have emailed ATLAS publications about this)
     yield workspace_offshell(
         "incSR_offWZ_f1",
         [

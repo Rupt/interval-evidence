@@ -1,5 +1,5 @@
 """
-time python searches/ins1767649/dump_fit_signal.py
+time python searches/atlas_susy_compressed_2020/dump_fit_signal.py
 
 """
 

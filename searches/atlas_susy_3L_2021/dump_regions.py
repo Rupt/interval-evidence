@@ -1,7 +1,7 @@
 """
 Usage:
 
-python searches/ins1866951/dump_regions.py
+python searches/atlas_susy_3L_2021/dump_regions.py
 
 """
 import os

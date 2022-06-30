@@ -1,5 +1,5 @@
 """
-time python searches/ins1771533/dump_fit_mcmc.py
+time python searches/atlas_susy_3LRJmimic_2020/dump_fit_mcmc.py
 
 """
 

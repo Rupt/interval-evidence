@@ -1,5 +1,5 @@
 """
-time python searches/ins1831992/dump_fits.py
+time python searches/atlas_susy_trilepton_2020/dump_fits.py
 
 """
 

@@ -1,7 +1,7 @@
 """
 Usage:
 
-python searches/ins1839446/dump_regions.py
+python searches/atlas_susy_1Ljets_2021/dump_regions.py
 
 """
 

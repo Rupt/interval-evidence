@@ -24,7 +24,7 @@ def main():
 
 
 def generate_regions():
-    paths = glob.glob(os.path.join(BASEPATH, "*.json.gz"))
+    paths = glob.glob(os.path.join(BASEPATH, "*_bkg.json.gz"))
 
     for path in paths:
         spec = serial.load_json_gz(path)
@@ -46,7 +46,7 @@ def generate_regions():
         (sr_name,) = signal_regions
         assert sr_name == SR_NAME
 
-        name = os.path.basename(path).split("_bkgonly.json.gz")[0]
+        name = os.path.basename(path).split("_bkg.json.gz")[0]
         yield name, region.prune(workspace, [sr_name, *control_regions])
 
 

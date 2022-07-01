@@ -84,9 +84,8 @@ def generate_regions():
     # Redux! Distrust the tables, try to reverse engineer from results.
     # 5/3?: data and backgrounds match 7 + 8
     # which would be mT > 160, met > 200 (labelled incSR_WZ_5 in Table 16)
-    # choosing 5 to believe the definition over the numerical results
-    # (I have emailed ATLAS publications about this)
-    yield workspace_onshell("incSR_WZ_5", [7, 8])
+    # choosing 3 (private communications) thank you, you know who you are
+    yield workspace_onshell("incSR_WZ_3", [7, 8])
 
     # offshell: offWZ x low/high x 0j/nj
     spec = serial.load_json_gz(os.path.join(BASEPATH, "offshell_bkg.json.gz"))

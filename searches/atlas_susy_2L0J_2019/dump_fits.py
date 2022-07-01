@@ -45,7 +45,7 @@ def main():
         dump(name, lo, hi)
 
 
-def dump(name, lo, hi, *, nbins=50, region_name_to_anchors=None):
+def dump(name, lo, hi, *, nbins=200, region_name_to_anchors=None):
     if region_name_to_anchors is None:
         region_name_to_anchors = {}
 

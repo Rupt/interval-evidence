@@ -38,9 +38,6 @@ env/bin/activate:
 	python3 -m venv env
 	( \
 	source env/bin/activate; \
-	pip install --upgrade pip; \
-	pip install scipy numpy numba black isort flake8; \
-	pip install pyhf==0.7.0rc1 cabinetry==0.4.1 --no-dependencies; \
-	pip install jax jaxlib; \
-	pip install tensorflow-probability; \
+	pip install --upgrade pip wheel; \
+	pip install -r requirements.txt \
 	)

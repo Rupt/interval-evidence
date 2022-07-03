@@ -1,13 +1,17 @@
 """
-time python searches/atlas_susy_trilepton_2020/dump_fit_mcmc.py
+time python searches/atlas_susy_3Lresonance_2020/dump_fits.py
 
 """
 
 import os
 
-import numpy
-
-from discohist import fit_mcmc_mix, mcmc_core, region
+from discohist import (
+    fit_cabinetry,
+    fit_cabinetry_post,
+    fit_linspace,
+    fit_normal,
+    region,
+)
 
 BASEPATH = os.path.dirname(__file__)
 
@@ -64,41 +68,47 @@ def main():
         "SR3l_580_inf_all": (0, 8),
     }
 
+    region_name_to_anchors = {
+        "SR4l_170_190_all": [2.0],
+    }
+
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump_region(name, lo, hi)
+        dump(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
 
 
-def dump_region(name, lo, hi, nbins=200):
+def dump(name, lo, hi, *, nbins=200, region_name_to_anchors=None):
+    if region_name_to_anchors is None:
+        region_name_to_anchors = {}
+
     dir_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(dir_region)
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    mix = fit_mcmc_mix.fit(
-        region_1,
-        nbins,
-        (lo, hi),
-        seed=0,
-        nsamples=100_000,
-        nrepeats=100,
-        # we find poor efficiency at default step_size=0.5
-        step_size=0.2,
-    )
-    mix.dump(dir_fit)
+    # cabinetry fits fail here by default
+    # Diboson3L in CRWZ and CRttZ shares a number of 3L theory normfactors
+    # removing this of these appears to resolve the problem
+    # (muRmuF or mu_Diboson3l could also be removed with similar results)
+    def cr_theory(modifier, sample, channel):
+        return (
+            channel["name"] == "CRWZ_all_cuts"
+            and modifier["name"] == "theory_scale_muR_Diboson3l"
+        )
 
-    neff = mcmc_core.n_by_fit(mix).sum()
-    nrepeats = mix.nrepeats
-    nsamples = mix.nsamples
-    total = numpy.sum(mix.yields)
-    print(
-        "acceptance: %.2f (%d / %d)"
-        % (total / (nrepeats * nsamples), total, nrepeats * nsamples)
+    region_cabinetry = region.Region(
+        region_1.signal_region_name,
+        region.filter_modifiers(region_1.workspace, [cr_theory]),
     )
-    print(
-        "efficiency: %.2f (%.1f / %.1f)"
-        % (nrepeats * neff / total, neff, total / nrepeats)
-    )
+
+    fit_cabinetry.fit(region_cabinetry).dump(dir_fit)
+    fit_cabinetry_post.fit(region_cabinetry).dump(dir_fit)
+
+    # normal
+    fit_normal.fit(region_1).dump(dir_fit)
+
+    # linspace
+    fit_linspace.fit(region_1, lo, hi, nbins + 1).dump(dir_fit)
 
 
 if __name__ == "__main__":

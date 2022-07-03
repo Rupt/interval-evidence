@@ -22,6 +22,10 @@ $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
 Search for chargino--neutralino pair production in final states with three leptons and missing transverse momentum in
 $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
 
+### [`atlas_susy_3Lresonance_2020`](https://www.hepdata.net/record/ins1831992)
+Search for trilepton resonances from chargino and neutralino pair production in
+$\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
+
 ### [`atlas_susy_3LRJmimic_2020`](https://www.hepdata.net/record/ins1771533)
 Search for chargino-neutralino production with mass splittings near the electroweak scale in three-lepton final states in
 $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
@@ -47,7 +51,3 @@ $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collision data with the ATLAS detec
 
 ### [`atlas_susy_ss3L_2019`](https://www.hepdata.net/record/ins1754675)
 Search for squarks and gluinos in final states with same-sign leptons and jets using $139~\text{fb}^{-1}$ of data collected with the ATLAS detector
-
-### [`atlas_susy_trilepton_2020`](https://www.hepdata.net/record/ins1831992)
-Search for trilepton resonances from chargino and neutralino pair production in
-$\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector

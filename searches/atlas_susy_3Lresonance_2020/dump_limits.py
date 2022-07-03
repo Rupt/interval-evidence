@@ -1,5 +1,5 @@
 """
-time python searches/atlas_susy_trilepton_2020/dump_limits.py
+time python searches/atlas_susy_3Lresonance_2020/dump_limits.py
 
 """
 

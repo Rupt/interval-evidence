@@ -44,7 +44,18 @@ def dump_region(name, lo, hi, nbins=200):
 
     dir_fit = os.path.join(dir_region, "fit")
 
-    if name.startswith("SR_E"):
+    if name == "SR_E_mll_40":
+        # this one got 0.00 efficiency otherwise
+        result = fit_mcmc_mix.fit(
+            region_1,
+            nbins,
+            (lo, hi),
+            seed=0,
+            nsamples=100_000,
+            nrepeats=100,
+            step_size=0.2,
+        )
+    elif name.startswith("SR_E"):
         result = fit_mcmc_mix.fit(
             region_1,
             nbins,

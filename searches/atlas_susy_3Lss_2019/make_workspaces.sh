@@ -1,6 +1,6 @@
 #!/bin/bash
 # usage:
-# ./searches/atlas_susy_ss3L_2019/make_workspaces.sh
+# ./searches/atlas_susy_3Lss_2019/make_workspaces.sh
 cd $(dirname $0)
 
 curl -OJLH "Accept: application/x-tar" https://doi.org/10.17182/hepdata.91214.v4/r6

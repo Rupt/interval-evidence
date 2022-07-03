@@ -30,6 +30,9 @@ $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
 Search for chargino-neutralino production with mass splittings near the electroweak scale in three-lepton final states in
 $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
 
+### [`atlas_susy_3Lss_2019`](https://www.hepdata.net/record/ins1754675)
+Search for squarks and gluinos in final states with same-sign leptons and jets using $139~\text{fb}^{-1}$ of data collected with the ATLAS detector
+
 ### [`atlas_susy_4L_2021`](https://www.hepdata.net/record/ins1852821)
 Search for supersymmetry in events with four or more charged leptons in $139~\text{fb}^{-1}$ of
 $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collisions with the ATLAS detector
@@ -48,6 +51,3 @@ Search for bottom-squark pair production with the ATLAS detector in final states
 ### [`atlas_susy_jets_2021`](https://www.hepdata.net/record/ins1827025)
 Search for squarks and gluinos in final states with jets and missing transverse momentum using $139~\text{fb}^{-1}$ of
 $\sqrt{s}=13~\mathrm{Te\kern-0.15ex V}$ $pp$ collision data with the ATLAS detector
-
-### [`atlas_susy_ss3L_2019`](https://www.hepdata.net/record/ins1754675)
-Search for squarks and gluinos in final states with same-sign leptons and jets using $139~\text{fb}^{-1}$ of data collected with the ATLAS detector

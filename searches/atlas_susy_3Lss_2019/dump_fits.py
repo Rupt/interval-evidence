@@ -1,5 +1,5 @@
 """
-time python searches/atlas_susy_ss3L_2019/dump_fits.py
+time python searches/atlas_susy_3Lss_2019/dump_fits.py
 
 """
 

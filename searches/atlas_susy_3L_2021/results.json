@@ -1,0 +1,202 @@
+{
+    "incSR_WZ_1": {
+        "n": 34,
+        "bkg": 38,
+        "bkg_hi": 5,
+        "bkg_lo": -5,
+        "s95obs": 14,
+        "s95exp": 16,
+        "s95exp_hi": 7,
+        "s95exp_lo": -4
+    },
+    "incSR_WZ_2": {
+        "n": 2,
+        "bkg": 1.2,
+        "bkg_hi": 0.5,
+        "bkg_lo": -0.5,
+        "s95obs": 5.0,
+        "s95exp": 4.0,
+        "s95exp_hi": 1.6,
+        "s95exp_lo": -0.7
+    },
+    "incSR_WZ_3": {
+        "n": 4,
+        "bkg": 6.5,
+        "bkg_hi": 1.1,
+        "bkg_lo": -1.1,
+        "s95obs": 4.8,
+        "s95exp": 6.5,
+        "s95exp_hi": 2.6,
+        "s95exp_lo": -1.8
+    },
+    "incSR_offWZ_highEt_nj_a": {
+        "n": 3,
+        "bkg": 6.0,
+        "bkg_hi": 1.6,
+        "bkg_lo": -1.6,
+        "s95obs": 4.6,
+        "s95exp": 6.3,
+        "s95exp_hi": 2.4,
+        "s95exp_lo": -2.0
+    },
+    "incSR_offWZ_highEt_nj_b": {
+        "n": 2,
+        "bkg": 1.4,
+        "bkg_hi": 0.6,
+        "bkg_lo": -0.6,
+        "s95obs": 4.8,
+        "s95exp": 4.0,
+        "s95exp_hi": 1.6,
+        "s95exp_lo": -0.7
+    },
+    "incSR_offWZ_highEt_nj_c1": {
+        "n": 7,
+        "bkg": 9.5,
+        "bkg_hi": 2.2,
+        "bkg_lo": -2.2,
+        "s95obs": 7.0,
+        "s95exp": 8.4,
+        "s95exp_hi": 2.9,
+        "s95exp_lo": -2.2
+    },
+    "incSR_offWZ_highEt_nj_c2": {
+        "n": 2,
+        "bkg": 2.1,
+        "bkg_hi": 0.8,
+        "bkg_lo": -0.8,
+        "s95obs": 4.7,
+        "s95exp": 4.6,
+        "s95exp_hi": 1.8,
+        "s95exp_lo": -1.1
+    },
+    "incSR_offWZ_lowEt_b": {
+        "n": 31,
+        "bkg": 36,
+        "bkg_hi": 4,
+        "bkg_lo": -4,
+        "s95obs": 12,
+        "s95exp": 15,
+        "s95exp_hi": 6,
+        "s95exp_lo": -4
+    },
+    "incSR_offWZ_highEt_b": {
+        "n": 3,
+        "bkg": 3.0,
+        "bkg_hi": 0.9,
+        "bkg_lo": -0.9,
+        "s95obs": 5.4,
+        "s95exp": 5.2,
+        "s95exp_hi": 2.0,
+        "s95exp_lo": -1.3
+    },
+    "incSR_offWZ_lowEt_c": {
+        "n": 86,
+        "bkg": 88,
+        "bkg_hi": 7,
+        "bkg_lo": -7,
+        "s95obs": 23,
+        "s95exp": 24,
+        "s95exp_hi": 9,
+        "s95exp_lo": -7
+    },
+    "incSR_offWZ_highEt_c": {
+        "n": 9,
+        "bkg": 9.3,
+        "bkg_hi": 1.5,
+        "bkg_lo": -1.5,
+        "s95obs": 7.7,
+        "s95exp": 7.7,
+        "s95exp_hi": 3.4,
+        "s95exp_lo": -1.8
+    },
+    "incSR_offWZ_d": {
+        "n": 202,
+        "bkg": 184,
+        "bkg_hi": 12,
+        "bkg_lo": -12,
+        "s95obs": 51,
+        "s95exp": 37,
+        "s95exp_hi": 14,
+        "s95exp_lo": -11
+    },
+    "incSR_offWZ_e1": {
+        "n": 332,
+        "bkg": 308,
+        "bkg_hi": 17,
+        "bkg_lo": -17,
+        "s95obs": 68,
+        "s95exp": 49,
+        "s95exp_hi": 19,
+        "s95exp_lo": -15
+    },
+    "incSR_offWZ_e2": {
+        "n": 298,
+        "bkg": 269,
+        "bkg_hi": 15,
+        "bkg_lo": -15,
+        "s95obs": 69,
+        "s95exp": 46,
+        "s95exp_hi": 17,
+        "s95exp_lo": -14
+    },
+    "incSR_offWZ_f1": {
+        "n": 479,
+        "bkg": 457,
+        "bkg_hi": 22,
+        "bkg_lo": -22,
+        "s95obs": 78,
+        "s95exp": 63,
+        "s95exp_hi": 22,
+        "s95exp_lo": -20
+    },
+    "incSR_offWZ_f2": {
+        "n": 277,
+        "bkg": 272,
+        "bkg_hi": 13,
+        "bkg_lo": -13,
+        "s95obs": 46,
+        "s95exp": 42,
+        "s95exp_hi": 17,
+        "s95exp_lo": -12
+    },
+    "incSR_offWZ_g1": {
+        "n": 620,
+        "bkg": 593,
+        "bkg_hi": 28,
+        "bkg_lo": -28,
+        "s95obs": 96,
+        "s95exp": 74,
+        "s95exp_hi": 29,
+        "s95exp_lo": -22
+    },
+    "incSR_offWZ_g2": {
+        "n": 418,
+        "bkg": 408,
+        "bkg_hi": 20,
+        "bkg_lo": -20,
+        "s95obs": 64,
+        "s95exp": 57,
+        "s95exp_hi": 23,
+        "s95exp_lo": -15
+    },
+    "incSR_offWZ_g3": {
+        "n": 288,
+        "bkg": 285,
+        "bkg_hi": 16,
+        "bkg_lo": -16,
+        "s95obs": 48,
+        "s95exp": 47,
+        "s95exp_hi": 19,
+        "s95exp_lo": -12
+    },
+    "incSR_offWZ_g4": {
+        "n": 141,
+        "bkg": 136,
+        "bkg_hi": 10,
+        "bkg_lo": -10,
+        "s95obs": 35,
+        "s95exp": 31,
+        "s95exp_hi": 13,
+        "s95exp_lo": -8
+    }
+}

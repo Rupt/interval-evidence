@@ -1,0 +1,62 @@
+{
+    "SR2JBVEM_meffInc30_gluino": {
+        "n": 22,
+        "bkg": 12.8,
+        "bkg_hi": 2.2,
+        "bkg_lo": -2.2,
+        "s95obs": 19.0,
+        "s95exp": 10.1,
+        "s95exp_hi": 4.0,
+        "s95exp_lo": -2.3
+    },
+    "SR2JBVEM_meffInc30_squark": {
+        "n": 106,
+        "bkg": 86,
+        "bkg_hi": 12,
+        "bkg_lo": -12,
+        "s95obs": 47.8,
+        "s95exp": 31.3,
+        "s95exp_hi": 13.0,
+        "s95exp_lo": -9.6
+    },
+    "SR4JhighxBVEM_meffInc30": {
+        "n": 11,
+        "bkg": 7.1,
+        "bkg_hi": 2.3,
+        "bkg_lo": -2.3,
+        "s95obs": 12.0,
+        "s95exp": 8.3,
+        "s95exp_hi": 3.5,
+        "s95exp_lo": -2.0
+    },
+    "SR4JlowxBVEM_meffInc30": {
+        "n": 10,
+        "bkg": 9.5,
+        "bkg_hi": 1.7,
+        "bkg_lo": -1.7,
+        "s95obs": 8.9,
+        "s95exp": 8.4,
+        "s95exp_hi": 3.3,
+        "s95exp_lo": -2.0
+    },
+    "SR6JBVEM_meffInc30_gluino": {
+        "n": 2,
+        "bkg": 1.8,
+        "bkg_hi": 0.6,
+        "bkg_lo": -0.6,
+        "s95obs": 4.7,
+        "s95exp": 4.3,
+        "s95exp_hi": 1.9,
+        "s95exp_lo": -0.8
+    },
+    "SR6JBVEM_meffInc30_squark": {
+        "n": 5,
+        "bkg": 5.3,
+        "bkg_hi": 0.8,
+        "bkg_lo": -0.8,
+        "s95obs": 6.0,
+        "s95exp": 6.0,
+        "s95exp_hi": 24.0,
+        "s95exp_lo": -1.5
+    },
+}

@@ -1,0 +1,32 @@
+{
+    "SR_LM_disc": {
+        "n": 34,
+        "bkg": 27,
+        "bkg_hi": 4,
+        "bkg_lo": -4,
+        "s95obs": 36.8,
+        "s95exp": 20.0,
+        "s95exp_hi": 9.0,
+        "s95exp_lo": -5.4
+    },
+    "SR_MM_disc": {
+        "n": 13,
+        "bkg": 8.6,
+        "bkg_hi": 2.2,
+        "bkg_lo": -2.2,
+        "s95obs": 24.8,
+        "s95exp": 15.3,
+        "s95exp_hi": 6.2,
+        "s95exp_lo": -4.6
+    },
+    "SR_HM_disc": {
+        "n": 14,
+        "bkg": 8.1,
+        "bkg_hi": 2.7,
+        "bkg_lo": -2.7,
+        "s95obs": 14.7,
+        "s95exp": 9.7,
+        "s95exp_hi": 3.3,
+        "s95exp_lo": -2.7
+    }
+}

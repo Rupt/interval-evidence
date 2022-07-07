@@ -1,0 +1,172 @@
+{
+    "SR_E_mll_1": {
+        "n": 0,
+        "bkg": 1.0,
+        "bkg_hi": 1.0,
+        "bkg_lo": -1.0,
+        "s95obs": 3.0,
+        "s95exp": 3.0,
+        "s95exp_hi": 1.3,
+        "s95exp_lo": -0.0
+    },
+    "SR_E_mll_2": {
+        "n": 46,
+        "bkg": 44,
+        "bkg_hi": 6.8,
+        "bkg_lo": -6.8,
+        "s95obs": 21,
+        "s95exp": 19,
+        "s95exp_hi": 7,
+        "s95exp_lo": -5
+    },
+    "SR_E_mll_3": {
+        "n": 90,
+        "bkg": 77,
+        "bkg_hi": 12,
+        "bkg_lo": -12,
+        "s95obs": 41,
+        "s95exp": 31,
+        "s95exp_hi": 11,
+        "s95exp_lo": -9
+    },
+    "SR_E_mll_5": {
+        "n": 151,
+        "bkg": 138,
+        "bkg_hi": 18,
+        "bkg_lo": -18,
+        "s95obs": 52,
+        "s95exp": 43,
+        "s95exp_hi": 16,
+        "s95exp_lo": -11
+    },
+    "SR_E_mll_10": {
+        "n": 244,
+        "bkg": 200,
+        "bkg_hi": 19,
+        "bkg_lo": -19,
+        "s95obs": 86,
+        "s95exp": 49,
+        "s95exp_hi": 26,
+        "s95exp_lo": -13
+    },
+    "SR_E_mll_20": {
+        "n": 383,
+        "bkg": 301,
+        "bkg_hi": 23,
+        "bkg_lo": -23,
+        "s95obs": 132,
+        "s95exp": 61,
+        "s95exp_hi": 22,
+        "s95exp_lo": -16
+    },
+    "SR_E_mll_30": {
+        "n": 453,
+        "bkg": 366,
+        "bkg_hi": 27,
+        "bkg_lo": -27,
+        "s95obs": 144,
+        "s95exp": 70,
+        "s95exp_hi": 26,
+        "s95exp_lo": -20
+    },
+    "SR_E_mll_40": {
+        "n": 492,
+        "bkg": 420,
+        "bkg_hi": 30,
+        "bkg_lo": -30,
+        "s95obs": 134,
+        "s95exp": 74,
+        "s95exp_hi": 29,
+        "s95exp_lo": -20
+    },
+    "SR_E_mll_60": {
+        "n": 583,
+        "bkg": 520,
+        "bkg_hi": 35,
+        "bkg_lo": -35,
+        "s95obs": 135,
+        "s95exp": 84,
+        "s95exp_hi": 32,
+        "s95exp_lo": -23
+    },
+    "SR_S_100p5": {
+        "n": 24,
+        "bkg": 27,
+        "bkg_hi": 4.8,
+        "bkg_lo": -4.8,
+        "s95obs": 13,
+        "s95exp": 14,
+        "s95exp_hi": 5,
+        "s95exp_lo": -4
+    },
+    "SR_S_101": {
+        "n": 41,
+        "bkg": 46,
+        "bkg_hi": 6.5,
+        "bkg_lo": -6.5,
+        "s95obs": 16,
+        "s95exp": 18,
+        "s95exp_hi": 7,
+        "s95exp_lo": -5
+    },
+    "SR_S_102": {
+        "n": 91,
+        "bkg": 82,
+        "bkg_hi": 10,
+        "bkg_lo": -10,
+        "s95obs": 35,
+        "s95exp": 28,
+        "s95exp_hi": 10,
+        "s95exp_lo": -8
+    },
+    "SR_S_105": {
+        "n": 158,
+        "bkg": 158,
+        "bkg_hi": 10,
+        "bkg_lo": -10,
+        "s95obs": 41,
+        "s95exp": 41,
+        "s95exp_hi": 16,
+        "s95exp_lo": -11
+    },
+    "SR_S_110": {
+        "n": 243,
+        "bkg": 242,
+        "bkg_hi": 21,
+        "bkg_lo": -21,
+        "s95obs": 52,
+        "s95exp": 52,
+        "s95exp_hi": 19,
+        "s95exp_lo": -14
+    },
+    "SR_S_120": {
+        "n": 328,
+        "bkg": 312,
+        "bkg_hi": 24,
+        "bkg_lo": -24,
+        "s95obs": 71,
+        "s95exp": 60,
+        "s95exp_hi": 22,
+        "s95exp_lo": -17
+    },
+    "SR_S_130": {
+        "n": 419,
+        "bkg": 388,
+        "bkg_hi": 28,
+        "bkg_lo": -28,
+        "s95obs": 92,
+        "s95exp": 68,
+        "s95exp_hi": 27,
+        "s95exp_lo": -18
+    },
+    "SR_S_140": {
+        "n": 472,
+        "bkg": 443,
+        "bkg_hi": 31,
+        "bkg_lo": -31,
+        "s95obs": 95,
+        "s95exp": 74,
+        "s95exp_hi": 28,
+        "s95exp_lo": -21
+    }
+}

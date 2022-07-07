@@ -1,0 +1,24 @@
+{
+    "SRlowMass": {
+        "n": 10,
+        "bkg": 6.0,
+        "bkg_hi": 1.7,
+        "bkg_lo": -1.7,
+        "x95obs": 0.08,
+        "x95exp": 0.055,
+        "x95exp_hi": 0.025,
+        "x95exp_lo": -0.014,
+        "lumi": 139
+    },
+    "SRhighMass": {
+        "n": 7,
+        "bkg": 10.2,
+        "bkg_hi": 3.3,
+        "bkg_lo": -3.3,
+        "x95obs": 0.05,
+        "x95exp": 0.065,
+        "x95exp_hi": 0.025,
+        "x95exp_lo": -0.019,
+        "lumi": 139
+    },
+}

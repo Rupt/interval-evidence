@@ -78,6 +78,17 @@ def dump_region(name, lo, hi):
     dump(fit.filename, fit, models.normal)
     dump(fit.filename + "_log", fit, models.normal_log)
 
+    # best fit only, no uncertainty
+    limit.dump_scan_delta(
+        "delta",
+        fit.yield_linear,
+        path_limit,
+        region_1.ndata,
+        lo,
+        hi,
+        print_=True,
+    )
+
     # linspace
     fit = fit_linspace.FitLinspace.load(path_fit)
     dump(fit.filename, fit, models.linspace)

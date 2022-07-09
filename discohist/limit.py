@@ -8,22 +8,24 @@ import scipy
 
 from . import serial
 
+# levels of:
+#     log prob (data | background + signal) - log prob(data | background)
 # not only limits, we can also see positive evidence!
 # (this will be sign flipped, so limits are set with positive level)
 # 0 data => limit is 3 if we select level at 3
 DEFAULT_LEVELS = (
-    -4.5,
-    -3.0,
-    -2.5,
-    -0.5,
-    0.0,
-    0.5,
-    2.5,
-    3.0,
     4.5,
+    3.0,
+    2.5,
+    0.5,
+    0.0,
+    -0.5,
+    -2.5,
+    -3.0,
+    -4.5,
 )
 
-# for fit processing
+# fit processing
 
 
 def dump_scans(
@@ -31,7 +33,6 @@ def dump_scans(
 ):
     partial_model = model_fn(fit)
     model_temp = partial_model(ndata)
-
     predicted_trio = low_central_high(model_temp.prior)
 
     n_and_suffix = zip(
@@ -41,16 +42,49 @@ def dump_scans(
     for n, suffix in n_and_suffix:
         scan_i = scan(partial_model, n, lo, hi, nbins + 1)
         scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+
+        if scan_i.points[-1]:
+            top = "%.1f" % scan_i.points[-1][0]
+        else:
+            top = "!!!"
+
         if print_:
-            print("%.2f: %r" % (n, scan_i.points[-1]))
+            print(f"  {label:>16s} {n=:<6.1f} {top}")
 
 
 def dump_scan_fit_signal(label, fit, path_limit, *, print_=False):
-    scan_fit_signal_i = scan_fit_signal(fit)
+    scan_i = scan_fit_signal(fit)
     suffix = "observed"
-    scan_fit_signal_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+    label = "signal"
+    scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+
+    if scan_i.points[-1]:
+        top = "%.1f" % scan_i.points[-1][0]
+    else:
+        top = "!!!!"
+
     if print_:
-        print("fit : %r" % scan_fit_signal_i.points[-1])
+        print(f"  {label:>16s} n=obs    {top}")
+
+
+def dump_scan_delta(
+    label, mu, path_limit, ndata, lo, hi, *, nbins=200, print_=False
+):
+    trio = [max(0.0, mu - mu**0.5), mu, mu + mu**0.5]
+
+    n_and_suffix = zip((ndata, *trio), ("observed", "down", "central", "up"))
+
+    for n, suffix in n_and_suffix:
+        scan_i = scan_delta(mu, n, lo, hi, nbins + 1)
+        scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+
+        if scan_i.points[-1]:
+            top = "%.1f" % scan_i.points[-1][0]
+        else:
+            top = "!!!"
+
+        if print_:
+            print(f"  {label:>16s} {n=:<6.1f} {top}")
 
 
 # core
@@ -75,6 +109,8 @@ def scan(
         levels: negative log likelihood levels to cross
         rtol: relative tolerance argument to Model.integrate
     """
+    levels = list(levels)
+
     model = partial(partial_model, ndata)
     signals = numpy.linspace(start, stop, num)
 
@@ -84,17 +120,12 @@ def scan(
 
     # do no-signal to higher precision to allay error doubts
     integral_zero = model(shift=0.0).integrate(rtol=rtol / 10)
-
-    if start == 0.0:
+    if start == 0:
         integrals[0] = integral_zero
 
     # find crosses with log-linear interpolation
-    levels = list(levels)
-    log_ratios = log_ratio(integrals, integral_zero)
-
-    points = [
-        crosses(signals, log_ratios, value) for value in numpy.negative(levels)
-    ]
+    log_ratios = _ratio_log_mean(integrals, integral_zero)
+    points = [crosses(signals, log_ratios, value) for value in levels]
 
     return LimitScan(
         ndata=ndata,
@@ -118,18 +149,57 @@ def scan_fit_signal(fit, *, levels: list[float] = DEFAULT_LEVELS):
         fit: FitSignal-like
         levels: negative log likelihood levels to cross
     """
+    if not fit.start == 0:
+        raise ValueError(fit.start)
+    levels = list(levels)
+
     signals = numpy.linspace(fit.start, fit.stop, len(fit.levels))
 
-    levels = list(levels)
-    log_ratios = numpy.array(fit.levels) - min(fit.levels)
-
-    # already negated in these log ratios (unlike the integral scan above)
+    # these are objective levels (negated log likelihood ratios)
+    # so negate with respect to others
+    log_ratios = fit.levels[0] - numpy.array(fit.levels)
     points = [crosses(signals, log_ratios, value) for value in levels]
 
     return LimitScanFit(
         # linspace arguments
         start=fit.start,
         stop=fit.stop,
+        # crosses results
+        levels=levels,
+        points=points,
+    )
+
+
+def scan_delta(
+    mu: float,
+    ndata: float,
+    start: float,
+    stop: float,
+    num: int,
+    *,
+    levels: list[float] = DEFAULT_LEVELS,
+):
+    """Return a LimitScan wih no uncertainty.
+
+    Arguments:
+        mu: fixed poisson mean
+        ndata: observed data (real data are integer)
+        start, stop, num: linspace arguments
+        levels: negative log likelihood levels to cross
+    """
+    levels = list(levels)
+
+    signals = numpy.linspace(start, stop, num)
+
+    log_ratio_0 = _poisson_log_minus_max(ndata, mu + 0)
+    log_ratios = _poisson_log_minus_max(ndata, mu + signals) - log_ratio_0
+    points = [crosses(signals, log_ratios, value) for value in levels]
+
+    return LimitScanDelta(
+        ndata=ndata,
+        # arguments
+        start=start,
+        stop=stop,
         # crosses results
         levels=levels,
         points=points,
@@ -224,10 +294,18 @@ def crosses(x: list[float], y: list[float], value: float) -> list[float]:
     return results
 
 
-def log_ratio(integrals, integral_zero):
+def _ratio_log_mean(integrals, integral_zero):
     bulk = numpy.log(numpy.mean(integrals, axis=1))
     zero = numpy.log(numpy.mean(integral_zero))
     return bulk - zero
+
+
+def _poisson_log_minus_max(n, mu):
+    # log(e^-x x^n / n!) - log(e^-n n^n / n!)
+    # = -x + nlogx - (-n + nlogn)
+    # in convention 0log0 -> 0
+    # maximum(n, 1) just avoids a div0 error
+    return n - mu + scipy.special.xlogy(n, mu / numpy.maximum(n, 1))
 
 
 # serialization
@@ -244,8 +322,8 @@ class LimitScan:
     levels: list[float]
     points: list[list[float]]
     # scan results
-    integrals: list[list[float]]
     integral_zero: list[float]
+    integrals: list[list[float]]
 
     filename = "scan"
 
@@ -271,6 +349,30 @@ class LimitScanFit:
     points: list[list[float]]
 
     filename = "scan_fit"
+
+    def dump(self, path, *, suffix=""):
+        os.makedirs(path, exist_ok=True)
+        filename = self.filename + suffix + ".json"
+        serial.dump_json_human(asdict(self), os.path.join(path, filename))
+
+    @classmethod
+    def load(cls, path, *, suffix=""):
+        filename = cls.filename + suffix + ".json"
+        obj_json = serial.load_json(os.path.join(path, filename))
+        return cls(**obj_json)
+
+
+@dataclass(frozen=True)
+class LimitScanDelta:
+    ndata: int | float
+    # linspace arguments
+    start: float
+    stop: float
+    # crosses results
+    levels: list[float]
+    points: list[list[float]]
+
+    filename = "scan_delta"
 
     def dump(self, path, *, suffix=""):
         os.makedirs(path, exist_ok=True)

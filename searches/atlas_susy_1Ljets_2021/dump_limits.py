@@ -7,6 +7,7 @@ import os
 
 from discohist import (
     fit_cabinetry,
+    fit_cabinetry_post,
     fit_linspace,
     fit_mcmc_mix,
     fit_normal,
@@ -31,10 +32,10 @@ def main():
 
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump_region(name, lo, hi)
+        dump_limits(name, lo, hi)
 
 
-def dump_region(name, lo, hi):
+def dump_limits(name, lo, hi):
     path_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(path_region)
 
@@ -57,10 +58,24 @@ def dump_region(name, lo, hi):
     fit = fit_cabinetry.FitCabinetry.load(path_fit)
     dump(fit.filename, fit, models.cabinetry)
 
+    fit = fit_cabinetry_post.FitCabinetryPost.load(path_fit)
+    dump(fit.filename, fit, models.cabinetry_post)
+
     # normal
     fit = fit_normal.FitNormal.load(path_fit)
     dump(fit.filename, fit, models.normal)
     dump(fit.filename + "_log", fit, models.normal_log)
+
+    # best fit only, no uncertainty
+    limit.dump_scan_delta(
+        "delta",
+        fit.yield_linear,
+        path_limit,
+        region_1.ndata,
+        lo,
+        hi,
+        print_=True,
+    )
 
     # linspace
     fit = fit_linspace.FitLinspace.load(path_fit)
@@ -72,7 +87,9 @@ def dump_region(name, lo, hi):
 
     # fit signal scan
     signal = fit_signal.FitSignal.load(path_fit)
-    limit.dump_scan_fit_signal(signal.filename, signal, path_limit)
+    limit.dump_scan_fit_signal(
+        signal.filename, signal, path_limit, print_=True
+    )
 
 
 if __name__ == "__main__":

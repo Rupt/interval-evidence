@@ -14,6 +14,14 @@ def cabinetry(fit):
     )
 
 
+def cabinetry_post(fit):
+    return partial(
+        lebesgue.canned.gamma1_trunc_normal,
+        mu=fit.yield_post,
+        sigma=fit.error_post,
+    )
+
+
 def normal(fit):
     return partial(
         lebesgue.canned.gamma1_trunc_normal,

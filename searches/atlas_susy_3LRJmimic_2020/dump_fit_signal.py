@@ -18,10 +18,10 @@ def main():
 
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump_region(name, lo, hi)
+        dump_signal(name, lo, hi)
 
 
-def dump_region(name, lo, hi, nbins=200):
+def dump_signal(name, lo, hi, nbins=200):
     dir_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(dir_region)
 

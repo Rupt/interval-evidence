@@ -2,7 +2,6 @@
 time python searches/atlas_susy_1Lbb_2020/dump_limits.py
 
 """
-
 import os
 
 from discohist import (

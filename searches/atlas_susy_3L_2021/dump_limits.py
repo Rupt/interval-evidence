@@ -46,10 +46,10 @@ def main():
 
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump_region(name, lo, hi)
+        dump_limits(name, lo, hi)
 
 
-def dump_region(name, lo, hi):
+def dump_limits(name, lo, hi):
     path_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(path_region)
 

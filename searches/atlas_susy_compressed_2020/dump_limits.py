@@ -7,6 +7,7 @@ import os
 
 from discohist import (
     fit_cabinetry,
+    fit_cabinetry_post,
     fit_linspace,
     fit_mcmc_mix,
     fit_mcmc_tfp_ham,
@@ -69,6 +70,9 @@ def dump_region(name, lo, hi):
     fit = fit_cabinetry.FitCabinetry.load(path_fit)
     dump(fit.filename, fit, models.cabinetry)
 
+    fit = fit_cabinetry_post.FitCabinetryPost.load(path_fit)
+    dump(fit.filename, fit, models.cabinetry_post)
+
     # normal
     fit = fit_normal.FitNormal.load(path_fit)
     dump(fit.filename, fit, models.normal)
@@ -87,7 +91,9 @@ def dump_region(name, lo, hi):
 
     # fit signal scan
     signal = fit_signal.FitSignal.load(path_fit)
-    limit.dump_scan_fit_signal(signal.filename, signal, path_limit)
+    limit.dump_scan_fit_signal(
+        signal.filename, signal, path_limit, print_=True
+    )
 
 
 if __name__ == "__main__":

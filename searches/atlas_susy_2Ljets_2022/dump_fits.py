@@ -46,10 +46,10 @@ def main():
         "str_src_12_31": [20.0],
         "str_src_12_61": [40.0],
         "str_srlow_101_201": [80.0],
-        "str_src_31_81": [36.],
-        "str_srhigh_301": [15.],
-        "str_src_81": [150.],
-        "str_srlow_101_301": [100.],
+        "str_src_31_81": [36.0],
+        "str_srhigh_301": [15.0],
+        "str_src_81": [150.0],
+        "str_srlow_101_301": [100.0],
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

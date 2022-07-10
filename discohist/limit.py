@@ -52,7 +52,7 @@ def dump_scans(
             print(f"  {label:>16s} {n=:<6.1f} {top}")
 
 
-def dump_scan_fit_signal(label, fit, path_limit, *, print_=False):
+def dump_scan_fit_signal(fit, path_limit, *, print_=False):
     scan_i = scan_fit_signal(fit)
     suffix = "observed"
     label = "signal"
@@ -67,16 +67,15 @@ def dump_scan_fit_signal(label, fit, path_limit, *, print_=False):
         print(f"  {label:>16s} n=obs    {top}")
 
 
-def dump_scan_delta(
-    label, mu, path_limit, ndata, lo, hi, *, nbins=200, print_=False
-):
+def dump_scan_delta(mu, path_limit, ndata, lo, hi, *, nbins=200, print_=False):
+    label = "delta"
     trio = [max(0.0, mu - mu**0.5), mu, mu + mu**0.5]
 
     n_and_suffix = zip((ndata, *trio), ("observed", "down", "central", "up"))
 
     for n, suffix in n_and_suffix:
         scan_i = scan_delta(mu, n, lo, hi, nbins + 1)
-        scan_i.dump(path_limit, suffix="_%s_%s" % (label, suffix))
+        scan_i.dump(path_limit, suffix="_%s" % suffix)
 
         if scan_i.points[-1]:
             top = "%.1f" % scan_i.points[-1][0]

@@ -30,19 +30,23 @@ def main():
         "SR_DF_1J_120_160": (10, 45),
         # SF 0J
         "SR_SF_0J_100_inf": (80, 260),
-        "SR_SF_0J_160_inf": (25, 60),
-        "SR_SF_0J_100_120": (15, 100),
+        "SR_SF_0J_160_inf": (25, 70),
+        "SR_SF_0J_100_120": (15, 115),
         "SR_SF_0J_120_160": (30, 100),
         # SF 1J
-        "SR_SF_1J_100_inf": (60, 220),
-        "SR_SF_1J_160_inf": (20, 70),
-        "SR_SF_1J_100_120": (0, 100),
+        "SR_SF_1J_100_inf": (60, 260),
+        "SR_SF_1J_160_inf": (20, 100),
+        "SR_SF_1J_100_120": (0, 140),
         "SR_SF_1J_120_160": (25, 65),
+    }
+
+    region_name_to_anchors = {
+        "SR_DF_0J_120_160": [60.0],
     }
 
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump(name, lo, hi)
+        dump(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
 
 
 def dump(name, lo, hi, *, nbins=200, region_name_to_anchors=None):

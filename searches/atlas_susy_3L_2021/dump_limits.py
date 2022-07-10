@@ -82,7 +82,6 @@ def dump_limits(name, lo, hi):
 
     # best fit only, no uncertainty
     limit.dump_scan_delta(
-        "delta",
         fit.yield_linear,
         path_limit,
         region_1.ndata,
@@ -101,9 +100,7 @@ def dump_limits(name, lo, hi):
 
     # fit signal scan
     signal = fit_signal.FitSignal.load(path_fit)
-    limit.dump_scan_fit_signal(
-        signal.filename, signal, path_limit, print_=True
-    )
+    limit.dump_scan_fit_signal(signal, path_limit, print_=True)
 
 
 if __name__ == "__main__":

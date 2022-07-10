@@ -18,10 +18,10 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "SR2JBVEM_meffInc30_gluino": (5, 40),
-        "SR2JBVEM_meffInc30_squark": (40, 160),
-        "SR4JhighxBVEM_meffInc30": (0, 30),
-        "SR4JlowxBVEM_meffInc30": (0, 30),
+        #"SR2JBVEM_meffInc30_gluino": (5, 40),
+        #"SR2JBVEM_meffInc30_squark": (40, 160),
+        #"SR4JhighxBVEM_meffInc30": (0, 30),
+        #"SR4JlowxBVEM_meffInc30": (0, 30),
         "SR6JBVEM_meffInc30_gluino": (0, 14),
         "SR6JBVEM_meffInc30_squark": (2, 18),
     }
@@ -29,8 +29,8 @@ def main():
     region_name_to_anchors = {
         "SR2JBVEM_meffInc30_gluino": [38.0],
         "SR4JlowxBVEM_meffInc30": [25.0],
-        "SR6JBVEM_meffInc30_gluino": [5.0, 1.0],
-        "SR6JBVEM_meffInc30_squark": [9.0, 2.0],
+        "SR6JBVEM_meffInc30_gluino": [5.0, 1.0, 13.0],
+        "SR6JBVEM_meffInc30_squark": [9.0, 2.0, 16.25],
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

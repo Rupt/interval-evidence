@@ -46,22 +46,22 @@ def generate_regions():
     sr_name_to_srs = {
         # DF 0J
         "SR_DF_0J_100_inf": sr_df_0j,
-        "SR_DF_0J_160_inf": sr_df_0j[4:],
+        "SR_DF_0J_160_inf": sr_df_0j[5:],
         "SR_DF_0J_100_120": sr_df_0j[:3],
         "SR_DF_0J_120_160": sr_df_0j[3:5],
         # DF 1J
         "SR_DF_1J_100_inf": sr_df_1j,
-        "SR_DF_1J_160_inf": sr_df_1j[4:],
+        "SR_DF_1J_160_inf": sr_df_1j[5:],
         "SR_DF_1J_100_120": sr_df_1j[:3],
         "SR_DF_1J_120_160": sr_df_1j[3:5],
         # SF 0J
         "SR_SF_0J_100_inf": sr_sf_0j,
-        "SR_SF_0J_160_inf": sr_sf_0j[4:],
+        "SR_SF_0J_160_inf": sr_sf_0j[5:],
         "SR_SF_0J_100_120": sr_sf_0j[:3],
         "SR_SF_0J_120_160": sr_sf_0j[3:5],
         # SF 1J
         "SR_SF_1J_100_inf": sr_sf_1j,
-        "SR_SF_1J_160_inf": sr_sf_1j[4:],
+        "SR_SF_1J_160_inf": sr_sf_1j[5:],
         "SR_SF_1J_100_120": sr_sf_1j[:3],
         "SR_SF_1J_120_160": sr_sf_1j[3:5],
     }

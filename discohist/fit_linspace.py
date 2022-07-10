@@ -15,26 +15,29 @@ def fit(region, start, stop, num, *, anchors=None):
         anchors = []
     anchors = list(anchors)
 
-    anchor_inits = [_fit_slsqp(region, anchor_i).x for anchor_i in anchors]
+    anchor_inits = []
 
-    levels = []
-    for yield_ in numpy.linspace(start, stop, num):
+    def fit_optimum(region, yield_):
         # slsqp results depend on initialization (stuck in local minima?)
         # use suggested init and alternatives and take the best
         optimum_from_suggested = _fit_slsqp(region, yield_)
         optima_from_anchors = (
             _fit_slsqp(region, yield_, init=x) for x in anchor_inits
         )
-
-        optimum = min(
+        return min(
             [optimum_from_suggested, *optima_from_anchors],
             key=lambda x: x.fun,
         )
+
+    # populate anchors, bootstrapping off each as we go
+    for anchor in anchors:
+        anchor_inits.append(fit_optimum(region, anchor).x)
+
+    levels = []
+    for yield_ in numpy.linspace(start, stop, num):
+        optimum = fit_optimum(region, yield_)
         if not optimum.success:
-            print(optimum)
-            levels.append(numpy.nan)
-            continue
-            # raise RuntimeError(yield_)
+            raise RuntimeError(yield_)
 
         levels.append(optimum.fun)
 

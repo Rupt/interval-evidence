@@ -23,7 +23,7 @@ def main():
     }
 
     region_name_to_anchors = {
-        "SRlowMass": [0.0],
+        "SRlowMass": [0.0, 10.0],
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

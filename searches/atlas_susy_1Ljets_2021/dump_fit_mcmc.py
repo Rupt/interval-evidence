@@ -18,8 +18,8 @@ def main():
         "SR2JBVEM_meffInc30_squark": (40, 160),
         "SR4JhighxBVEM_meffInc30": (0, 30),
         "SR4JlowxBVEM_meffInc30": (0, 30),
-        "SR6JBVEM_meffInc30_gluino": (0, 12),
-        "SR6JBVEM_meffInc30_squark": (0, 12),
+        "SR6JBVEM_meffInc30_gluino": (0, 14),
+        "SR6JBVEM_meffInc30_squark": (2, 18),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

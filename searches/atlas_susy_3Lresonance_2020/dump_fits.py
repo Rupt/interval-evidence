@@ -74,10 +74,10 @@ def main():
 
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
+        dump_fits(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
 
 
-def dump(name, lo, hi, *, nbins=200, region_name_to_anchors=None):
+def dump_fits(name, lo, hi, *, nbins=200, region_name_to_anchors=None):
     if region_name_to_anchors is None:
         region_name_to_anchors = {}
 

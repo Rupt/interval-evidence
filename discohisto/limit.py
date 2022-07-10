@@ -326,13 +326,13 @@ class LimitScan:
 
     filename = "scan"
 
-    def dump(self, path, *, suffix=""):
+    def dump(self, path, *, suffix):
         os.makedirs(path, exist_ok=True)
         filename = self.filename + suffix + ".json"
         serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path, *, suffix=""):
+    def load(cls, path, *, suffix):
         filename = cls.filename + suffix + ".json"
         obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)
@@ -349,13 +349,13 @@ class LimitScanFit:
 
     filename = "scan_fit"
 
-    def dump(self, path, *, suffix=""):
+    def dump(self, path, *, suffix):
         os.makedirs(path, exist_ok=True)
         filename = self.filename + suffix + ".json"
         serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path, *, suffix=""):
+    def load(cls, path, *, suffix):
         filename = cls.filename + suffix + ".json"
         obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)
@@ -373,13 +373,13 @@ class LimitScanDelta:
 
     filename = "scan_delta"
 
-    def dump(self, path, *, suffix=""):
+    def dump(self, path, *, suffix):
         os.makedirs(path, exist_ok=True)
         filename = self.filename + suffix + ".json"
         serial.dump_json_human(asdict(self), os.path.join(path, filename))
 
     @classmethod
-    def load(cls, path, *, suffix=""):
+    def load(cls, path, *, suffix):
         filename = cls.filename + suffix + ".json"
         obj_json = serial.load_json(os.path.join(path, filename))
         return cls(**obj_json)

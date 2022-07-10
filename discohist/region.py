@@ -131,9 +131,8 @@ def merge_bins(workspace, channel_name, bins):
                 ),
             )
         if type_ in ("normsys", "lumi", "normfactor"):
-            # normsys, lumi apply equally to all bins
+            # these apply equally to all bins
             return modifier
-        # not sure about "shapefactor"; I've seen no examples
         raise NotImplementedError(type_)
 
     def merge_channel(channel):

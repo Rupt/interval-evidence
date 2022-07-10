@@ -14,8 +14,8 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        "SRMU": (0, 10),
-        "SRMET": (0, 10),
+        "SRMU": (0, 4),
+        "SRMET": (0, 2.5),
     }
 
     for name, (lo, hi) in region_name_to_scan.items():

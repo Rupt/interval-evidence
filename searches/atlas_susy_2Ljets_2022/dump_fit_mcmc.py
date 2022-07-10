@@ -7,7 +7,7 @@ import os
 
 import numpy
 
-from discohist import fit_mcmc_mix, fit_mcmc_tfp_ham, mcmc_core, region
+from discohisto import fit_mcmc_mix, fit_mcmc_tfp_ham, mcmc_core, region
 
 BASEPATH = os.path.dirname(__file__)
 

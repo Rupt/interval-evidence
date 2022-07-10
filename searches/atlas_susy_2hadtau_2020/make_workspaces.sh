@@ -7,7 +7,7 @@ curl -OJLH "Accept: application/x-tar" https://doi.org/10.17182/hepdata.92006.v2
 
 tar -f SUSY-2018-04_likelihoods.tar.gz -x Region-highMass/BkgOnly.json Region-lowMass/BkgOnly.json
 
-python ../../discohist/specgz.py Region-highMass/BkgOnly.json high_mass_bkg.json.gz
-python ../../discohist/specgz.py Region-lowMass/BkgOnly.json low_mass_bkg.json.gz
+python ../../discohisto/specgz.py Region-highMass/BkgOnly.json high_mass_bkg.json.gz
+python ../../discohisto/specgz.py Region-lowMass/BkgOnly.json low_mass_bkg.json.gz
 
 rm -r SUSY-2018-04_likelihoods.tar.gz Region-lowMass Region-highMass

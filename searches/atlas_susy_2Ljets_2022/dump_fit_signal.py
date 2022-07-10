@@ -5,7 +5,7 @@ time python searches/atlas_susy_2Ljets_2022/dump_fit_signal.py
 
 import os
 
-from discohist import fit_signal, region
+from discohisto import fit_signal, region
 
 BASEPATH = os.path.dirname(__file__)
 

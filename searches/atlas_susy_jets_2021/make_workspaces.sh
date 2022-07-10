@@ -33,7 +33,7 @@ tar -f Likelihoods.tar.gz -x ${JSON_GZS_BDT//BDT/Likelihoods\/BDT} ${JSON_GZS_SR
 
 for JSON_GZ in ${JSON_GZS_BDT} ${JSON_GZS_SR}
 do
-    python ../../discohist/specgz.py Likelihoods/${JSON_GZ} ${JSON_GZ/%_bkgonly.json/_bkg.json.gz}
+    python ../../discohisto/specgz.py Likelihoods/${JSON_GZ} ${JSON_GZ/%_bkgonly.json/_bkg.json.gz}
 done
 
 rm -r Likelihoods.tar.gz Likelihoods

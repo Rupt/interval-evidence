@@ -5,7 +5,7 @@ time python searches/atlas_susy_2L0J_2019/dump_fits.py
 
 import os
 
-from discohist import (
+from discohisto import (
     fit_cabinetry,
     fit_cabinetry_post,
     fit_linspace,

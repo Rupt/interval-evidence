@@ -51,36 +51,36 @@ pyhf patchset apply --name DR_OffShell_EWK --output-file ewk_offshell_bkg.json \
 ewk_discovery_bkgonly.json ewk_discovery_patchset.json
 
 
-python ../../discohist/specgz.py ewk_high_bkg.json ewk_high_bkg.json.gz
-python ../../discohist/specgz.py ewk_llbb_bkg.json ewk_llbb_bkg.json.gz
-python ../../discohist/specgz.py ewk_int_bkg.json ewk_int_bkg.json.gz
-python ../../discohist/specgz.py ewk_low_bkg.json ewk_low_bkg.json.gz
-python ../../discohist/specgz.py ewk_offshell_bkg.json ewk_offshell_bkg.json.gz
+python ../../discohisto/specgz.py ewk_high_bkg.json ewk_high_bkg.json.gz
+python ../../discohisto/specgz.py ewk_llbb_bkg.json ewk_llbb_bkg.json.gz
+python ../../discohisto/specgz.py ewk_int_bkg.json ewk_int_bkg.json.gz
+python ../../discohisto/specgz.py ewk_low_bkg.json ewk_low_bkg.json.gz
+python ../../discohisto/specgz.py ewk_offshell_bkg.json ewk_offshell_bkg.json.gz
 
 
-python ../../discohist/specgz.py RJR_SR2L_ISR_discovery_bkgonly.json rjr_sr2l_isr_bkg.json.gz
-python ../../discohist/specgz.py RJR_SR2L_LOW_discovery_bkgonly.json rjr_sr2l_low_bkg.json.gz
+python ../../discohisto/specgz.py RJR_SR2L_ISR_discovery_bkgonly.json rjr_sr2l_isr_bkg.json.gz
+python ../../discohisto/specgz.py RJR_SR2L_LOW_discovery_bkgonly.json rjr_sr2l_low_bkg.json.gz
 
 
-python ../../discohist/specgz.py STR-SRC_12_31_discovery_bkgonly.json str_src_12_31_bkg.json.gz
-python ../../discohist/specgz.py STR-SRC_12_61_discovery_bkgonly.json str_src_12_61_bkg.json.gz
-python ../../discohist/specgz.py STR-SRC_31_81_discovery_bkgonly.json str_src_31_81_bkg.json.gz
-python ../../discohist/specgz.py STR-SRC_81__discovery_bkgonly.json str_src_81_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRC_12_31_discovery_bkgonly.json str_src_12_31_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRC_12_61_discovery_bkgonly.json str_src_12_61_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRC_31_81_discovery_bkgonly.json str_src_31_81_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRC_81__discovery_bkgonly.json str_src_81_bkg.json.gz
 
-python ../../discohist/specgz.py STR-SRHigh_12_301_discovery_bkgonly.json str_srhigh_12_301_bkg.json.gz
-python ../../discohist/specgz.py STR-SRHigh_301__discovery_bkgonly.json str_srhigh_301_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRHigh_12_301_discovery_bkgonly.json str_srhigh_12_301_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRHigh_301__discovery_bkgonly.json str_srhigh_301_bkg.json.gz
 
-python ../../discohist/specgz.py STR-SRLow_101_201_discovery_bkgonly.json str_srlow_101_201_bkg.json.gz
-python ../../discohist/specgz.py STR-SRLow_101_301_discovery_bkgonly.json str_srlow_101_301_bkg.json.gz
-python ../../discohist/specgz.py STR-SRLow_12_81_discovery_bkgonly.json str_srlow_12_81_bkg.json.gz
-python ../../discohist/specgz.py STR-SRLow_301__discovery_bkgonly.json str_srlow_301_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRLow_101_201_discovery_bkgonly.json str_srlow_101_201_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRLow_101_301_discovery_bkgonly.json str_srlow_101_301_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRLow_12_81_discovery_bkgonly.json str_srlow_12_81_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRLow_301__discovery_bkgonly.json str_srlow_301_bkg.json.gz
 
-python ../../discohist/specgz.py STR-SRMed_12_101_discovery_bkgonly.json str_srmed_12_101_bkg.json.gz
-python ../../discohist/specgz.py STR-SRMed_101__discovery_bkgonly.json str_srmed_101_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRMed_12_101_discovery_bkgonly.json str_srmed_12_101_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRMed_101__discovery_bkgonly.json str_srmed_101_bkg.json.gz
 
-python ../../discohist/specgz.py STR-SRZHigh___discovery_bkgonly.json str_srzhigh_bkg.json.gz
-python ../../discohist/specgz.py STR-SRZLow___discovery_bkgonly.json str_srzlow_bkg.json.gz
-python ../../discohist/specgz.py STR-SRZMed___discovery_bkgonly.json str_srzmed_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRZHigh___discovery_bkgonly.json str_srzhigh_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRZLow___discovery_bkgonly.json str_srzlow_bkg.json.gz
+python ../../discohisto/specgz.py STR-SRZMed___discovery_bkgonly.json str_srzmed_bkg.json.gz
 
 
 rm -r llh_jsons.tar ${JSON_TGZS} ${JSON_TGZS//.tgz/} \

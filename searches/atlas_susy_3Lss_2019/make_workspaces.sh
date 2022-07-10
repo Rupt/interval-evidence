@@ -12,11 +12,11 @@ Rpc2L2b_BkgOnly.json \
 Rpc3LSS1b_BkgOnly.json \
 Rpv2L_BkgOnly.json
 
-python ../../discohist/specgz.py Rpc2L0b_BkgOnly.json rpc2l0b_bkg.json.gz
-python ../../discohist/specgz.py Rpc2L1b_BkgOnly.json rpc2l1b_bkg.json.gz
-python ../../discohist/specgz.py Rpc2L2b_BkgOnly.json rpc2l2b_bkg.json.gz
-python ../../discohist/specgz.py Rpc3LSS1b_BkgOnly.json rpc3lss1b_bkg.json.gz
-python ../../discohist/specgz.py Rpv2L_BkgOnly.json rpv2l_bkg.json.gz
+python ../../discohisto/specgz.py Rpc2L0b_BkgOnly.json rpc2l0b_bkg.json.gz
+python ../../discohisto/specgz.py Rpc2L1b_BkgOnly.json rpc2l1b_bkg.json.gz
+python ../../discohisto/specgz.py Rpc2L2b_BkgOnly.json rpc2l2b_bkg.json.gz
+python ../../discohisto/specgz.py Rpc3LSS1b_BkgOnly.json rpc3lss1b_bkg.json.gz
+python ../../discohisto/specgz.py Rpv2L_BkgOnly.json rpv2l_bkg.json.gz
 
 rm -r InclSS3L_likelihoods.tgz \
 Rpc2L0b_BkgOnly.json \

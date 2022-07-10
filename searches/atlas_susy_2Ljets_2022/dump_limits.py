@@ -5,7 +5,7 @@ time python searches/atlas_susy_2Ljets_2022/dump_limits.py
 
 import os
 
-from discohist import (
+from discohisto import (
     fit_cabinetry,
     fit_cabinetry_post,
     fit_linspace,

@@ -7,6 +7,6 @@ curl -OJLH "Accept: application/x-tar" https://doi.org/10.17182/hepdata.103062.v
 
 tar -f statistical_models.tar.gz -x statistical_models/bgOnly_likelihood.json
 
-python ../../discohist/specgz.py statistical_models/bgOnly_likelihood.json bkg.json.gz
+python ../../discohisto/specgz.py statistical_models/bgOnly_likelihood.json bkg.json.gz
 
 rm -r statistical_models.tar.gz statistical_models

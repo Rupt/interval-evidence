@@ -7,7 +7,7 @@ curl -OJLH "Accept: application/x-tar" https://doi.org/10.17182/hepdata.95751.v2
 
 tar -f statistical_models.tar.gz -x bkg_offshell.json bkg_onshell.json
 
-python ../../discohist/specgz.py bkg_offshell.json offshell_bkg.json.gz
-python ../../discohist/specgz.py bkg_onshell.json onshell_bkg.json.gz
+python ../../discohisto/specgz.py bkg_offshell.json offshell_bkg.json.gz
+python ../../discohisto/specgz.py bkg_onshell.json onshell_bkg.json.gz
 
 rm -r statistical_models.tar.gz bkg_onshell.json bkg_offshell.json

@@ -112,7 +112,13 @@ def dump_fits(name, lo, hi, *, nbins=200, region_name_to_anchors=None):
     fit_normal.fit(region_1).dump(dir_fit)
 
     # linspace
-    fit_linspace.fit(region_1, lo, hi, nbins + 1).dump(dir_fit)
+    fit_linspace.fit(
+        region_1,
+        lo,
+        hi,
+        nbins + 1,
+        anchors=region_name_to_anchors.get(name),
+    ).dump(dir_fit)
 
 
 if __name__ == "__main__":

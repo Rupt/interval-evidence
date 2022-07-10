@@ -38,12 +38,19 @@ def main():
         "SR6j-3400": (0, 10),
     }
 
+    region_name_to_anchors = {
+        "BDT-GGd2": [32.7],
+    }
+
     for name, (lo, hi) in region_name_to_scan.items():
         print(name)
-        dump_region(name, lo, hi)
+        dump_fits(name, lo, hi, region_name_to_anchors=region_name_to_anchors)
 
 
-def dump_region(name, lo, hi, nbins=200):
+def dump_fits(name, lo, hi, *, nbins=200, region_name_to_anchors=None):
+    if region_name_to_anchors is None:
+        region_name_to_anchors = {}
+
     dir_region = os.path.join(BASEPATH, name)
     region_1 = region.Region.load(dir_region)
 
@@ -57,7 +64,13 @@ def dump_region(name, lo, hi, nbins=200):
     fit_normal.fit(region_1).dump(dir_fit)
 
     # linspace
-    fit_linspace.fit(region_1, lo, hi, nbins + 1).dump(dir_fit)
+    fit_linspace.fit(
+        region_1,
+        lo,
+        hi,
+        nbins + 1,
+        anchors=region_name_to_anchors.get(name),
+    ).dump(dir_fit)
 
 
 if __name__ == "__main__":

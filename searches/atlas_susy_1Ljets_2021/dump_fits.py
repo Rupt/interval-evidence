@@ -18,10 +18,10 @@ BASEPATH = os.path.dirname(__file__)
 
 def main():
     region_name_to_scan = {
-        #"SR2JBVEM_meffInc30_gluino": (5, 40),
-        #"SR2JBVEM_meffInc30_squark": (40, 160),
-        #"SR4JhighxBVEM_meffInc30": (0, 30),
-        #"SR4JlowxBVEM_meffInc30": (0, 30),
+        "SR2JBVEM_meffInc30_gluino": (5, 40),
+        "SR2JBVEM_meffInc30_squark": (40, 160),
+        "SR4JhighxBVEM_meffInc30": (0, 30),
+        "SR4JlowxBVEM_meffInc30": (0, 30),
         "SR6JBVEM_meffInc30_gluino": (0, 14),
         "SR6JBVEM_meffInc30_squark": (2, 18),
     }

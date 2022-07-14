@@ -6,7 +6,7 @@ from functools import partial
 import numpy
 import scipy
 
-from . import serial
+from . import serial, stats
 
 # levels of:
 #     log prob (data | background + signal) - log prob(data | background)
@@ -190,8 +190,8 @@ def scan_delta(
 
     signals = numpy.linspace(start, stop, num)
 
-    log_ratio_0 = _poisson_log_minus_max(ndata, mu + 0)
-    log_ratios = _poisson_log_minus_max(ndata, mu + signals) - log_ratio_0
+    log_ratio_0 = stats.poisson_log_minus_max(ndata, mu + 0)
+    log_ratios = stats.poisson_log_minus_max(ndata, mu + signals) - log_ratio_0
     points = [crosses(signals, log_ratios, value) for value in levels]
 
     return LimitScanDelta(
@@ -297,14 +297,6 @@ def _ratio_log_mean(integrals, integral_zero):
     bulk = numpy.log(numpy.mean(integrals, axis=1))
     zero = numpy.log(numpy.mean(integral_zero))
     return bulk - zero
-
-
-def _poisson_log_minus_max(n, mu):
-    # log(e^-x x^n / n!) - log(e^-n n^n / n!)
-    # = -x + nlogx - (-n + nlogn)
-    # in convention 0log0 -> 0
-    # maximum(n, 1) just avoids a div0 error
-    return n - mu + scipy.special.xlogy(n, mu / numpy.maximum(n, 1))
 
 
 # serialization

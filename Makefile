@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-PYFILES := {lebesgue,test,discohisto,searches/*/}/*.py
+PYFILES := {lebesgue,discohisto,test,searches/*/,demo}/*.py
 
 
 .PHONY: help

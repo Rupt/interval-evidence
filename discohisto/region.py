@@ -386,6 +386,45 @@ def merge_normfactor(workspace, mod_name, mod_names_to_merge):
     return pyhf.Workspace(newspec)
 
 
+def discovery_workspace(region_):
+    """Return a Workspace for a discovery fit of region_.
+
+    https://twiki.cern.ch/twiki/bin/view/Main/HistFitterTutorialOutsideAtlas?rev=3#Setting_the_fit_types
+    says '''
+    Very important is that you do not input a signal model. What you MUST DO
+    instead is input a 'dummy' signal model that is a single bin histogram with
+    the bin value at 1
+    '''
+
+    Names are copied from HistFitter.
+    """
+    spec = copy.deepcopy(dict(region_.workspace))
+
+    # add the unit discovery signal
+    sample = {
+        "data": [1.0],
+        "modifiers": [
+            {"data": None, "name": "mu_Discovery", "type": "normfactor"}
+        ],
+        "name": "DiscoveryMode_%s" % region_.signal_region_name,
+    }
+    channel = _get_named(spec["channels"], region_.signal_region_name)
+    channel["samples"].append(sample)
+
+    # add its parameter
+    parameter = {
+        "bounds": [[0.0, numpy.inf]],
+        "fixed": False,
+        "inits": [1.0],
+        "name": "mu_Discovery",
+    }
+    (measurement,) = spec["measurements"]
+    measurement["config"]["parameters"].append(parameter)
+    measurement["config"]["poi"] = parameter["name"]
+
+    return pyhf.Workspace(spec)
+
+
 def _get_named(items, name):
     # awful linear search :(
     # would love to rearrange to a {name: obj} map...

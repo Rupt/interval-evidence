@@ -9,6 +9,7 @@ def run_tests():
         _test_blind.test_simple_model_blind,
         _test_blind.test_model,
         _test_stats.test_sigma_to_fro_llr,
+        _test_stats.test_poisson_log_minus_max,
         _test_limit.test_quantile,
         _test_limit.test_crosses,
         _test_region_properties.test_cache,

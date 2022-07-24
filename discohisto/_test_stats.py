@@ -1,6 +1,7 @@
 import numpy
+import scipy.stats
 
-from .stats import llr_to_sigma, sigma_to_llr
+from .stats import llr_to_sigma, poisson_log_minus_max, sigma_to_llr
 
 
 def test_sigma_to_fro_llr():
@@ -39,3 +40,25 @@ def test_sigma_to_fro_llr():
     numpy.testing.assert_array_equal(
         llr_to_sigma(range(10)), llr_to_sigma(numpy.arange(10))
     )
+
+
+def test_poisson_log_minus_max():
+    rng = numpy.random.Generator(numpy.random.Philox(123))
+
+    # fuzz
+    n = rng.integers(1000, size=2000)
+    mu = rng.uniform(high=1000, size=len(n))
+
+    chk = poisson_log_minus_max(n, mu)
+    ref = scipy.stats.poisson.logpmf(n, mu) - scipy.stats.poisson.logpmf(n, n)
+    numpy.testing.assert_allclose(chk, ref)
+
+    # special cases
+    n, mu = numpy.array([
+        (0, 1.0),
+        (0, 0.0),
+        (1, 0.0),
+    ]).T
+    chk = poisson_log_minus_max(n, mu)
+    ref = scipy.stats.poisson.logpmf(n, mu) - scipy.stats.poisson.logpmf(n, n)
+    numpy.testing.assert_allclose(chk, ref)

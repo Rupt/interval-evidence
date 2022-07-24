@@ -22,4 +22,4 @@ def poisson_log_minus_max(n, mu):
     # = -x + nlogx - (-n + nlogn)
     # in convention 0log0 -> 0
     # maximum(n, 1) just avoids a div0 error
-    return n - mu + scipy.special.xlogy(n, mu / numpy.maximum(n, 1))
+    return n - mu + scipy.special.xlogy(n, mu / (n + (n == 0)))

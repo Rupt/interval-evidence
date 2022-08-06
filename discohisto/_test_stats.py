@@ -54,11 +54,13 @@ def test_poisson_log_minus_max():
     numpy.testing.assert_allclose(chk, ref)
 
     # special cases
-    n, mu = numpy.array([
-        (0, 1.0),
-        (0, 0.0),
-        (1, 0.0),
-    ]).T
+    n, mu = numpy.array(
+        [
+            (0, 1.0),
+            (0, 0.0),
+            (1, 0.0),
+        ]
+    ).T
     chk = poisson_log_minus_max(n, mu)
     ref = scipy.stats.poisson.logpmf(n, mu) - scipy.stats.poisson.logpmf(n, n)
     numpy.testing.assert_allclose(chk, ref)

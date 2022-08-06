@@ -386,8 +386,8 @@ def merge_normfactor(workspace, mod_name, mod_names_to_merge):
     return pyhf.Workspace(newspec)
 
 
-def discovery_workspace(region_):
-    """Return a Workspace for a discovery fit of region_.
+def discovery_workspace(region_, *, scale=1e100):
+    """Return a Workspace for a discovery fit of region_ and a signal scale.
 
     https://twiki.cern.ch/twiki/bin/view/Main/HistFitterTutorialOutsideAtlas?rev=3#Setting_the_fit_types
     says '''
@@ -396,13 +396,17 @@ def discovery_workspace(region_):
     the bin value at 1
     '''
 
+    However, setting that unit signal messes with staterror normalization and
+    appears to be a difference from the ROOT implementation.
+    To minimize this effect, we scale the signal its normalization factor.
+
     Names are copied from HistFitter.
     """
     spec = copy.deepcopy(dict(region_.workspace))
 
     # add the unit discovery signal
     sample = {
-        "data": [1.0],
+        "data": [1.0 / scale],
         "modifiers": [
             {"data": None, "name": "mu_Discovery", "type": "normfactor"}
         ],
@@ -422,7 +426,7 @@ def discovery_workspace(region_):
     measurement["config"]["parameters"].append(parameter)
     measurement["config"]["poi"] = parameter["name"]
 
-    return pyhf.Workspace(spec)
+    return pyhf.Workspace(spec), scale
 
 
 def _get_named(items, name):

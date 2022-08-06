@@ -39,7 +39,7 @@ def cls_region(nsamples, region_path, seed=0):
 
     reg = region.Region.load(region_path)
 
-    workspace = region.discovery_workspace(reg)
+    workspace, scale = region.discovery_workspace(reg)
 
     model = workspace.model()
     data = workspace.data(model)
@@ -52,8 +52,8 @@ def cls_region(nsamples, region_path, seed=0):
         track_progress=False,
     )
 
-    dist_sb, dist_b = calculator.distributions(signal)
-    teststat = calculator.teststatistic(signal)
+    dist_sb, dist_b = calculator.distributions(signal * scale)
+    teststat = calculator.teststatistic(signal * scale)
     return teststat, dist_sb, dist_b
 
 

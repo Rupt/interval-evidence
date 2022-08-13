@@ -82,36 +82,48 @@ def load_frame():
     limit_mcmc_2obs = []
     limit_mcmc_3obs = []
 
-    # limits expected
-    limit_cabinetry_bkgexp = []
+    # limits expected and corresponding data
     limit_cabinetry_3exp = []
     limit_cabinetry_3exp_hi = []
     limit_cabinetry_3exp_lo = []
+    limit_cabinetry_nexp = []
+    limit_cabinetry_nexp_hi = []
+    limit_cabinetry_nexp_lo = []
 
-    limit_normal_bkgexp = []
     limit_normal_3exp = []
     limit_normal_3exp_hi = []
     limit_normal_3exp_lo = []
+    limit_normal_nexp = []
+    limit_normal_nexp_hi = []
+    limit_normal_nexp_lo = []
 
-    limit_normal_log_bkgexp = []
     limit_normal_log_3exp = []
     limit_normal_log_3exp_hi = []
     limit_normal_log_3exp_lo = []
+    limit_normal_log_nexp = []
+    limit_normal_log_nexp_hi = []
+    limit_normal_log_nexp_lo = []
 
-    limit_linspace_bkgexp = []
     limit_linspace_3exp = []
     limit_linspace_3exp_hi = []
     limit_linspace_3exp_lo = []
+    limit_linspace_nexp = []
+    limit_linspace_nexp_hi = []
+    limit_linspace_nexp_lo = []
 
-    limit_delta_bkgexp = []
     limit_delta_3exp = []
     limit_delta_3exp_hi = []
     limit_delta_3exp_lo = []
+    limit_delta_nexp = []
+    limit_delta_nexp_hi = []
+    limit_delta_nexp_lo = []
 
-    limit_mcmc_bkgexp = []
     limit_mcmc_3exp = []
     limit_mcmc_3exp_hi = []
     limit_mcmc_3exp_lo = []
+    limit_mcmc_nexp = []
+    limit_mcmc_nexp_hi = []
+    limit_mcmc_nexp_lo = []
 
     for search in searches:
         reported = load_reported(search)
@@ -196,58 +208,70 @@ def load_frame():
 
             # limits expected
             lim = load_limit("_cabinetry_central")
-            limit_cabinetry_bkgexp.append(lim.ndata)
             limit_cabinetry_3exp.append(last3(lim))
+            limit_cabinetry_nexp.append(lim.ndata)
             lim = load_limit("_cabinetry_up")
             limit_cabinetry_3exp_hi.append(last3(lim))
+            limit_cabinetry_nexp_hi.append(lim.ndata)
             lim = load_limit("_cabinetry_down")
             limit_cabinetry_3exp_lo.append(last3(lim))
+            limit_cabinetry_nexp_lo.append(lim.ndata)
 
             lim = load_limit("_normal_central")
-            limit_normal_bkgexp.append(lim.ndata)
             limit_normal_3exp.append(last3(lim))
+            limit_normal_nexp.append(lim.ndata)
             lim = load_limit("_normal_up")
             limit_normal_3exp_hi.append(last3(lim))
+            limit_normal_nexp_hi.append(lim.ndata)
             lim = load_limit("_normal_down")
             limit_normal_3exp_lo.append(last3(lim))
+            limit_normal_nexp_lo.append(lim.ndata)
 
             lim = load_limit("_normal_log_central")
-            limit_normal_log_bkgexp.append(lim.ndata)
             limit_normal_log_3exp.append(last3(lim))
+            limit_normal_log_nexp.append(lim.ndata)
             lim = load_limit("_normal_log_up")
             limit_normal_log_3exp_hi.append(last3(lim))
+            limit_normal_log_nexp_hi.append(lim.ndata)
             lim = load_limit("_normal_log_down")
             limit_normal_log_3exp_lo.append(last3(lim))
+            limit_normal_log_nexp_lo.append(lim.ndata)
 
             lim = load_limit("_linspace_central")
-            limit_linspace_bkgexp.append(lim.ndata)
             limit_linspace_3exp.append(last3(lim))
+            limit_linspace_nexp.append(lim.ndata)
             lim = load_limit("_linspace_up")
             limit_linspace_3exp_hi.append(last3(lim))
+            limit_linspace_nexp_hi.append(lim.ndata)
             lim = load_limit("_linspace_down")
             limit_linspace_3exp_lo.append(last3(lim))
+            limit_linspace_nexp_lo.append(lim.ndata)
 
             lim = limit.LimitScanDelta.load(limit_dir, suffix="_central")
             assert lim.levels[6:8] == [-2, -3], lim.levels[6:8]
-            limit_delta_bkgexp.append(lim.ndata)
             limit_delta_3exp.append(last3(lim))
+            limit_delta_nexp.append(lim.ndata)
             lim = limit.LimitScanDelta.load(limit_dir, suffix="_up")
             assert lim.levels[6:8] == [-2, -3], lim.levels[6:8]
             limit_delta_3exp_hi.append(last3(lim))
+            limit_delta_nexp_hi.append(lim.ndata)
             lim = limit.LimitScanDelta.load(limit_dir, suffix="_down")
             assert lim.levels[6:8] == [-2, -3], lim.levels[6:8]
             limit_delta_3exp_lo.append(last3(lim))
+            limit_delta_nexp_lo.append(lim.ndata)
 
             lim = _load_mcmc_limits(limit_dir, suffix="central")
             assert lim.levels[6:8] == [-2, -3], lim.levels[6:8]
-            limit_mcmc_bkgexp.append(lim.ndata)
             limit_mcmc_3exp.append(last3(lim))
+            limit_mcmc_nexp.append(lim.ndata)
             lim = _load_mcmc_limits(limit_dir, suffix="up")
             assert lim.levels[6:8] == [-2, -3], lim.levels[6:8]
             limit_mcmc_3exp_hi.append(last3(lim))
+            limit_mcmc_nexp_hi.append(lim.ndata)
             lim = _load_mcmc_limits(limit_dir, suffix="down")
             assert lim.levels[6:8] == [-2, -3], lim.levels[6:8]
             limit_mcmc_3exp_lo.append(last3(lim))
+            limit_mcmc_nexp_lo.append(lim.ndata)
 
     out = dict(
         # labels
@@ -291,30 +315,42 @@ def load_frame():
         limit_mcmc_2obs=limit_mcmc_2obs,
         limit_mcmc_3obs=limit_mcmc_3obs,
         # expected limits
-        limit_cabinetry_bkgexp=limit_cabinetry_bkgexp,
         limit_cabinetry_3exp=limit_cabinetry_3exp,
         limit_cabinetry_3exp_hi=limit_cabinetry_3exp_hi,
         limit_cabinetry_3exp_lo=limit_cabinetry_3exp_lo,
-        limit_normal_bkgexp=limit_normal_bkgexp,
+        limit_cabinetry_nexp=limit_cabinetry_nexp,
+        limit_cabinetry_nexp_hi=limit_cabinetry_nexp_hi,
+        limit_cabinetry_nexp_lo=limit_cabinetry_nexp_lo,
         limit_normal_3exp=limit_normal_3exp,
         limit_normal_3exp_hi=limit_normal_3exp_hi,
         limit_normal_3exp_lo=limit_normal_3exp_lo,
-        limit_normal_log_bkgexp=limit_normal_log_bkgexp,
+        limit_normal_nexp=limit_normal_nexp,
+        limit_normal_nexp_hi=limit_normal_nexp_hi,
+        limit_normal_nexp_lo=limit_normal_nexp_lo,
         limit_normal_log_3exp=limit_normal_log_3exp,
         limit_normal_log_3exp_hi=limit_normal_log_3exp_hi,
         limit_normal_log_3exp_lo=limit_normal_log_3exp_lo,
-        limit_linspace_bkgexp=limit_linspace_bkgexp,
+        limit_normal_log_nexp=limit_normal_log_nexp,
+        limit_normal_log_nexp_hi=limit_normal_log_nexp_hi,
+        limit_normal_log_nexp_lo=limit_normal_log_nexp_lo,
         limit_linspace_3exp=limit_linspace_3exp,
         limit_linspace_3exp_hi=limit_linspace_3exp_hi,
         limit_linspace_3exp_lo=limit_linspace_3exp_lo,
-        limit_delta_bkgexp=limit_delta_bkgexp,
+        limit_linspace_nexp=limit_linspace_nexp,
+        limit_linspace_nexp_hi=limit_linspace_nexp_hi,
+        limit_linspace_nexp_lo=limit_linspace_nexp_lo,
         limit_delta_3exp=limit_delta_3exp,
         limit_delta_3exp_hi=limit_delta_3exp_hi,
         limit_delta_3exp_lo=limit_delta_3exp_lo,
-        limit_mcmc_bkgexp=limit_mcmc_bkgexp,
+        limit_delta_nexp=limit_delta_nexp,
+        limit_delta_nexp_hi=limit_delta_nexp_hi,
+        limit_delta_nexp_lo=limit_delta_nexp_lo,
         limit_mcmc_3exp=limit_mcmc_3exp,
         limit_mcmc_3exp_hi=limit_mcmc_3exp_hi,
         limit_mcmc_3exp_lo=limit_mcmc_3exp_lo,
+        limit_mcmc_nexp=limit_mcmc_nexp,
+        limit_mcmc_nexp_hi=limit_mcmc_nexp_hi,
+        limit_mcmc_nexp_lo=limit_mcmc_nexp_lo,
     )
 
     return SimpleNamespace(

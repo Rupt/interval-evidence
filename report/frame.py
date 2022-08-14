@@ -59,9 +59,7 @@ def _test():
         foo=numpy.array([1, 2, 3]),
         bar=numpy.array([3.1, 3.2, 3.3]),
     )
-
     dump(frame, "test.csv")
-
     print(load("test.csv"))
 
 

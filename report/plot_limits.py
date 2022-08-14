@@ -8,13 +8,13 @@ python report/plot_limits.py
 import matplotlib
 from matplotlib import pyplot
 
-from report import frame, plot_lib
+from report import frame, lib_plot
 
 
 def main():
     frame_ = frame.load("report/results.csv")
 
-    plot_lib.default_init()
+    lib_plot.default_init()
     plot_limits(frame_, "cabinetry", "Cabinetry truncated normal")
     plot_limits(frame_, "normal", "Autodiff truncated normal")
     plot_limits(frame_, "normal_log", "Autodiff log normal")
@@ -31,7 +31,7 @@ def plot_limits(frame_, label, description_prior, lim=(1.5, 350)):
     assert lim[1] > max(max(reported_obs), max(label_2obs), max(label_3obs))
 
     figure, axis = pyplot.subplots(
-        figsize=(plot_lib.WIDTH_COLUMN, plot_lib.WIDTH_COLUMN * 0.98),
+        figsize=(lib_plot.WIDTH_COLUMN, lib_plot.WIDTH_COLUMN * 0.98),
         dpi=400,
         gridspec_kw={
             "top": 0.999,

@@ -36,8 +36,8 @@ def plot_limits(frame_, label, description_prior, lim=(1.5, 350)):
         gridspec_kw={
             "top": 0.999,
             "right": 0.999,
-            "bottom": 0.14,
-            "left": 0.15,
+            "bottom": 0.11,
+            "left": 0.12,
         },
     )
 
@@ -59,26 +59,26 @@ def plot_limits(frame_, label, description_prior, lim=(1.5, 350)):
     )
     axis.plot(lim, lim, "k", lw=0.5, zorder=0.5, markersize=0)
 
-    axis.legend(
-        [_marker_from(scatter3, 3), _marker_from(scatter2, 3)],
-        [r"$T^3_\mathrm{obs}$", r"$T^2_\mathrm{obs}$"],
-        frameon=False,
-        loc="upper left",
-        bbox_to_anchor=(0.02, 0.92),
-        numpoints=3,
-        framealpha=0,
-        handletextpad=0.4,
-        borderpad=0,
-        borderaxespad=0,
-    )
-
     axis.text(
-        0.015,
+        0.03,
         0.99,
         f"Prior: {description_prior}",
         horizontalalignment="left",
         verticalalignment="top",
         transform=axis.transAxes,
+    )
+
+    axis.legend(
+        [_marker_from(scatter3, 3), _marker_from(scatter2, 3)],
+        [r"$T^3_\mathrm{obs}$", r"$T^2_\mathrm{obs}$"],
+        frameon=False,
+        loc="upper left",
+        bbox_to_anchor=(0.05, 0.92),
+        numpoints=3,
+        framealpha=0,
+        handletextpad=0.4,
+        borderpad=0,
+        borderaxespad=0,
     )
 
     axis.set_aspect("equal")
@@ -87,11 +87,18 @@ def plot_limits(frame_, label, description_prior, lim=(1.5, 350)):
     axis.set_xlim(*lim)
     axis.set_ylim(*lim)
     axis.set_xlabel(r"$S^{95}_\mathrm{obs}$")
-    axis.set_ylabel(r"$T_\mathrm{obs}$")
-    axis.xaxis.set_label_coords(0.5, -0.1)
-    axis.yaxis.set_label_coords(-0.13, 0.5)
+    axis.set_ylabel(r"$T^*_\mathrm{obs}$")
+    axis.xaxis.set_label_coords(0.5, -0.06)
+    axis.yaxis.set_label_coords(-0.09, 0.5)
     axis.spines.top.set_visible(False)
     axis.spines.right.set_visible(False)
+
+    # https://stackoverflow.com/a/51213884
+    # default tick sizes {major: 3.5, minor: 2.0}
+    # axis.xaxis.majorTicks[0].tick1line.get_markersize())
+    # axis.xaxis.minorTicks[0].tick1line.get_markersize())
+    axis.tick_params(which="major", direction="in", length=5)
+    axis.tick_params(which="minor", direction="in", length=3)
 
     outpath = f"limits_{label}.pdf"
     figure.savefig(outpath)

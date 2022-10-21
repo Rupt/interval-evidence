@@ -28,7 +28,8 @@ def _fit(model, data, region_name):
     )
     index = model.config.channels.index(region_name)
     yield_ = numpy.sum(prediction.model_yields[index])
-    error = prediction.total_stdev_model_channels[index]
+    # ModelPrediction doc: "(last sample: sum over samples)"
+    error = prediction.total_stdev_model_channels[index][-1]
     return yield_, error
 
 

@@ -19,12 +19,18 @@ class Model(pyhf.Model):
         self.spec = model.spec
         self.schema = model.schema
         self.version = model.version
-        self.config = model.config
+        self.model_config = model.config
         self.main_model = model.main_model
         self.constraint_model = model.constraint_model
         self.fullpdf_tv = model.fullpdf_tv
 
         self.blind_channels = set(blind_channels)
+
+    @property
+    def config(self):
+        # pyhf 0.7.0 changed .config to ._config, so respect the conventional
+        # _private API volatility by using our own property
+        return self.model_config
 
     def make_pdf(self, pars):
         # pdf ~ Simultaneous([Independent(Poisson), constraint])

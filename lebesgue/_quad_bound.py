@@ -78,6 +78,8 @@ def integrator(func: Callable) -> Callable:
 
         return fs[: i + 1], tol, err_tail
 
+    # _choose_err_scale is defined below because it does not need func closure.
+
     @numba.njit
     def _linear_scan(args, fs, err_scale):
         # Refine each bin with a linear scan.

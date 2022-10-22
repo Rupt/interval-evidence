@@ -60,7 +60,7 @@ def plot_limits(frame_, label, description_prior, lim=(1.5, 350)):
     axis.plot(lim, lim, "k", lw=0.5, zorder=0.5, markersize=0)
 
     axis.text(
-        0.03,
+        0.06,
         0.99,
         f"Prior: {description_prior}",
         horizontalalignment="left",

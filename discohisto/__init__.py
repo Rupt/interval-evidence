@@ -24,22 +24,7 @@ jax.config.update("jax_platform_name", "cpu")
 jax.config.update("jax_enable_x64", True)
 
 # pyhf
-
 pyhf.set_backend("jax")
 
-
-def _no_validate_no_network(*args, **kwargs):
-    # pyhf validation downloads schema files from the interweb every time
-    # objects of certain classes are __init__ialized.
-    # Not all of those classes offer options to disable that validation.
-    # This has been a source of sporadic crashes, and I want to work without an
-    # internet connection.
-    ...
-
-
-pyhf.schema.validate = _no_validate_no_network
-
-
 # pyhf screams into this logger when its fits fail
-
 _pyhf_optimize_mixins_log.setLevel(logging.CRITICAL)

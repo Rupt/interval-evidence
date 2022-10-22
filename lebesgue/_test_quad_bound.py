@@ -48,6 +48,7 @@ def test_next_pow2():
     assert _next_pow2(512.1) == 1024
     assert _next_pow2(2**52) == 2**52
     assert _next_pow2(2**52 + 1) == 2**53
+    assert numpy.isnan(_next_pow2(numpy.nan))
 
 
 # utilities
@@ -96,8 +97,8 @@ _normal_normal_integrate_func = _model.integrate_func
 
 @integrator.put(_model.mass_func)
 @numba.njit(cache=True)
-def _normal_normal_integrate(args, ratio):
-    return _normal_normal_integrate_func(args, ratio)
+def _normal_normal_integrate(args, rtol):
+    return _normal_normal_integrate_func(args, rtol)
 
 
 def normal_normal_logz_ratio(mu1, sigma1, mu2, sigma2):

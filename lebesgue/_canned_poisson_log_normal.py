@@ -30,5 +30,5 @@ integrate_func = example_model.integrate_func
 
 @integrator.put(example_model.mass_func)
 @numba.njit(integrator_signature(example_model.args), cache=True)
-def integrate(args, ratio):
-    return integrate_func(args, ratio)
+def integrate(args, rtol):
+    return integrate_func(args, rtol)

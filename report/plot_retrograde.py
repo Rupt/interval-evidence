@@ -13,9 +13,9 @@ from discohisto.limit import crosses
 from discohisto.stats import poisson_log_minus_max
 from report import lib_plot
 
-
 # TODO: use standard colors from lib_plot
 COLORS = ["xkcd:blue", "xkcd:red", "xkcd:orange"]
+
 
 def main():
     lib_plot.default_init()
@@ -159,7 +159,6 @@ def plot_models(signals, ns, point_to_weight, range_):
                 color=color_i,
             )
 
-
     axis.set_xlim(*range_)
     axis.set_ylim(*ylim)
     axis.set_yticks(range(0, -6, -1))
@@ -181,6 +180,7 @@ def plot_models(signals, ns, point_to_weight, range_):
     figure.savefig(outpath)
     print("wrote %r" % outpath)
     pyplot.close(figure)
+
 
 # utilities
 

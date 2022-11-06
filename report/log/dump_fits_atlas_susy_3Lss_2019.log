@@ -1,0 +1,18 @@
+Rpv2L
+W VariableMetricBuilder No improvement in line search
+Rpc3LSS1b
+W VariableMetricBuilder No improvement in line search
+Traceback (most recent call last):
+  File "/home/tombs/Documents/interval-evidence/searches/atlas_susy_3Lss_2019/dump_fits.py", line 60, in <module>
+    main()
+  File "/home/tombs/Documents/interval-evidence/searches/atlas_susy_3Lss_2019/dump_fits.py", line 30, in main
+    dump(name, lo, hi)
+  File "/home/tombs/Documents/interval-evidence/searches/atlas_susy_3Lss_2019/dump_fits.py", line 50, in dump
+    fit_linspace.fit(
+  File "/home/tombs/Documents/interval-evidence/discohisto/fit_linspace.py", line 40, in fit
+    raise RuntimeError(yield_)
+RuntimeError: 0.0
+
+real	0m15.903s
+user	0m17.841s
+sys	0m2.802s

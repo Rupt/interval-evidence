@@ -1,0 +1,19 @@
+Rpv2L
+acceptance: 1.00 (9999961 / 10000000)
+efficiency: 0.63 (63377.3 / 99999.6)
+Rpc3LSS1b
+acceptance: 1.00 (9999854 / 10000000)
+efficiency: 0.65 (64670.1 / 99998.5)
+Rpc2L2b
+acceptance: 1.00 (9999463 / 10000000)
+efficiency: 0.63 (63052.7 / 99994.6)
+Rpc2L1b
+acceptance: 1.00 (9999950 / 10000000)
+efficiency: 0.63 (62899.8 / 99999.5)
+Rpc2L0b
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.65 (65316.2 / 100000.0)
+
+real	1m19.039s
+user	9m24.748s
+sys	0m6.162s

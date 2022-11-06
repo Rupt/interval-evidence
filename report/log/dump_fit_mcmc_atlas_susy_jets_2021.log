@@ -1,0 +1,58 @@
+BDT-GGd1
+acceptance: 1.00 (9999953 / 10000000)
+efficiency: 0.50 (49792.0 / 99999.5)
+BDT-GGd2
+acceptance: 1.00 (9999476 / 10000000)
+efficiency: 0.60 (59850.8 / 99994.8)
+BDT-GGd3
+acceptance: 1.00 (9999927 / 10000000)
+efficiency: 0.61 (61253.8 / 99999.3)
+BDT-GGd4
+acceptance: 1.00 (9999991 / 10000000)
+efficiency: 0.75 (75018.0 / 99999.9)
+BDT-GGo1
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.57 (56757.6 / 100000.0)
+BDT-GGo2
+acceptance: 1.00 (9999997 / 10000000)
+efficiency: 0.63 (62840.1 / 100000.0)
+BDT-GGo3
+acceptance: 1.00 (9999018 / 10000000)
+efficiency: 0.72 (71856.2 / 99990.2)
+BDT-GGo4
+acceptance: 1.00 (9999997 / 10000000)
+efficiency: 0.65 (65024.1 / 100000.0)
+SR2j-1600
+acceptance: 1.00 (9999987 / 10000000)
+efficiency: 0.66 (66181.0 / 99999.9)
+SR2j-2200
+acceptance: 1.00 (9999976 / 10000000)
+efficiency: 0.67 (66585.5 / 99999.8)
+SR2j-2800
+acceptance: 1.00 (9999900 / 10000000)
+efficiency: 0.65 (64900.8 / 99999.0)
+SR4j-1000
+acceptance: 1.00 (9999826 / 10000000)
+efficiency: 0.75 (74692.2 / 99998.3)
+SR4j-2200
+acceptance: 1.00 (9999864 / 10000000)
+efficiency: 0.76 (75721.8 / 99998.6)
+SR4j-3400
+acceptance: 1.00 (9999984 / 10000000)
+efficiency: 0.68 (68271.0 / 99999.8)
+SR5j-1600
+acceptance: 1.00 (9998404 / 10000000)
+efficiency: 0.75 (75439.3 / 99984.0)
+SR6j-1000
+acceptance: 1.00 (9999990 / 10000000)
+efficiency: 0.67 (66884.7 / 99999.9)
+SR6j-2200
+acceptance: 1.00 (9963883 / 10000000)
+efficiency: 0.49 (48508.9 / 99638.8)
+SR6j-3400
+acceptance: 1.00 (9998990 / 10000000)
+efficiency: 0.40 (40127.3 / 99989.9)
+
+real	43m1.790s
+user	453m41.798s
+sys	0m25.293s

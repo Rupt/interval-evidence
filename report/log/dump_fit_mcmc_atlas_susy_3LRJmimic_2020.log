@@ -1,0 +1,10 @@
+SRlow
+acceptance: 0.99 (9925762 / 10000000)
+efficiency: 0.32 (32023.3 / 99257.6)
+SRISR
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.40 (40331.0 / 100000.0)
+
+real	1m57.877s
+user	17m7.240s
+sys	0m4.488s

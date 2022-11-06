@@ -1,0 +1,64 @@
+incSR_WZ_1
+acceptance: 1.00 (9999399 / 10000000)
+efficiency: 0.55 (54507.9 / 99994.0)
+incSR_WZ_2
+acceptance: 0.98 (9845697 / 10000000)
+efficiency: 0.55 (53678.1 / 98457.0)
+incSR_WZ_3
+acceptance: 1.00 (9999988 / 10000000)
+efficiency: 0.55 (55484.2 / 99999.9)
+incSR_offWZ_highEt_nj_a
+acceptance: 1.00 (9999898 / 10000000)
+efficiency: 0.39 (38557.3 / 99999.0)
+incSR_offWZ_highEt_nj_b
+acceptance: 1.00 (9999300 / 10000000)
+efficiency: 0.25 (25116.6 / 99993.0)
+incSR_offWZ_highEt_nj_c1
+acceptance: 1.00 (9999477 / 10000000)
+efficiency: 0.36 (36037.8 / 99994.8)
+incSR_offWZ_highEt_nj_c2
+acceptance: 1.00 (9985829 / 10000000)
+efficiency: 0.37 (36588.9 / 99858.3)
+incSR_offWZ_lowEt_b
+acceptance: 1.00 (9999979 / 10000000)
+efficiency: 0.41 (41003.0 / 99999.8)
+incSR_offWZ_highEt_b
+acceptance: 0.99 (9913657 / 10000000)
+efficiency: 0.26 (25446.5 / 99136.6)
+incSR_offWZ_lowEt_c
+acceptance: 1.00 (9999988 / 10000000)
+efficiency: 0.45 (45053.2 / 99999.9)
+incSR_offWZ_highEt_c
+acceptance: 1.00 (9999578 / 10000000)
+efficiency: 0.36 (35545.6 / 99995.8)
+incSR_offWZ_d
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.42 (41511.9 / 100000.0)
+incSR_offWZ_e1
+acceptance: 1.00 (9999995 / 10000000)
+efficiency: 0.43 (42505.0 / 99999.9)
+incSR_offWZ_e2
+acceptance: 1.00 (9999991 / 10000000)
+efficiency: 0.44 (43798.7 / 99999.9)
+incSR_offWZ_f1
+acceptance: 1.00 (9999990 / 10000000)
+efficiency: 0.41 (41181.2 / 99999.9)
+incSR_offWZ_f2
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.40 (40483.3 / 100000.0)
+incSR_offWZ_g1
+acceptance: 1.00 (9999998 / 10000000)
+efficiency: 0.40 (40397.5 / 100000.0)
+incSR_offWZ_g2
+acceptance: 1.00 (9999952 / 10000000)
+efficiency: 0.41 (40838.9 / 99999.5)
+incSR_offWZ_g3
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.42 (41663.1 / 100000.0)
+incSR_offWZ_g4
+acceptance: 1.00 (9999997 / 10000000)
+efficiency: 0.42 (41702.8 / 100000.0)
+
+real	47m49.760s
+user	486m34.704s
+sys	0m45.855s

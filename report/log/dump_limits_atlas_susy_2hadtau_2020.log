@@ -1,0 +1,64 @@
+SRlowMass
+         cabinetry n=10.0   19.2
+         cabinetry n=3.0    7.7
+         cabinetry n=6.0    11.8
+         cabinetry n=9.0    17.1
+    cabinetry_post n=10.0   18.0
+    cabinetry_post n=3.7    8.8
+    cabinetry_post n=7.4    13.8
+    cabinetry_post n=11.2   20.1
+            normal n=10.0   19.1
+            normal n=3.1    7.6
+            normal n=6.0    11.5
+            normal n=8.8    16.7
+        normal_log n=10.0   18.8
+        normal_log n=3.2    7.5
+        normal_log n=6.2    11.6
+        normal_log n=9.1    16.9
+             delta n=10.0   18.7
+             delta n=3.5    7.3
+             delta n=6.0    10.6
+             delta n=8.4    15.1
+          linspace n=10.0   16.7
+          linspace n=6.7    11.7
+          linspace n=20.8   32.1
+          linspace n=35.0   50.6
+      mcmc_tfp_ham n=10.0   16.5
+      mcmc_tfp_ham n=3.3    7.1
+      mcmc_tfp_ham n=9.2    15.1
+      mcmc_tfp_ham n=15.1   25.9
+            signal n=obs    18.5
+SRhighMass
+         cabinetry n=7.0    13.3
+         cabinetry n=5.0    10.9
+         cabinetry n=10.2   17.5
+         cabinetry n=15.5   25.6
+    cabinetry_post n=7.0    12.0
+    cabinetry_post n=4.5    8.8
+    cabinetry_post n=8.1    13.5
+    cabinetry_post n=11.7   19.6
+            normal n=7.0    13.4
+            normal n=4.9    10.9
+            normal n=10.3   17.7
+            normal n=15.6   25.9
+        normal_log n=7.0    11.7
+        normal_log n=5.1    9.4
+        normal_log n=11.2   17.6
+        normal_log n=17.2   27.4
+             delta n=7.0    8.9
+             delta n=7.0    8.9
+             delta n=10.2   12.8
+             delta n=13.4   18.2
+          linspace n=7.0    11.7
+          linspace n=5.8    10.3
+          linspace n=21.7   32.4
+          linspace n=37.6   53.8
+      mcmc_tfp_ham n=7.0    11.8
+      mcmc_tfp_ham n=5.5    10.0
+      mcmc_tfp_ham n=13.4   20.6
+      mcmc_tfp_ham n=21.3   33.0
+            signal n=obs    12.1
+
+real	0m28.318s
+user	0m29.104s
+sys	0m1.360s

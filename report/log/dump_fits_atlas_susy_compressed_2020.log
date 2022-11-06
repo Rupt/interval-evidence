@@ -1,0 +1,23 @@
+SR_E_mll_1
+W MnPosDef non-positive diagonal element in covariance matrix[ 87 ] = -0.00335567
+W MnPosDef Added to diagonal of Error matrix a value 0.503357
+SR_E_mll_2
+SR_E_mll_3
+SR_E_mll_5
+SR_E_mll_10
+SR_E_mll_20
+SR_E_mll_30
+SR_E_mll_40
+SR_E_mll_60
+SR_S_100p5
+SR_S_101
+SR_S_102
+SR_S_105
+SR_S_110
+SR_S_120
+SR_S_130
+SR_S_140
+
+real	26m36.149s
+user	26m46.974s
+sys	0m14.169s

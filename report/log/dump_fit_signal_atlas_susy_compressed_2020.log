@@ -1,0 +1,23 @@
+/home/tombs/Documents/interval-evidence/env/lib/python3.10/site-packages/scipy/optimize/_optimize.py:284: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  warnings.warn("Values in x were outside bounds during a "
+SR_E_mll_1
+SR_E_mll_2
+SR_E_mll_3
+SR_E_mll_5
+SR_E_mll_10
+SR_E_mll_20
+SR_E_mll_30
+SR_E_mll_40
+SR_E_mll_60
+SR_S_100p5
+SR_S_101
+SR_S_102
+SR_S_105
+SR_S_110
+SR_S_120
+SR_S_130
+SR_S_140
+
+real	6m0.356s
+user	6m1.729s
+sys	0m1.700s

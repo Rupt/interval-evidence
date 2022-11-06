@@ -1,0 +1,8 @@
+SRMU
+W VariableMetricBuilder No improvement in line search
+SRMET
+W VariableMetricBuilder No improvement in line search
+
+real	0m5.044s
+user	0m6.004s
+sys	0m1.457s

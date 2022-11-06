@@ -1,0 +1,10 @@
+SRlowMass
+acceptance: 0.97 (9703607 / 10000000)
+efficiency: 0.24 (23339.7 / 97036.1)
+SRhighMass
+acceptance: 1.00 (9971353 / 10000000)
+efficiency: 0.27 (26983.7 / 99713.5)
+
+real	27m54.550s
+user	314m48.558s
+sys	0m10.039s

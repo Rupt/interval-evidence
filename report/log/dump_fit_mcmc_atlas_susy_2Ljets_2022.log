@@ -1,0 +1,70 @@
+ewk_high
+acceptance: 1.00 (9999996 / 10000000)
+efficiency: 0.47 (47242.6 / 100000.0)
+ewk_int
+acceptance: 1.00 (9999906 / 10000000)
+efficiency: 0.46 (45875.7 / 99999.1)
+ewk_llbb
+acceptance: 0.99 (9894063 / 10000000)
+efficiency: 0.46 (45368.6 / 98940.6)
+ewk_low
+acceptance: 1.00 (9999162 / 10000000)
+efficiency: 0.47 (46864.4 / 99991.6)
+ewk_offshell
+acceptance: 1.00 (9999867 / 10000000)
+efficiency: 0.48 (48381.7 / 99998.7)
+rjr_sr2l_isr
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.14 (14313.8 / 100000.0)
+rjr_sr2l_low
+acceptance: 1.00 (9999996 / 10000000)
+efficiency: 0.61 (60837.6 / 100000.0)
+str_src_12_31
+acceptance: 1.00 (9999414 / 10000000)
+efficiency: 0.08 (8041.2 / 99994.1)
+str_src_12_61
+acceptance: 1.00 (9999827 / 10000000)
+efficiency: 0.09 (8625.7 / 99998.3)
+str_src_31_81
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.08 (8474.6 / 100000.0)
+str_src_81
+acceptance: 1.00 (9974959 / 10000000)
+efficiency: 0.08 (8373.9 / 99749.6)
+str_srhigh_12_301
+acceptance: 1.00 (9999917 / 10000000)
+efficiency: 0.51 (51453.2 / 99999.2)
+str_srhigh_301
+acceptance: 1.00 (9997818 / 10000000)
+efficiency: 0.48 (47958.1 / 99978.2)
+str_srlow_101_201
+acceptance: 0.97 (9689076 / 10000000)
+efficiency: 0.52 (50407.5 / 96890.8)
+str_srlow_101_301
+acceptance: 0.96 (9608753 / 10000000)
+efficiency: 0.55 (52667.9 / 96087.5)
+str_srlow_12_81
+acceptance: 1.00 (9999985 / 10000000)
+efficiency: 0.55 (54803.3 / 99999.9)
+str_srlow_301
+acceptance: 0.99 (9930633 / 10000000)
+efficiency: 0.52 (52031.8 / 99306.3)
+str_srmed_101
+acceptance: 1.00 (9999580 / 10000000)
+efficiency: 0.32 (32453.8 / 99995.8)
+str_srmed_12_101
+acceptance: 1.00 (9999977 / 10000000)
+efficiency: 0.35 (34503.3 / 99999.8)
+str_srzhigh
+acceptance: 1.00 (9999970 / 10000000)
+efficiency: 0.48 (48391.3 / 99999.7)
+str_srzlow
+acceptance: 1.00 (9998783 / 10000000)
+efficiency: 0.56 (55983.7 / 99987.8)
+str_srzmed
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.53 (53448.5 / 100000.0)
+
+real	47m52.188s
+user	494m5.498s
+sys	0m41.479s

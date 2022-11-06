@@ -1,0 +1,64 @@
+SRlow
+         cabinetry n=51.0   34.3
+         cabinetry n=37.6   19.1
+         cabinetry n=46.0   27.6
+         cabinetry n=54.3   39.2
+    cabinetry_post n=51.0   31.0
+    cabinetry_post n=39.7   18.6
+    cabinetry_post n=47.7   26.7
+    cabinetry_post n=55.7   37.9
+            normal n=51.0   34.3
+            normal n=37.6   19.2
+            normal n=46.0   27.7
+            normal n=54.3   39.3
+        normal_log n=51.0   33.7
+        normal_log n=37.8   18.7
+        normal_log n=46.2   27.4
+        normal_log n=54.6   39.1
+             delta n=51.0   30.4
+             delta n=39.2   16.5
+             delta n=46.0   23.4
+             delta n=52.7   33.1
+          linspace n=51.0   49.4
+          linspace n=34.9   34.5
+          linspace n=53.3   52.6
+          linspace n=71.7   77.9
+          mcmc_mix n=51.0   35.2
+          mcmc_mix n=37.3   20.3
+          mcmc_mix n=46.6   29.3
+          mcmc_mix n=55.8   42.7
+            signal n=obs    33.7
+SRISR
+         cabinetry n=30.0   28.9
+         cabinetry n=18.2   13.0
+         cabinetry n=23.5   18.7
+         cabinetry n=28.7   26.7
+    cabinetry_post n=30.0   27.2
+    cabinetry_post n=19.2   13.1
+    cabinetry_post n=24.5   18.9
+    cabinetry_post n=29.8   27.0
+            normal n=30.0   28.9
+            normal n=18.2   13.0
+            normal n=23.5   18.8
+            normal n=28.7   26.7
+        normal_log n=30.0   28.8
+        normal_log n=18.3   12.9
+        normal_log n=23.5   18.7
+        normal_log n=28.8   26.7
+             delta n=30.0   28.2
+             delta n=18.6   12.4
+             delta n=23.5   17.7
+             delta n=28.3   25.1
+          linspace n=30.0   28.6
+          linspace n=18.4   13.0
+          linspace n=23.7   18.8
+          linspace n=29.0   26.8
+          mcmc_mix n=30.0   28.9
+          mcmc_mix n=18.2   12.9
+          mcmc_mix n=23.4   18.7
+          mcmc_mix n=28.7   26.7
+            signal n=obs    26.6
+
+real	0m25.297s
+user	0m26.075s
+sys	0m1.456s

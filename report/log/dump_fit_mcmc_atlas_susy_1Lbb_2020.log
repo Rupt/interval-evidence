@@ -1,0 +1,13 @@
+SR_LM_disc
+acceptance: 1.00 (9999265 / 10000000)
+efficiency: 0.63 (62939.1 / 99992.6)
+SR_MM_disc
+acceptance: 1.00 (9995566 / 10000000)
+efficiency: 0.61 (61282.0 / 99955.7)
+SR_HM_disc
+acceptance: 1.00 (9981661 / 10000000)
+efficiency: 0.43 (42944.0 / 99816.6)
+
+real	99m0.726s
+user	1132m21.131s
+sys	0m23.541s

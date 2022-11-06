@@ -1,0 +1,52 @@
+SR_DF_0J_100_inf
+acceptance: 1.00 (9999984 / 10000000)
+efficiency: 0.34 (33782.0 / 99999.8)
+SR_DF_0J_160_inf
+acceptance: 1.00 (9999964 / 10000000)
+efficiency: 0.33 (32960.6 / 99999.6)
+SR_DF_0J_100_120
+acceptance: 1.00 (9999990 / 10000000)
+efficiency: 0.33 (32958.5 / 99999.9)
+SR_DF_0J_120_160
+acceptance: 1.00 (9999911 / 10000000)
+efficiency: 0.33 (33291.6 / 99999.1)
+SR_DF_1J_100_inf
+acceptance: 1.00 (9999855 / 10000000)
+efficiency: 0.34 (34122.0 / 99998.6)
+SR_DF_1J_160_inf
+acceptance: 1.00 (9999989 / 10000000)
+efficiency: 0.33 (32609.0 / 99999.9)
+SR_DF_1J_100_120
+acceptance: 1.00 (9999993 / 10000000)
+efficiency: 0.35 (34689.2 / 99999.9)
+SR_DF_1J_120_160
+acceptance: 1.00 (9999916 / 10000000)
+efficiency: 0.34 (33865.8 / 99999.2)
+SR_SF_0J_100_inf
+acceptance: 1.00 (9999987 / 10000000)
+efficiency: 0.33 (33267.1 / 99999.9)
+SR_SF_0J_160_inf
+acceptance: 1.00 (9999914 / 10000000)
+efficiency: 0.34 (34340.9 / 99999.1)
+SR_SF_0J_100_120
+acceptance: 1.00 (9999994 / 10000000)
+efficiency: 0.34 (34219.0 / 99999.9)
+SR_SF_0J_120_160
+acceptance: 1.00 (9999984 / 10000000)
+efficiency: 0.33 (32785.6 / 99999.8)
+SR_SF_1J_100_inf
+acceptance: 1.00 (9999996 / 10000000)
+efficiency: 0.33 (33188.0 / 100000.0)
+SR_SF_1J_160_inf
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.33 (33359.7 / 100000.0)
+SR_SF_1J_100_120
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.33 (32977.1 / 100000.0)
+SR_SF_1J_120_160
+acceptance: 1.00 (9999977 / 10000000)
+efficiency: 0.33 (33067.9 / 99999.8)
+
+real	11m50.757s
+user	104m17.560s
+sys	0m15.388s

@@ -1,0 +1,148 @@
+SRFR_90_110_all
+acceptance: 1.00 (9995871 / 10000000)
+efficiency: 0.40 (40248.5 / 99958.7)
+SRFR_110_130_all
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.41 (40513.5 / 100000.0)
+SRFR_130_150_all
+acceptance: 1.00 (9999993 / 10000000)
+efficiency: 0.28 (27611.3 / 99999.9)
+SRFR_150_170_all
+acceptance: 1.00 (9999974 / 10000000)
+efficiency: 0.37 (36726.5 / 99999.7)
+SRFR_170_190_all
+acceptance: 1.00 (9999990 / 10000000)
+efficiency: 0.32 (32053.7 / 99999.9)
+SRFR_190_210_all
+acceptance: 1.00 (9999995 / 10000000)
+efficiency: 0.31 (30901.2 / 99999.9)
+SRFR_210_230_all
+acceptance: 1.00 (9996451 / 10000000)
+efficiency: 0.26 (26268.6 / 99964.5)
+SRFR_230_250_all
+acceptance: 1.00 (9999982 / 10000000)
+efficiency: 0.36 (36099.9 / 99999.8)
+SRFR_250_270_all
+acceptance: 1.00 (9999946 / 10000000)
+efficiency: 0.34 (33544.8 / 99999.5)
+SRFR_270_300_all
+acceptance: 1.00 (9992774 / 10000000)
+efficiency: 0.37 (36897.6 / 99927.7)
+SRFR_300_330_all
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.00 (2.7 / 100000.0)
+SRFR_330_360_all
+acceptance: 1.00 (9996926 / 10000000)
+efficiency: 0.34 (33920.3 / 99969.3)
+SRFR_360_400_all
+acceptance: 1.00 (9999819 / 10000000)
+efficiency: 0.23 (22827.2 / 99998.2)
+SRFR_400_440_all
+acceptance: 0.99 (9929234 / 10000000)
+efficiency: 0.36 (35399.3 / 99292.3)
+SRFR_440_580_all
+acceptance: 1.00 (9999871 / 10000000)
+efficiency: 0.30 (30412.5 / 99998.7)
+SRFR_580_inf_all
+acceptance: 0.90 (8970248 / 10000000)
+efficiency: 0.33 (29290.6 / 89702.5)
+SR4l_90_110_all
+acceptance: 1.00 (9999768 / 10000000)
+efficiency: 0.41 (41202.0 / 99997.7)
+SR4l_110_130_all
+acceptance: 1.00 (9999361 / 10000000)
+efficiency: 0.45 (45018.7 / 99993.6)
+SR4l_130_150_all
+acceptance: 1.00 (9999638 / 10000000)
+efficiency: 0.35 (34721.8 / 99996.4)
+SR4l_150_170_all
+acceptance: 1.00 (9999963 / 10000000)
+efficiency: 0.41 (40524.4 / 99999.6)
+SR4l_170_190_all
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.30 (30370.4 / 100000.0)
+SR4l_190_210_all
+acceptance: 1.00 (9999888 / 10000000)
+efficiency: 0.45 (44640.5 / 99998.9)
+SR4l_210_230_all
+acceptance: 1.00 (9999213 / 10000000)
+efficiency: 0.35 (35157.8 / 99992.1)
+SR4l_230_250_all
+acceptance: 1.00 (9999818 / 10000000)
+efficiency: 0.37 (36697.7 / 99998.2)
+SR4l_250_270_all
+acceptance: 1.00 (9997477 / 10000000)
+efficiency: 0.41 (40630.6 / 99974.8)
+SR4l_270_300_all
+acceptance: 1.00 (9999988 / 10000000)
+efficiency: 0.31 (31136.3 / 99999.9)
+SR4l_300_330_all
+acceptance: 1.00 (9999922 / 10000000)
+efficiency: 0.36 (36425.2 / 99999.2)
+SR4l_330_360_all
+acceptance: 1.00 (9999660 / 10000000)
+efficiency: 0.32 (32082.6 / 99996.6)
+SR4l_360_400_all
+acceptance: 1.00 (9999735 / 10000000)
+efficiency: 0.33 (33365.3 / 99997.4)
+SR4l_400_440_all
+acceptance: 1.00 (9999818 / 10000000)
+efficiency: 0.31 (31254.2 / 99998.2)
+SR4l_440_580_all
+acceptance: 1.00 (9997158 / 10000000)
+efficiency: 0.35 (35331.4 / 99971.6)
+SR4l_580_inf_all
+acceptance: 1.00 (9999990 / 10000000)
+efficiency: 0.33 (33435.6 / 99999.9)
+SR3l_90_110_all
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.37 (37047.3 / 100000.0)
+SR3l_110_130_all
+acceptance: 1.00 (9999543 / 10000000)
+efficiency: 0.40 (40254.5 / 99995.4)
+SR3l_130_150_all
+acceptance: 1.00 (9999449 / 10000000)
+efficiency: 0.43 (43186.1 / 99994.5)
+SR3l_150_170_all
+acceptance: 1.00 (9999516 / 10000000)
+efficiency: 0.39 (39496.1 / 99995.2)
+SR3l_170_190_all
+acceptance: 1.00 (9999886 / 10000000)
+efficiency: 0.38 (37853.0 / 99998.9)
+SR3l_190_210_all
+acceptance: 1.00 (9999988 / 10000000)
+efficiency: 0.42 (41909.6 / 99999.9)
+SR3l_210_230_all
+acceptance: 1.00 (9997483 / 10000000)
+efficiency: 0.47 (47394.9 / 99974.8)
+SR3l_230_250_all
+acceptance: 1.00 (9999274 / 10000000)
+efficiency: 0.42 (42488.2 / 99992.7)
+SR3l_250_270_all
+acceptance: 1.00 (9999980 / 10000000)
+efficiency: 0.39 (39101.8 / 99999.8)
+SR3l_270_300_all
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.32 (32363.7 / 100000.0)
+SR3l_300_330_all
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.32 (31987.4 / 100000.0)
+SR3l_330_360_all
+acceptance: 1.00 (9998055 / 10000000)
+efficiency: 0.38 (38172.6 / 99980.6)
+SR3l_360_400_all
+acceptance: 1.00 (9999991 / 10000000)
+efficiency: 0.33 (33406.2 / 99999.9)
+SR3l_400_440_all
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.38 (37508.9 / 100000.0)
+SR3l_440_580_all
+acceptance: 1.00 (9999733 / 10000000)
+efficiency: 0.36 (35743.7 / 99997.3)
+SR3l_580_inf_all
+acceptance: 1.00 (9999822 / 10000000)
+efficiency: 0.35 (34655.0 / 99998.2)
+
+real	116m23.002s
+user	1205m41.536s
+sys	1m7.574s

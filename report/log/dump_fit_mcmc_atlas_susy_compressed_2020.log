@@ -1,0 +1,55 @@
+SR_E_mll_1
+acceptance: 1.00 (9999998 / 10000000)
+efficiency: 0.23 (22929.0 / 100000.0)
+SR_E_mll_2
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.24 (24498.1 / 100000.0)
+SR_E_mll_3
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.24 (23654.4 / 100000.0)
+SR_E_mll_5
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.24 (23507.0 / 100000.0)
+SR_E_mll_10
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.24 (24039.7 / 100000.0)
+SR_E_mll_20
+acceptance: 1.00 (10000000 / 10000000)
+efficiency: 0.23 (23139.3 / 100000.0)
+SR_E_mll_30
+acceptance: 1.00 (9999717 / 10000000)
+efficiency: 0.23 (22957.2 / 99997.2)
+SR_E_mll_40
+acceptance: 1.00 (9997663 / 10000000)
+efficiency: 0.51 (51030.4 / 99976.6)
+SR_E_mll_60
+acceptance: 1.00 (9999286 / 10000000)
+efficiency: 0.19 (19272.9 / 99992.9)
+SR_S_100p5
+acceptance: 1.00 (9999039 / 10000000)
+efficiency: 0.57 (57058.0 / 99990.4)
+SR_S_101
+acceptance: 1.00 (9996691 / 10000000)
+efficiency: 0.48 (47747.3 / 99966.9)
+SR_S_102
+acceptance: 1.00 (9997184 / 10000000)
+efficiency: 0.61 (60654.4 / 99971.8)
+SR_S_105
+acceptance: 1.00 (9999929 / 10000000)
+efficiency: 0.73 (72612.2 / 99999.3)
+SR_S_110
+acceptance: 1.00 (9999987 / 10000000)
+efficiency: 0.75 (75029.5 / 99999.9)
+SR_S_120
+acceptance: 1.00 (9999657 / 10000000)
+efficiency: 0.62 (62308.0 / 99996.6)
+SR_S_130
+acceptance: 1.00 (9999993 / 10000000)
+efficiency: 0.72 (71983.9 / 99999.9)
+SR_S_140
+acceptance: 1.00 (9999978 / 10000000)
+efficiency: 0.74 (74071.5 / 99999.8)
+
+real	376m16.228s
+user	4278m28.671s
+sys	1m42.888s

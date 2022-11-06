@@ -1,0 +1,13 @@
+SRA
+acceptance: 1.00 (9999972 / 10000000)
+efficiency: 0.48 (48056.0 / 99999.7)
+SRB
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.59 (59489.5 / 100000.0)
+SRC
+acceptance: 1.00 (9999999 / 10000000)
+efficiency: 0.49 (48541.5 / 100000.0)
+
+real	5m50.679s
+user	59m42.035s
+sys	0m6.452s

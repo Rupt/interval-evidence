@@ -1,0 +1,10 @@
+SRMU
+acceptance: 1.00 (9999993 / 10000000)
+efficiency: 0.82 (81772.9 / 99999.9)
+SRMET
+acceptance: 1.00 (9999909 / 10000000)
+efficiency: 0.81 (81398.3 / 99999.1)
+
+real	0m10.189s
+user	0m22.013s
+sys	0m1.511s

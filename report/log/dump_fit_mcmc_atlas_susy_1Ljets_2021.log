@@ -1,0 +1,22 @@
+SR2JBVEM_meffInc30_gluino
+acceptance: 1.00 (9998888 / 10000000)
+efficiency: 0.43 (42520.5 / 99988.9)
+SR2JBVEM_meffInc30_squark
+acceptance: 1.00 (9998711 / 10000000)
+efficiency: 0.41 (41420.0 / 99987.1)
+SR4JhighxBVEM_meffInc30
+acceptance: 1.00 (9999260 / 10000000)
+efficiency: 0.42 (42230.2 / 99992.6)
+SR4JlowxBVEM_meffInc30
+acceptance: 1.00 (9999821 / 10000000)
+efficiency: 0.40 (40355.6 / 99998.2)
+SR6JBVEM_meffInc30_gluino
+acceptance: 1.00 (9998623 / 10000000)
+efficiency: 0.36 (36342.0 / 99986.2)
+SR6JBVEM_meffInc30_squark
+acceptance: 1.00 (9999129 / 10000000)
+efficiency: 0.37 (37300.0 / 99991.3)
+
+real	85m58.332s
+user	970m10.240s
+sys	0m24.901s

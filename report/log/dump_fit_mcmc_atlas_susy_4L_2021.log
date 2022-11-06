@@ -1,0 +1,43 @@
+SR0breq
+acceptance: 1.00 (9999975 / 10000000)
+efficiency: 0.40 (39527.0 / 99999.8)
+SR0bvetoloose
+acceptance: 1.00 (9998118 / 10000000)
+efficiency: 0.31 (31344.0 / 99981.2)
+SR0bvetotight
+acceptance: 1.00 (9985568 / 10000000)
+efficiency: 0.36 (36126.4 / 99855.7)
+SR0ZZbvetoloose
+acceptance: 1.00 (9999906 / 10000000)
+efficiency: 0.28 (27738.1 / 99999.1)
+SR0ZZbvetotight
+acceptance: 1.00 (9998110 / 10000000)
+efficiency: 0.34 (34094.6 / 99981.1)
+SR0ZZloose
+acceptance: 1.00 (9999933 / 10000000)
+efficiency: 0.38 (38049.0 / 99999.3)
+SR0ZZtight
+acceptance: 1.00 (9999944 / 10000000)
+efficiency: 0.36 (36045.8 / 99999.4)
+SR1breq
+acceptance: 1.00 (9999901 / 10000000)
+efficiency: 0.35 (34850.9 / 99999.0)
+SR1bvetoloose
+acceptance: 1.00 (9999934 / 10000000)
+efficiency: 0.37 (36645.8 / 99999.3)
+SR1bvetotight
+acceptance: 1.00 (9999915 / 10000000)
+efficiency: 0.34 (33629.3 / 99999.1)
+SR2breq
+acceptance: 0.86 (8582252 / 10000000)
+efficiency: 0.37 (31819.1 / 85822.5)
+SR2bvetoloose
+acceptance: 0.86 (8616127 / 10000000)
+efficiency: 0.34 (29073.3 / 86161.3)
+SR2bvetotight
+acceptance: 0.79 (7944183 / 10000000)
+efficiency: 0.39 (30903.4 / 79441.8)
+
+real	52m46.808s
+user	566m54.945s
+sys	0m30.337s

@@ -1,6 +1,6 @@
-# ¡Research in progress!
-
 # Likelihood intervals for ATLAS discovery regions
+
+Unfinished research project.
 
 Where is my likelihood above this threshold?<br/>
 _This project answers that question for likelihoods on signal yields
